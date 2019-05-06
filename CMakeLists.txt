@@ -125,7 +125,7 @@ set(xmsmesh_headers
 
 # Pybind11 sources
 set(xmsmesh_py_source
-  xmsmesher/python/xmsmesh_py.cpp
+  xmsmesher/python/xmsmesher_py.cpp
   # Meshing
   xmsmesher/python/meshing/meshing_py.cpp
   xmsmesher/python/meshing/MeMeshUtils_py.cpp
