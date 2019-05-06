@@ -2,15 +2,15 @@ env:
  global:
    # TRAVIS_BRANCH is tag name if tag provided else branch name
    - XMS_VERSION: $TRAVIS_BRANCH
-   - CONAN_REFERENCE: "xmsmesh/${XMS_VERSION}"
+   - CONAN_REFERENCE: "xmsmesher/${XMS_VERSION}"
    - CONAN_USERNAME: "aquaveo"
    - CONAN_CHANNEL: "stable"
    - CONAN_LOGIN_USERNAME: $CONAN_USER_SECRET
    - CONAN_PASSWORD: $CONAN_PASSWORD_SECRET
    - CONAN_REMOTES: $AQUAVEO_CONAN
-   - GH_REPO_NAME: xmsmesh
+   - GH_REPO_NAME: xmsmesher
    - DOXYFILE: $TRAVIS_BUILD_DIR/Doxygen/Doxyfile
-   - GH_REPO_REF: github.com/Aquaveo/xmsmesh.git
+   - GH_REPO_REF: github.com/Aquaveo/xmsmesher.git
    - PYTHON_TARGET_VERSION: 2.7
 
 linux: &linux

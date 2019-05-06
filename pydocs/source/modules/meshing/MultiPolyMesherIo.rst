@@ -2,13 +2,13 @@
 MultiPolyMesherIo
 *****************
 
-The MultiPolyMesherIo contains the options for meshing using XmsMesh library. This class uses
-a collection of :class:`xmsmesh.meshing.PolyInput` objects, :class:`xmsmesh.meshing.RefinePoint` objects
+The MultiPolyMesherIo contains the options for meshing using Xmsmesher library. This class uses
+a collection of :class:`xmsmesher.meshing.PolyInput` objects, :class:`xmsmesher.meshing.RefinePoint` objects
 and several other options that can be used to generate meshes.
 
 This class is also used to retrieve a mesh after it has been generated. The points and cells
 properties on this class are used to pass back the geometry of the mesh that is generated using
-functions from the :mod:`xmsmesh.meshing.mesh_utils` module.
+functions from the :mod:`xmsmesher.meshing.mesh_utils` module.
 
 The points property is just a list of (x, y, z) coordinates representing the points of the mesh. Cells,
 is a cell stream that is used to define the mesh. The cell stream is a list of integers used to describe
@@ -31,7 +31,7 @@ from. The length of cell_polygons will be the total number of cells in your mesh
 because each mesh can be generated from many different polygons. It may sometimes be useful to know which polygon
 each cell came from.
 
-.. autoclass:: xmsmesh.meshing.MultiPolyMesherIo
+.. autoclass:: xmsmesher.meshing.MultiPolyMesherIo
    :members:
 
    .. automethod:: __init__

@@ -4,10 +4,10 @@ from conans.errors import ConanException
 
 
 class XmsinterpConan(ConanFile):
-    name = "xmsmesh"
+    name = "xmsmesher"
     # version = None  # This no longer worked after conan version 1.11
     license = "BSD2"
-    url = "https://github.com/Aquaveo/xmsmesh"
+    url = "https://github.com/Aquaveo/xmsmesher"
     description = "Meshing library for XMS products"
     settings = "os", "compiler", "build_type", "arch"
     options = {
@@ -19,7 +19,7 @@ class XmsinterpConan(ConanFile):
     generators = "cmake"
     build_requires = "cxxtest/4.4@aquaveo/stable"
     exports = "CMakeLists.txt", "LICENSE", "test_files/*"
-    exports_sources = "xmsmesh/*"
+    exports_sources = "xmsmesher/*"
 
     def configure(self):
         # Set verion dynamically using XMS_VERSION env variable.
@@ -107,7 +107,7 @@ class XmsinterpConan(ConanFile):
                   self.run('pip install --user numpy')
                 else:
                   self.run('pip install numpy')
-                self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsmesh/python', cwd="./lib")
+                self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsmesher/python', cwd="./lib")
 
     def package(self):
         self.copy("license", dst="licenses", ignore_case=True, keep_path=False)

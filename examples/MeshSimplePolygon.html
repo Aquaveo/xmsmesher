@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="xmsmesh-&quot;hello-world&quot;">xmsmesh "hello world"<a class="anchor-link" href="#xmsmesh-&quot;hello-world&quot;">&#182;</a></h2><p>This is an introduction to the xmsmesh library. This library generates unstructured triangular or mixed triangle, quad meshes. The meshes are generated from input polygons. The resulting mesh will honor the input polygon boundaries. The density of mesh elements is controlled by the spacing of points along the polygon boundaries.</p>
+<h2 id="xmsmesher-&quot;hello-world&quot;">xmsmesher "hello world"<a class="anchor-link" href="#xmsmesher-&quot;hello-world&quot;">&#182;</a></h2><p>This is an introduction to the xmsmesher library. This library generates unstructured triangular or mixed triangle, quad meshes. The meshes are generated from input polygons. The resulting mesh will honor the input polygon boundaries. The density of mesh elements is controlled by the spacing of points along the polygon boundaries.</p>
 <p>In addition, the density of elements can be controlled by specifying a size function (this is demonstrated in another notebook {see the examples folder}).</p>
 <p>This example shows how to generate a mesh from a simple, square polygon with coordinates (0,0), (100,100) and a boundary spacing of 10.0.</p>
 
@@ -11803,7 +11803,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">hvplot.xarray</span>
 
 <span class="kn">import</span> <span class="nn">meshing_tools</span>
-<span class="kn">import</span> <span class="nn">xmsmesh</span>
+<span class="kn">import</span> <span class="nn">xmsmesher</span>
 
 <span class="n">hv</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="s1">&#39;bokeh&#39;</span><span class="p">)</span>
 </pre></div>
@@ -16162,11 +16162,11 @@ if (!(document.getElementById('1006')) && !(document.getElementById('_anim_imgNo
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create Meshing Inputs</span>
-<span class="n">input_polygon</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">PolyInput</span><span class="p">(</span><span class="n">out_poly</span><span class="o">=</span><span class="n">polygon_points</span><span class="p">)</span>
-<span class="n">mesh_io</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">MultiPolyMesherIo</span><span class="p">(</span><span class="n">poly_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_polygon</span><span class="p">])</span>
+<span class="n">input_polygon</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">PolyInput</span><span class="p">(</span><span class="n">out_poly</span><span class="o">=</span><span class="n">polygon_points</span><span class="p">)</span>
+<span class="n">mesh_io</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">MultiPolyMesherIo</span><span class="p">(</span><span class="n">poly_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_polygon</span><span class="p">])</span>
 
 <span class="c1"># Generate Mesh</span>
-<span class="n">succeded</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_utils</span><span class="o">.</span><span class="n">generate_mesh</span><span class="p">(</span><span class="n">mesh_io</span><span class="o">=</span><span class="n">mesh_io</span><span class="p">)</span>
+<span class="n">succeded</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_utils</span><span class="o">.</span><span class="n">generate_mesh</span><span class="p">(</span><span class="n">mesh_io</span><span class="o">=</span><span class="n">mesh_io</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">succeded</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Meshing was successful&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -16321,11 +16321,11 @@ if (!(document.getElementById('1211')) && !(document.getElementById('_anim_imgNo
     <span class="n">holes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole_coords</span><span class="p">)</span>
 
 <span class="c1"># Create Meshing Inputs</span>
-<span class="n">input_polygon</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">PolyInput</span><span class="p">(</span><span class="n">out_poly</span><span class="o">=</span><span class="n">coords</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">inside_polys</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">])</span>
-<span class="n">mesh_io</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">MultiPolyMesherIo</span><span class="p">(</span><span class="n">poly_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_polygon</span><span class="p">])</span>
+<span class="n">input_polygon</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">PolyInput</span><span class="p">(</span><span class="n">out_poly</span><span class="o">=</span><span class="n">coords</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">inside_polys</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">])</span>
+<span class="n">mesh_io</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">MultiPolyMesherIo</span><span class="p">(</span><span class="n">poly_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_polygon</span><span class="p">])</span>
 
 <span class="c1"># Generate Mesh</span>
-<span class="n">succeded</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">xmsmesh</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_utils</span><span class="o">.</span><span class="n">generate_mesh</span><span class="p">(</span><span class="n">mesh_io</span><span class="o">=</span><span class="n">mesh_io</span><span class="p">)</span>
+<span class="n">succeded</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">xmsmesher</span><span class="o">.</span><span class="n">meshing</span><span class="o">.</span><span class="n">mesh_utils</span><span class="o">.</span><span class="n">generate_mesh</span><span class="p">(</span><span class="n">mesh_io</span><span class="o">=</span><span class="n">mesh_io</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">succeded</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Meshing was successful&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>

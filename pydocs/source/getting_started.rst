@@ -1,13 +1,13 @@
 Installation
 ------------
 
-XmsMesh can be installed using `Anaconda <https://www.anaconda.com/download/>`_.
+Xmsmesher can be installed using `Anaconda <https://www.anaconda.com/download/>`_.
 
-You can install XmsMesh using the `conda <https://www.anaconda.com/download/>`_ command::
+You can install Xmsmesher using the `conda <https://www.anaconda.com/download/>`_ command::
 
-   conda install -c aquaveo xmsmesh
+   conda install -c aquaveo xmsmesher
 
-This will install XmsMesh and **all** the needed dependencies.
+This will install Xmsmesher and **all** the needed dependencies.
 
 
 Usage
@@ -22,8 +22,8 @@ polygon.
 
 .. code-block:: python
 
-    from xmsmesh.meshing import PolyInput
-    from xmsmesh.meshing import PolyRedistributePts
+    from xmsmesher.meshing import PolyInput
+    from xmsmesher.meshing import PolyRedistributePts
 
     polygon_corners = [(0, 0, 0), (0, 100, 0), (100, 100, 0),
                        (100, 0, 0), (0, 0, 0)]
@@ -41,8 +41,8 @@ Now we will create our PolyMesherIo and generate our mesh
 
 .. code-block:: python
 
-    from xmsmesh.meshing import MultiPolyMesherIo
-    from xmsmesh.meshing import mesh_utils
+    from xmsmesher.meshing import MultiPolyMesherIo
+    from xmsmesher.meshing import mesh_utils
 
     mesher_io = MultiPolyMesherIo(poly_inputs=[poly_input])
 
@@ -67,4 +67,4 @@ There are many other options and settings that can be used to generate a mesh an
 documentation can be found in the **User Interface** section of this site. There are also
 additional examples that can be found on the Examples_ page
 
-.. _Examples: https://aquaveo.github.io/examples/xmsmesh/xmsmesh.html
+.. _Examples: https://aquaveo.github.io/examples/xmsmesher/xmsmesher.html

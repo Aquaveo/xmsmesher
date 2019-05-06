@@ -2,7 +2,7 @@
 # Meshing Tutorial {#Meshing_Tutorial}
 
 ## Introduction {#Intro_Meshing}
-The purpose of this tutorial is to provide explanation on how to use the classes defined in xmsmesh to generate meshes from input polygons. The examples provided in this tutorial refer to test cases that are in the xmsmesh/tutorial/TutMeshing.cpp source file.
+The purpose of this tutorial is to provide explanation on how to use the classes defined in xmsmesher to generate meshes from input polygons. The examples provided in this tutorial refer to test cases that are in the xmsmesher/tutorial/TutMeshing.cpp source file.
 
 ## Example - Simple Polygon {#Example_Simple_Polygon}
 This is the "hello world" example for using the meshing library.
@@ -16,7 +16,7 @@ The basic steps to generate a mesh from a polygon are:
 2. Add the instance of the xms::MePolyInput class to the m_polys vector of the xms::MeMultiPolyMesherInput class.
 3. Pass the xms::MeMultiPolyMesherInput class to the xms::MeMultiPolyTo2dm->Generate2dm method.  This call will create an ascii file (2dm).
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_SimplePolygon
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_SimplePolygon
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this mesh can be found at test_files/Tutorial_Meshing/Example_SimplePolygon_base.2dm.
 
@@ -29,7 +29,7 @@ This is another example of how to mesh a single polygon. The testing code for th
 
 The same basic steps used with the simple polygon are followed for this example.
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_ComplexPolygon
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_ComplexPolygon
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_ComplexPolygon_base.2dm
 
@@ -41,7 +41,7 @@ This is another example of how to mesh a single polygon, but this polygon contai
  
 ![Simple Polygon with a hole and boundary spacing = 10.0](tutMesh_SimplePolygonWithHole_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_SimplePolygonWithHole
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_SimplePolygonWithHole
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_SimplePolygonWithHole_base.2dm
 
@@ -54,7 +54,7 @@ The next example has a polygon as well as a breakline. A breakline is a mulitseg
 
 Breaklines can be specified as an internal polygon with a width of 0.0. The points that make up the line are pushed into a vector from the beginning point in order to the endpoint and then back in order to the point just before the beginning point (see the definition of the inner polygon in the following example).
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_Breakline
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_Breakline
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_Breakline_base.2dm
 
@@ -65,7 +65,7 @@ A refine point is a location in the mesh where the user can specify a desired el
 
 ![Simple Polygon with 3 refine points and boundary spacing = 10.0](tutMesh_RefinePoints_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_RefinePoints
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_RefinePoints
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_RefinePoints_base.2dm
 
@@ -76,7 +76,7 @@ The next example has multiple polygons with variable spacing along the boundary,
 
 ![Multiple polygons with variable spacing, holes, breaklines, and refine points](tutMesh_MultiPolygon_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_MultiPolygon
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_MultiPolygon
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_MultiPolygon_base.2dm
 
@@ -87,20 +87,20 @@ This example illustrates how to influence the size of elements in the generated 
 
 ![Simple polygon with linear size function](tutMesh_ScalarPaving_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_ScalarPaving
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_ScalarPaving
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_ScalarPaving_base.2dm
 
 ![2d mesh generated from simple polygon with size function](tutMesh_ScalarPaving_Output.png)
 
 ## Example - Patch Mesh Generation {#Example_Patch}
-An adaptive coons patch methodology is implemented in xmsmesh for generating triangular and quad cells. In general, a patch can be generated for a polygon with 4 sides. You can specify the four sides by indicating the indices of the points that make up the polygon corners in the xms::MePolyInput class (m_polyCorners). Below is a picture of the input for this example. Notice that the number of segments is different on each side of the polygon. The testing code for this example is TutMeshingTests::test_Example_Patch.
+An adaptive coons patch methodology is implemented in xmsmesher for generating triangular and quad cells. In general, a patch can be generated for a polygon with 4 sides. You can specify the four sides by indicating the indices of the points that make up the polygon corners in the xms::MePolyInput class (m_polyCorners). Below is a picture of the input for this example. Notice that the number of segments is different on each side of the polygon. The testing code for this example is TutMeshingTests::test_Example_Patch.
 
 ![Input polygon for patch mesh generation](tutMesh_Patch_Input.png)
 
 The following code shows how to setup the polygon corners. Note that the first point listed in the polygons is assumed to be a corner and not included in the list of corners. Thus, m_polyCorners should always be either size 0 or 3.
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_Patch
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_Patch
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_Patch_base.2dm
 
@@ -120,7 +120,7 @@ This example shows how to specify a constant size function on a polygon that wil
 
 The test shows having the size transition from the boundary spacing of 10.0 to a size of 1.0 and then a second example where the size transitions to 50.
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_ConstantSmooth
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_ConstantSmooth
 
 An image of the two 2d meshs is shown below. The *.2dm file for the output 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_ConstantSmooth_base.2dm and Example_ConstantSmooth1_base.2dm.
 
@@ -129,12 +129,12 @@ An image of the two 2d meshs is shown below. The *.2dm file for the output 2d me
 ## Example - Generate size function from depth {#Example_SizeFromDepth}
 This example shows how use use xms::meSizeFunctionFromDepth to generate a size function from depth measured at points. The user specifies an array of depths and a min element size and a max element size then an array is filled with the sizes. The testing code for this example is in TutMeshingTests::test_Example_SizeFuncFromDepth.
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_SizeFuncFromDepth
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_SizeFuncFromDepth
 
 ## Example - Smooth a size function {#Example_SmoothSizeFunc}
 This example shows how to smooth a size function based on geometric proximity so that element creation from the size function will satisfy an element growth/reduction factor. For example, if a size function specifies a nodal spacing of 10 meter elements at one location and 100 meter elements at another location 20 meters away then these constraints conflict. The smoothing function can reduce the 100 or increase the 10 based on the parameters passed to the function. The testing code for this example is in TutMeshingTests::test_Example_SmoothSizeFunc.
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_SmoothSizeFunc
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_SmoothSizeFunc
 
 ## Example - Spring relaxation {#Example_Spring_Relax}
 
@@ -142,7 +142,7 @@ This is another example of how to mesh a single polygon with a hole, and in this
  
 ![Simple Polygon with a hole and boundary spacing = 10.0](tutMesh_SimplePolygonWithHole_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_SpringRelax
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_SpringRelax
 
 An image of the 2d mesh generated from this example is shown below. The *.2dm file for this 2d mesh can be found at files_xmsmesh/Test/Tutorial_Meshing/Example_SpringRelax_base.2dm.
 
@@ -162,7 +162,7 @@ Also, note that the algorithm is O(N^3) with respect to the number of points in 
 
 ![Triangular mesh input to Quad Blossom algorithm](tutMesh_QuadBlossom_Input.png)
 
-\snippet xmsmesh/tutorial/TutMeshing.cpp snip_test_Example_QuadBlossom_BadQuadRemover
+\snippet xmsmesher/tutorial/TutMeshing.cpp snip_test_Example_QuadBlossom_BadQuadRemover
 
 ![Output mesh input after running Quad Blossom algorithm](tutMesh_QuadBlossom_Output.png)
 

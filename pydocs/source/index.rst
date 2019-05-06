@@ -4,19 +4,19 @@
    :align: right
 
 *****************
-XmsMesh |version|
+Xmsmesher |version|
 *****************
 
 **Last Updated:** February 7, 2019
 
-The xmsmesh library is a meshing library for other aquaveo products. This library
+The xmsmesher library is a meshing library for other aquaveo products. This library
 generates 2D unstructured meshes from polygons.
 
 Examples
 ========
 
 The examples for this library can be found in the
-examples folder in the `github repository <https://github.com/Aquaveo/xmsmesh>`_
+examples folder in the `github repository <https://github.com/Aquaveo/xmsmesher>`_
 
 Index
 =====

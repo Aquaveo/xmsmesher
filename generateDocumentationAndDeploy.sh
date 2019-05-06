@@ -112,9 +112,9 @@ cd $(dirname $SPHINX_CONF)
 # make a directory to get the conan package
 mkdir ./conan
 # get the conan package
-conan install -o xmsmesh:pybind=True -s compiler.version=6 -s compiler.libcxx=libstdc++11 -if ./conan -g txt xmsmesh/${TRAVIS_TAG}@aquaveo/stable
+conan install -o xmsmesher:pybind=True -s compiler.version=6 -s compiler.libcxx=libstdc++11 -if ./conan -g txt xmsmesher/${TRAVIS_TAG}@aquaveo/stable
 # get the path to the conan package
-export PATH_TO_PYTHON_PACKAGE=$(cat ./conan/conanbuildinfo.txt | grep PYTHONPATH.*xmsmesh | sed -r 's/^PYTHONPATH=\["(.*?)"\]$/\1/')
+export PATH_TO_PYTHON_PACKAGE=$(cat ./conan/conanbuildinfo.txt | grep PYTHONPATH.*xmsmesher | sed -r 's/^PYTHONPATH=\["(.*?)"\]$/\1/')
 # copy package into build directory
 cp ${PATH_TO_PYTHON_PACKAGE}/* $(dirname $SPHINX_CONF)/
 ls ${PATH_TO_PYTHON_PACKAGE}
@@ -132,7 +132,7 @@ sphinx-build -b html . $(dirname $DOXYFILE)/html/pydocs
 # Doxygen and Sphinx did their work.
 cd $(dirname $DOXYFILE)
 if [ -d "html" ] && [ -f "html/index.html" ] && [ -f "html/pydocs/index.html" ]; then
-    mv xmsmesh.tag "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
+    mv xmsmesher.tag "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
     mv html/* "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
     cd $TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME
     echo 'Uploading documentation to the gh-pages branch...'

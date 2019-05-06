@@ -10,7 +10,7 @@ environment:
     # Will not work on untagged commits.
     XMS_VERSION: ${APPVEYOR_REPO_TAG_NAME}
     AQUAVEO_CONAN: https://conan.aquaveo.com:443
-    CONAN_REFERENCE: "xmsmesh/${XMS_VERSION}"
+    CONAN_REFERENCE: "xmsmesher/${XMS_VERSION}"
     CONAN_USERNAME: "aquaveo"
     CONAN_CHANNEL: "stable"
     CONAN_LOGIN_USERNAME: ${CONAN_USER_SECRET}
@@ -53,7 +53,7 @@ build_script:
         $env:XMS_VERSION = $env:APPVEYOR_REPO_TAG_NAME 
         $env:CONAN_UPLOAD = $env:AQUAVEO_CONAN
       }
-      $env:CONAN_REFERENCE = 'xmsmesh/'+$env:XMS_VERSION
+      $env:CONAN_REFERENCE = 'xmsmesher/'+$env:XMS_VERSION
       echo 'XMS_VERSION: '+$env:XMS_VERSION
       echo 'CONAN_REFERENCE: '+$env:CONAN_REFERENCE
   - python build.py

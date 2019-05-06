@@ -1,14 +1,14 @@
-xmsmesh {#mainpage}
+xmsmesher {#mainpage}
 ============
 \tableofcontents
 
-xmsmesh {#xmsmesh}
+xmsmesher {#xmsmesher}
 ============
 
 Introduction {#XmsmeshIntroduction}
 ------------
 
-xmsmesh is a meshing library used in xms libraries and products.
+xmsmesher is a meshing library used in xms libraries and products.
 
 <table align="center" border="0">
   <tr>
@@ -54,6 +54,6 @@ More about the interface pattern can be found at the following resources:
 * More Effective C++, Meyers, item 33
 * Large-Scale C++ Software Design, Lakos, 6.4.1
 
-"xmsmesh" Name {#xmsmeshName}
+"xmsmesher" Name {#xmsmeshName}
 ------------
-The name "xmsmesh" comes from the "XMS" (GMS, SMS, WMS) water modeling software created by Aquaveo.
+The name "xmsmesher" comes from the "XMS" (GMS, SMS, WMS) water modeling software created by Aquaveo.

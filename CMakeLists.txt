@@ -82,59 +82,59 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsmesh_sources
-  xmsmesh/meshing/MeMeshUtils.cpp
-  xmsmesh/meshing/MeMultiPolyTo2dm.cpp
-  xmsmesh/meshing/MeMultiPolyMesher.cpp
-  xmsmesh/meshing/detail/MeBadQuadRemover.cpp
-  xmsmesh/meshing/detail/MeIntersectPolys.cpp
-  xmsmesh/meshing/detail/MePolyPatcher.cpp
-  xmsmesh/meshing/detail/MePolyOffsetter.cpp
-  xmsmesh/meshing/detail/MePolyPaverToMeshPts.cpp
-  xmsmesh/meshing/detail/MePolyCleaner.cpp
-  xmsmesh/meshing/detail/MePolyPts.cpp
-  xmsmesh/meshing/detail/MePolyRedistributePtsCurvature.cpp
-  xmsmesh/meshing/detail/MeQuadBlossom.cpp
-  xmsmesh/meshing/detail/MeRefinePtsToPolys.cpp
-  xmsmesh/meshing/detail/MeRelaxer.cpp
-  xmsmesh/meshing/detail/MeWeightMatcher.cpp
-  xmsmesh/meshing/MePolyMesher.cpp
-  xmsmesh/meshing/MePolyRedistributePts.cpp
-  xmsmesh/tutorial/TutMeshing.cpp
+  xmsmesher/meshing/MeMeshUtils.cpp
+  xmsmesher/meshing/MeMultiPolyTo2dm.cpp
+  xmsmesher/meshing/MeMultiPolyMesher.cpp
+  xmsmesher/meshing/detail/MeBadQuadRemover.cpp
+  xmsmesher/meshing/detail/MeIntersectPolys.cpp
+  xmsmesher/meshing/detail/MePolyPatcher.cpp
+  xmsmesher/meshing/detail/MePolyOffsetter.cpp
+  xmsmesher/meshing/detail/MePolyPaverToMeshPts.cpp
+  xmsmesher/meshing/detail/MePolyCleaner.cpp
+  xmsmesher/meshing/detail/MePolyPts.cpp
+  xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.cpp
+  xmsmesher/meshing/detail/MeQuadBlossom.cpp
+  xmsmesher/meshing/detail/MeRefinePtsToPolys.cpp
+  xmsmesher/meshing/detail/MeRelaxer.cpp
+  xmsmesher/meshing/detail/MeWeightMatcher.cpp
+  xmsmesher/meshing/MePolyMesher.cpp
+  xmsmesher/meshing/MePolyRedistributePts.cpp
+  xmsmesher/tutorial/TutMeshing.cpp
 )
 
 set(xmsmesh_headers
-  xmsmesh/meshing/MeMeshUtils.h
-  xmsmesh/meshing/MePolyMesher.h
-  xmsmesh/meshing/MeMultiPolyMesher.h
-  xmsmesh/meshing/MeMultiPolyMesherIo.h
-  xmsmesh/meshing/MeMultiPolyTo2dm.h
-  xmsmesh/meshing/MePolyRedistributePts.h
-  xmsmesh/meshing/detail/MeBadQuadRemover.h
-  xmsmesh/meshing/detail/MePolyCleaner.h
-  xmsmesh/meshing/detail/MePolyOffsetter.h
-  xmsmesh/meshing/detail/MePolyPts.h
-  xmsmesh/meshing/detail/MePolyPatcher.h
-  xmsmesh/meshing/detail/MeIntersectPolys.h
-  xmsmesh/meshing/detail/MePolyPaverToMeshPts.h
-  xmsmesh/meshing/detail/MePolyRedistributePtsCurvature.h
-  xmsmesh/meshing/detail/MeQuadBlossom.h
-  xmsmesh/meshing/detail/MeRefinePtsToPolys.h
-  xmsmesh/meshing/detail/MeRelaxer.h
-  xmsmesh/meshing/detail/MeWeightMatcher.h
+  xmsmesher/meshing/MeMeshUtils.h
+  xmsmesher/meshing/MePolyMesher.h
+  xmsmesher/meshing/MeMultiPolyMesher.h
+  xmsmesher/meshing/MeMultiPolyMesherIo.h
+  xmsmesher/meshing/MeMultiPolyTo2dm.h
+  xmsmesher/meshing/MePolyRedistributePts.h
+  xmsmesher/meshing/detail/MeBadQuadRemover.h
+  xmsmesher/meshing/detail/MePolyCleaner.h
+  xmsmesher/meshing/detail/MePolyOffsetter.h
+  xmsmesher/meshing/detail/MePolyPts.h
+  xmsmesher/meshing/detail/MePolyPatcher.h
+  xmsmesher/meshing/detail/MeIntersectPolys.h
+  xmsmesher/meshing/detail/MePolyPaverToMeshPts.h
+  xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.h
+  xmsmesher/meshing/detail/MeQuadBlossom.h
+  xmsmesher/meshing/detail/MeRefinePtsToPolys.h
+  xmsmesher/meshing/detail/MeRelaxer.h
+  xmsmesher/meshing/detail/MeWeightMatcher.h
 )
 
 # Pybind11 sources
 set(xmsmesh_py_source
-  xmsmesh/python/xmsmesh_py.cpp
+  xmsmesher/python/xmsmesh_py.cpp
   # Meshing
-  xmsmesh/python/meshing/meshing_py.cpp
-  xmsmesh/python/meshing/MeMeshUtils_py.cpp
-  xmsmesh/python/meshing/MeMultiPolyMesherIo_py.cpp
-  xmsmesh/python/meshing/MePolyRedistributePts_py.cpp
+  xmsmesher/python/meshing/meshing_py.cpp
+  xmsmesher/python/meshing/MeMeshUtils_py.cpp
+  xmsmesher/python/meshing/MeMultiPolyMesherIo_py.cpp
+  xmsmesher/python/meshing/MePolyRedistributePts_py.cpp
 )
 
 set(xmsmesh_py_headers
-  xmsmesh/python/meshing/meshing_py.h
+  xmsmesher/python/meshing/meshing_py.h
 )
 
 # Tests
@@ -143,23 +143,23 @@ if (BUILD_TESTING)
   add_definitions(-DCXX_TEST)
 
   list(APPEND xmsmesh_sources
-    xmsmesh/meshing/MeMeshUtils.t.h
-    xmsmesh/meshing/MeMultiPolyTo2dm.t.h
-    xmsmesh/meshing/MePolyMesher.t.h
-    xmsmesh/meshing/MeMultiPolyMesher.t.h
-    xmsmesh/meshing/MePolyRedistributePts.t.h
-    xmsmesh/meshing/detail/MeBadQuadRemover.t.h
-    xmsmesh/meshing/detail/MePolyPaverToMeshPts.t.h
-    xmsmesh/meshing/detail/MeIntersectPolys.t.h
-    xmsmesh/meshing/detail/MePolyPatcher.t.h
-    xmsmesh/meshing/detail/MePolyOffsetter.t.h
-    xmsmesh/meshing/detail/MePolyCleaner.t.h
-    xmsmesh/meshing/detail/MePolyRedistributePtsCurvature.t.h
-    xmsmesh/meshing/detail/MeQuadBlossom.t.h
-    xmsmesh/meshing/detail/MeRefinePtsToPolys.t.h
-    xmsmesh/meshing/detail/MeRelaxer.t.h
-    xmsmesh/meshing/detail/MeWeightMatcher.t.h
-    xmsmesh/tutorial/TutMeshing.t.h
+    xmsmesher/meshing/MeMeshUtils.t.h
+    xmsmesher/meshing/MeMultiPolyTo2dm.t.h
+    xmsmesher/meshing/MePolyMesher.t.h
+    xmsmesher/meshing/MeMultiPolyMesher.t.h
+    xmsmesher/meshing/MePolyRedistributePts.t.h
+    xmsmesher/meshing/detail/MeBadQuadRemover.t.h
+    xmsmesher/meshing/detail/MePolyPaverToMeshPts.t.h
+    xmsmesher/meshing/detail/MeIntersectPolys.t.h
+    xmsmesher/meshing/detail/MePolyPatcher.t.h
+    xmsmesher/meshing/detail/MePolyOffsetter.t.h
+    xmsmesher/meshing/detail/MePolyCleaner.t.h
+    xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.t.h
+    xmsmesher/meshing/detail/MeQuadBlossom.t.h
+    xmsmesher/meshing/detail/MeRefinePtsToPolys.t.h
+    xmsmesher/meshing/detail/MeRelaxer.t.h
+    xmsmesher/meshing/detail/MeWeightMatcher.t.h
+    xmsmesher/tutorial/TutMeshing.t.h
   )
 
   find_package(CxxTest)
@@ -168,7 +168,7 @@ if (BUILD_TESTING)
     enable_testing()
 
     set(CXXTEST_TESTGEN_ARGS --xunit-printer --have-eh)
-    file(GLOB_RECURSE test_headers ${CMAKE_CURRENT_LIST_DIR}/xmsmesh/*.t.h)
+    file(GLOB_RECURSE test_headers ${CMAKE_CURRENT_LIST_DIR}/xmsmesher/*.t.h)
     CXXTEST_ADD_TEST(
       runner runner.cpp ${test_headers}
     )
@@ -198,27 +198,27 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(IS_PYTHON_BUILD)
-    pybind11_add_module(xmsmesh
+    pybind11_add_module(xmsmesher
       ${xmsmesh_py_source} ${xmsmesh_py_headers}
     )
 
-    target_include_directories(xmsmesh
+    target_include_directories(xmsmesher
         PRIVATE
           ${EXT_LIB_DIRS}
           ${PYTHON_INCLUDE_DIRS}
     )
-    target_link_libraries(xmsmesh
+    target_link_libraries(xmsmesher
       PRIVATE
         ${EXT_LIBS}
         ${PROJECT_NAME}
     )
-    set_target_properties(xmsmesh PROPERTIES
+    set_target_properties(xmsmesher PROPERTIES
       LINKER_LANGUAGE CXX
     )
 
     # Install recipe
     install(
-      TARGETS xmsmesh
+      TARGETS xmsmesher
       ARCHIVE DESTINATION "site-packages"
       LIBRARY DESTINATION "site-packages"
     )

@@ -1,5 +1,5 @@
 
-XMSMesh
+Xmsmesher
 =======
 
 Meshing library for XMS products
@@ -7,9 +7,9 @@ Meshing library for XMS products
 Master Branch Status
 --------------------
 
-[![Build Status](https://travis-ci.org/Aquaveo/xmsmesh.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsmesh)
+[![Build Status](https://travis-ci.org/Aquaveo/xmsmesher.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsmesher)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/9rt489nowh8rt7ib?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsmesh)
+[![Build status](https://ci.appveyor.com/api/projects/status/9rt489nowh8rt7ib?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsmesher)
 
 Prerequisites
 --------------
@@ -25,7 +25,7 @@ See xmscore build [instructions](https://github.com/Aquaveo/xmscore/wiki/Buildin
 Documentation
 -------------
 
-[C++ Documentation](https://aquaveo.github.io/xmsmesh/)
+[C++ Documentation](https://aquaveo.github.io/xmsmesher/)
 
-[Python Documentation](https://aquaveo.github.io/xmsmesh/pydocs)
+[Python Documentation](https://aquaveo.github.io/xmsmesher/pydocs)
 

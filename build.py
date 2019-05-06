@@ -32,7 +32,7 @@ if __name__ == "__main__":
                      or int(settings['compiler.version']) > 12) \
                 and settings['arch'] == "x86_64" and settings['build_type'] != 'Debug':
             pybind_options = dict(options)
-            pybind_options.update({'xmsmesh:pybind': True})
+            pybind_options.update({'xmsmesher:pybind': True})
             pybind_updated_builds.append([settings, pybind_options, env_vars, build_requires])
 
         pybind_updated_builds.append([settings, options, env_vars, build_requires])
@@ -45,7 +45,7 @@ if __name__ == "__main__":
                 and 'MD' in settings['compiler.runtime'] \
                 and int(settings['compiler.version']) < 13:
             xms_options = dict(options)
-            xms_options.update({'xmsmesh:xms': True})
+            xms_options.update({'xmsmesher:xms': True})
             xms_updated_builds.append([settings, xms_options, env_vars, build_requires])
         xms_updated_builds.append([settings, options, env_vars, build_requires])
     builder.builds = xms_updated_builds
@@ -53,9 +53,9 @@ if __name__ == "__main__":
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # testing option
-        if not options.get('xmsmesh:xms', False) and not options.get('xmsmesh:pybind', False):
+        if not options.get('xmsmesher:xms', False) and not options.get('xmsmesher:pybind', False):
             testing_options = dict(options)
-            testing_options.update({'xmsmesh:testing': True})
+            testing_options.update({'xmsmesher:testing': True})
             testing_updated_builds.append([settings, testing_options, env_vars, build_requires])
         testing_updated_builds.append([settings, options, env_vars, build_requires])
     builder.builds = testing_updated_builds

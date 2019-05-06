@@ -16,7 +16,7 @@ dependencies:
   - xmscore
   - xmsinterp
   - xmsgrid
-  - xmsmesh
+  - xmsmesher
   - xmsextractor
   - xmsstamper
   - xmsgridtrace
