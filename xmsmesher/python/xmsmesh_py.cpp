@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 /// \file
-/// \brief root module for xmsmesh Python bindings.
+/// \brief root module for xmsmesher Python bindings.
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
 /// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ namespace py = pybind11;
 #endif
 
 //------ Primary Module --------------------------------------------------------
-PYBIND11_MODULE(xmsmesh, m) {
-    m.doc() = "Python bindings for xmsmesh"; // optional module docstring
+PYBIND11_MODULE(_xmsmesher, m) {
+    m.doc() = "Python bindings for xmsmesher"; // optional module docstring
     m.attr("__version__") = XMS_VERSION;
 
     // Interpolate module

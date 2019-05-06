@@ -171,7 +171,7 @@ void initMeMeshUtils(py::module &m) {
       Checks if the input polygons intersect one another
 
       Args:
-          mesh_io (:class:`MultiPolyMesherIo <xmsmesh.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
+          mesh_io (:class:`MultiPolyMesherIo <xmsmesher.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
 
       Returns:
         tuple: true if mesh inputs are topologically correct, and a string of messages.
@@ -192,7 +192,7 @@ void initMeMeshUtils(py::module &m) {
       Creates a mesh from the input polygons.
 
       Args:
-          mesh_io (:class:`MultiPolyMesherIo <xmsmesh.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
+          mesh_io (:class:`MultiPolyMesherIo <xmsmesher.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
 
       Returns:
         tuple: true if the mesh was generated successfully false otherwise, and a string of messages.
@@ -212,7 +212,7 @@ void initMeMeshUtils(py::module &m) {
         Creates a mesh from the input polygons and writes it to a 2dm file.
 
         Args:
-            mesh_io (:class:`MultiPolyMesherIo <xmsmesh.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
+            mesh_io (:class:`MultiPolyMesherIo <xmsmesher.meshing.MultiPolyMesherIo>`): Input polygons and options for generating a mesh.
             file_name (str): The file name of the output 2dm file.
             precision (int, optional): The decimal point precision of the resulting mesh.
 

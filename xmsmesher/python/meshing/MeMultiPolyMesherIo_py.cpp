@@ -33,8 +33,8 @@ void initMeMultiPolyMesherIo(py::module &m) {
         in the PolyMesherIo that is passed into this class.
 
         Args:
-            poly_inputs (collections.Iterable[xmsmesh.meshing.PolyInput]): A list of PolyInputs.
-            refine_points (collections.Iterable[xmsmesh.meshing.RefinePoint]): A list of RefinePoints.
+            poly_inputs (collections.Iterable[xmsmesher.meshing.PolyInput]): A list of PolyInputs.
+            refine_points (collections.Iterable[xmsmesher.meshing.RefinePoint]): A list of RefinePoints.
             check_topology (bool): Check polygon input topology for errors.
             return_cell_polygons (bool): Return the polygon index of each cell.
     )pydoc";

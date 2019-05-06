@@ -198,31 +198,42 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(IS_PYTHON_BUILD)
-    pybind11_add_module(xmsmesher
+    pybind11_add_module(_xmsmesher
       ${xmsmesh_py_source} ${xmsmesh_py_headers}
     )
 
-    target_include_directories(xmsmesher
+    target_include_directories(_xmsmesher
         PRIVATE
           ${EXT_LIB_DIRS}
           ${PYTHON_INCLUDE_DIRS}
     )
-    target_link_libraries(xmsmesher
+    target_link_libraries(_xmsmesher
       PRIVATE
         ${EXT_LIBS}
         ${PROJECT_NAME}
     )
-    set_target_properties(xmsmesher PROPERTIES
+    set_target_properties(_xmsmesher PROPERTIES
       LINKER_LANGUAGE CXX
     )
 
     # Install recipe
     install(
-      TARGETS xmsmesher
-      ARCHIVE DESTINATION "site-packages"
-      LIBRARY DESTINATION "site-packages"
+      TARGETS _xmsmesher
+      ARCHIVE DESTINATION "_package/xmsmesher"
+      LIBRARY DESTINATION "_package/xmsmesher"
     )
 
+    install(DIRECTORY "_package/" DESTINATION "_package"
+             FILES_MATCHING PATTERN "*.py")
+endif()
+
+# Disable Optimization for GCC6 for now... Report issue to gcc and pybind
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND IS_PYTHON_BUILD)
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 6 AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7)
+    Message("Disabling Optimization for GCC 6...")
+    STRING(REPLACE "-O3" "" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+    STRING(REPLACE "-O3" "" CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
+  endif()
 endif()
 
 

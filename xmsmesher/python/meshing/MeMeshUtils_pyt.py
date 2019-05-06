@@ -6,9 +6,9 @@ import filecmp
 
 from xmsinterp.triangulate import Tin
 
-from xmsmesh.meshing import mesh_utils
-from xmsmesh.meshing import MultiPolyMesherIo
-from xmsmesh.meshing import PolyInput
+from xmsmesher.meshing import mesh_utils
+from xmsmesher.meshing import MultiPolyMesherIo
+from xmsmesher.meshing import PolyInput
 
 
 class TestMeshUtils(unittest.TestCase):
