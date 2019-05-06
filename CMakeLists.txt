@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1.2)
 cmake_policy(SET CMP0015 NEW) # Link Directory Pathing
 set(CMAKE_DEBUG_POSTFIX _d)
 
-project(xmsmeshlib C CXX)
+project(xmsmesherlib C CXX)
 
 if (APPLE)  
   set(CMAKE_POSITION_INDEPENDENT_CODE False)
