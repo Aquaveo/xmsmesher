@@ -15,7 +15,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'build_py', 'lib')))
+sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'build_py', 'install', '_package')))
 
 
 # -- Project information -----------------------------------------------------
@@ -25,8 +25,8 @@ copyright = '2018, aquaveo'
 author = 'aquaveo'
 
 # The short X.Y version
-import xmsmesher
-version = xmsmesher.__version__
+from xms.mesher import __version__
+version = __version__
 # The full version, including alpha/beta/rc tags
 release = ''
 

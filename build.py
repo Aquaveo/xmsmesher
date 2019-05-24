@@ -1,5 +1,6 @@
 import os
 from conan.packager import ConanMultiPackager
+import time
 
 
 if __name__ == "__main__":
@@ -7,16 +8,25 @@ if __name__ == "__main__":
     # See: https://github.com/conan-io/conan-package-tools/blob/develop/README.md
     builder = ConanMultiPackager()
     builder.add_common_builds()
-    updated_builds = []
+
     # Add environment variables to build definitions
-    xms_version = os.environ.get('XMS_VERSION', None)
+    XMS_VERSION = os.environ.get('XMS_VERSION', None)
     python_target_version = os.environ.get('PYTHON_TARGET_VERSION', "3.6")
+    release_python = os.environ.get('RELEASE_PYTHON', 'False')
+    aquapi_username = os.environ.get('AQUAPI_USERNAME', None)
+    aquapi_password = os.environ.get('AQUAPI_PASSWORD', None)
+    aquapi_url = os.environ.get('AQUAPI_URL', None)
 
     for settings, options, env_vars, build_requires, reference in builder.items:
+        # General Options
         env_vars.update({
-            'XMS_VERSION': xms_version,
+            'XMS_VERSION': XMS_VERSION,
             'VERBOSE': 1,
-            'PYTHON_TARGET_VERSION': python_target_version
+            'PYTHON_TARGET_VERSION': python_target_version,
+            'RELEASE_PYTHON': release_python,
+            'AQUAPI_USERNAME': aquapi_username,
+            'AQUAPI_PASSWORD': aquapi_password,
+            'AQUAPI_URL': aquapi_url,
         })
 
         # Require c++11 compatibility
@@ -24,6 +34,7 @@ if __name__ == "__main__":
             settings.update({
                 'compiler.libcxx': 'libstdc++11'
             })
+
 
     pybind_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
@@ -52,7 +63,7 @@ if __name__ == "__main__":
 
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-        # testing option
+        # xms option
         if not options.get('xmsmesher:xms', False) and not options.get('xmsmesher:pybind', False):
             testing_options = dict(options)
             testing_options.update({'xmsmesher:testing': True})

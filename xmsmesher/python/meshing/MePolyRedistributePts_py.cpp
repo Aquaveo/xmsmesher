@@ -27,8 +27,7 @@ void initMePolyRedistributePts(py::module &m) {
     // -------------------------------------------------------------------------
     // function: SetSizeFunc
     // -------------------------------------------------------------------------
-    polyRedistribute.def("SetSizeFunc", [](xms::MePolyRedistributePts &self,
-              boost::shared_ptr<xms::InterpBase> interp) {
+    polyRedistribute.def("SetSizeFunc", [](xms::MePolyRedistributePts &self, boost::shared_ptr<xms::InterpBase>  interp) {
       self.SetSizeFunc(interp);
     },py::arg("interp"));
     // -------------------------------------------------------------------------
@@ -45,13 +44,13 @@ void initMePolyRedistributePts(py::module &m) {
     // -------------------------------------------------------------------------
     polyRedistribute.def("SetConstantSizeFunc", &xms::MePolyRedistributePts::SetConstantSizeFunc, py::arg("size"));
     // -------------------------------------------------------------------------
-    // function: set_constant_size_bias
-    // -------------------------------------------------------------------------
-    polyRedistribute.def("set_constant_size_bias", &xms::MePolyRedistributePts::SetConstantSizeBias, py::arg("size_bias"));
-    // -------------------------------------------------------------------------
     // function: SetConstantSizeBias
     // -------------------------------------------------------------------------
-    polyRedistribute.def("SetConstantSizeBias", &xms::MePolyRedistributePts::SetUseCurvatureRedistribution, 
+    polyRedistribute.def("SetConstantSizeBias", &xms::MePolyRedistributePts::SetConstantSizeBias, py::arg("size_bias"));
+    // -------------------------------------------------------------------------
+    // function: SetUseCurvatureRedistribution
+    // -------------------------------------------------------------------------
+    polyRedistribute.def("SetUseCurvatureRedistribution", &xms::MePolyRedistributePts::SetUseCurvatureRedistribution, 
       py::arg("feature_size"), py::arg("mean_spacing"),py::arg("minimum_curvature"),py::arg("smooth"));
     // -------------------------------------------------------------------------
     // function: Redistribute

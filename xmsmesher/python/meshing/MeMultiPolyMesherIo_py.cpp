@@ -34,7 +34,7 @@ void initMeMultiPolyMesherIo(py::module &m) {
     // ---------------------------------------------------------------------------
     // PROPERTY: checkTopology
     // ---------------------------------------------------------------------------
-    polyMesherIo.def_readwrite("check_topology", &xms::MeMultiPolyMesherIo::m_checkTopology);
+    polyMesherIo.def_readwrite("checkTopology", &xms::MeMultiPolyMesherIo::m_checkTopology);
     // ---------------------------------------------------------------------------
     // PROPERTY: returnCellPolygons
     // ---------------------------------------------------------------------------

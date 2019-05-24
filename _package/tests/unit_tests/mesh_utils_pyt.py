@@ -4,11 +4,11 @@ import os
 import unittest
 import filecmp
 
-from xmsinterp.triangulate import Tin
+from xmsgrid.triangulate import Tin
 
-from xmsmesher.meshing import mesh_utils
-from xmsmesher.meshing import MultiPolyMesherIo
-from xmsmesher.meshing import PolyInput
+from xms.mesher.meshing import mesh_utils
+from xms.mesher.meshing import MultiPolyMesherIo
+from xms.mesher.meshing import PolyInput
 
 
 class TestMeshUtils(unittest.TestCase):
@@ -74,12 +74,12 @@ class TestMeshUtils(unittest.TestCase):
         adj_tris = ()
 
         tin = Tin(pts, tris)
-        tin.set_triangles_adjacent_to_points(adj_tris)
+        tin.triangles_adjacent_to_points = adj_tris
         tin.triangulate()
 
         size_ratio = 0.5
         min_size = 1.0
-        anchor_type = 0
+        anchor_type = 'min'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_size_function(tin, sizes, size_ratio, min_size,
                                                       anchor_type, pt_flags)
@@ -98,12 +98,12 @@ class TestMeshUtils(unittest.TestCase):
         adj_tris = ()
 
         tin = Tin(pts, tris)
-        tin.set_triangles_adjacent_to_points(adj_tris)
+        tin.triangles_adjacent_to_points = adj_tris
         tin.triangulate()
 
         size_ratio = 0.5
         min_size = 1.0
-        anchor_type = 1
+        anchor_type = 'max'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_size_function(tin, sizes, size_ratio, min_size,
                                                       anchor_type, pt_flags)
@@ -122,11 +122,11 @@ class TestMeshUtils(unittest.TestCase):
         adj_tris = ()
 
         tin = Tin(pts, tris)
-        tin.set_triangles_adjacent_to_points(adj_tris)
+        tin.triangles_adjacent_to_points = adj_tris
         tin.triangulate()
 
         min_size = 0.5
-        anchor_type = 0
+        anchor_type = 'min'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_elev_by_slope(tin, elevations, min_size,
                                                       anchor_type, pt_flags)
@@ -145,12 +145,12 @@ class TestMeshUtils(unittest.TestCase):
         adj_tris = ()
 
         tin = Tin(pts, tris)
-        tin.set_triangles_adjacent_to_points(adj_tris)
+        tin.triangles_adjacent_to_points = adj_tris
         tin.triangulate()
 
         min_size = 0.5
-        anchor_type = 1
-        pt_flags = ()
+        anchor_type = 'max'
+        pt_flags = []
         smooth_sizes = mesh_utils.smooth_elev_by_slope(tin, elevations, min_size,
                                                       anchor_type, pt_flags)
         base = (95.00, 92.92, 87.92, 82.92, 100.0, 95.00,
@@ -320,7 +320,8 @@ class TestMeshUtils(unittest.TestCase):
         io = MultiPolyMesherIo(())
         _ = mesh_utils.generate_2dm(io, "fname.2dm")
         self.assertTrue(os.path.isfile("fname.2dm"))
-        self.assertTrue(filecmp.cmp("../test_files/python/fname.2dm", "fname.2dm"), "Files not equal")
+        base_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'test_files', 'python', 'fname.2dm')
+        self.assertTrue(filecmp.cmp(base_file, "fname.2dm"), "Files not equal")
 
     def test_case_4(self):
         # build test case 4 polys

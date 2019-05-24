@@ -8,7 +8,8 @@
 ********************************************************************************
 """
 import os
-from setuptools import setup, find_packages
+from setuptools import setup
+from xms.mesher import __version__
 
 
 # allow setup.py to be run from any path
@@ -18,13 +19,13 @@ requires = [
     'numpy', 'xmscore', 'xmsgrid', 'xmsinterp',
 ]
 
-version = '1.0.0'
+version = __version__
 
 setup(
     python_requires='==3.6.*',
     name='xmsmesher',
     version=version,
-    packages=find_packages(),
+    packages=['xms.mesher', 'xms.mesher.meshing', 'xms.mesher.api'],
     include_package_data=True,
     license='BSD 2-Clause License',
     description='',
@@ -32,3 +33,4 @@ setup(
     install_requires=requires,
     package_data={'': ['*.pyd']},
 )
+

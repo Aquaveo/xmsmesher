@@ -58,64 +58,64 @@ void initMeMeshUtils(py::module &m) {
   // function: smooth_elev_by_slope
   // ---------------------------------------------------------------------------
     modMeshUtils.def("SmoothElevBySlope", [](boost::shared_ptr<xms::TrTin> tin, py::iterable elevations,
-                                    double max_slope, bool anchor_to_max,
+                                    double max_slope, int anchor_to_max,
                                     py::iterable pts_flag) -> py::iterable {
       xms::VecFlt vec_elevations = *xms::VecFltFromPyIter(elevations);
       xms::VecFlt vec_smooth_elevations;
       xms::DynBitset bitset = xms::DynamicBitsetFromPyIter(pts_flag);
-      xms::meSmoothElevBySlope(tin, vec_elevations, max_slope, anchor_to_max? 1 : 0, bitset, vec_smooth_elevations);
+      xms::meSmoothElevBySlope(tin, vec_elevations, max_slope, anchor_to_max, bitset, vec_smooth_elevations);
 
       return xms::PyIterFromVecFlt(vec_smooth_elevations);
     }, py::arg("tin"),py::arg("elevations"), py::arg("max_slope"),py::arg("anchor_to_max"), py::arg("pts_flag"));
 
-  //// ---------------------------------------------------------------------------
-  //// function: check_mesh_input_topology
-  //// ---------------------------------------------------------------------------
-  //  modMeshUtils.def("check_mesh_input_topology",
-  //   [](xms::MeMultiPolyMesherIo &mesh_io) -> py::iterable
-  //   {
-  //     BSHP<xms::MeMultiPolyMesher> multiPolyMesher = xms::MeMultiPolyMesher::New();
-  //     std::string errors;
-  //     multiPolyMesher->CheckForIntersections(mesh_io, errors);
-  //     bool rval(errors.empty());
-  //     return py::make_tuple(rval, errors);
-  //   }, py::arg("mesh_io"));
-  //// ---------------------------------------------------------------------------
-  //// function: generate_mesh
-  //// ---------------------------------------------------------------------------
-  //  modMeshUtils.def("generate_mesh",
-  //   [](xms::MeMultiPolyMesherIo &mesh_io) -> py::iterable
-  //   {
-  //     BSHP<xms::MeMultiPolyMesher> multiPolyMesher = xms::MeMultiPolyMesher::New();
-  //     bool rval = multiPolyMesher->MeshIt(mesh_io);
-  //     std::string errors = xms::XmLog::Instance().GetAndClearStackStr();
-  //     return py::make_tuple(rval, errors);
-  //   }, py::arg("mesh_io"));
-  //// ---------------------------------------------------------------------------
-  //// function: generate_2dm
-  //// ---------------------------------------------------------------------------
-  //  modMeshUtils.def("generate_2dm",
-  //   [](xms::MeMultiPolyMesherIo &mesh_io,
-  //      std::string file_name, int precision) -> py::tuple {
-  //      BSHP<xms::MeMultiPolyTo2dm> mesher = xms::MeMultiPolyTo2dm::New();
-  //      if (file_name.empty()) {
-  //        throw py::value_error("file_name not specifed. Aborting mesh procedure.");
-  //      }
-  //      bool result = mesher->Generate2dm(mesh_io, file_name, precision);
-  //      std::string errors = xms::XmLog::Instance().GetAndClearStackStr();
-  //      return py::make_tuple(result, errors);
-  //      },py::arg("mesh_io"),py::arg("file_name"),py::arg("precision")=15);
+  // ---------------------------------------------------------------------------
+  // function: check_mesh_input_topology
+  // ---------------------------------------------------------------------------
+    modMeshUtils.def("check_mesh_input_topology",
+     [](xms::MeMultiPolyMesherIo &mesh_io) -> py::iterable
+     {
+       BSHP<xms::MeMultiPolyMesher> multiPolyMesher = xms::MeMultiPolyMesher::New();
+       std::string errors;
+       multiPolyMesher->CheckForIntersections(mesh_io, errors);
+       bool rval(errors.empty());
+       return py::make_tuple(rval, errors);
+     }, py::arg("mesh_io"));
+  // ---------------------------------------------------------------------------
+  // function: generate_mesh
+  // ---------------------------------------------------------------------------
+    modMeshUtils.def("generate_mesh",
+     [](xms::MeMultiPolyMesherIo &mesh_io) -> py::iterable
+     {
+       BSHP<xms::MeMultiPolyMesher> multiPolyMesher = xms::MeMultiPolyMesher::New();
+       bool rval = multiPolyMesher->MeshIt(mesh_io);
+       std::string errors = xms::XmLog::Instance().GetAndClearStackStr();
+       return py::make_tuple(rval, errors);
+     }, py::arg("mesh_io"));
+  // ---------------------------------------------------------------------------
+  // function: generate_2dm
+  // ---------------------------------------------------------------------------
+    modMeshUtils.def("generate_2dm",
+     [](xms::MeMultiPolyMesherIo &mesh_io,
+        std::string file_name, int precision) -> py::tuple {
+        BSHP<xms::MeMultiPolyTo2dm> mesher = xms::MeMultiPolyTo2dm::New();
+        if (file_name.empty()) {
+          throw py::value_error("file_name not specifed. Aborting mesh procedure.");
+        }
+        bool result = mesher->Generate2dm(mesh_io, file_name, precision);
+        std::string errors = xms::XmLog::Instance().GetAndClearStackStr();
+        return py::make_tuple(result, errors);
+        },py::arg("mesh_io"),py::arg("file_name"),py::arg("precision"));
 
-  //// ---------------------------------------------------------------------------
-  //// function: redistribute_line
-  //// ---------------------------------------------------------------------------
-  //  modMeshUtils.def("redistribute_poly_line",
-  //   [](py::iterable poly_line, double size) -> py::iterable {
-  //      BSHP<xms::MePolyRedistributePts> redist(xms::MePolyRedistributePts::New());
-  //      redist->SetConstantSizeFunc(size);
-  //      BSHP<xms::VecPt3d> vPolyLine = xms::VecPt3dFromPyIter(poly_line);
-  //      xms::VecPt3d rval = redist->Redistribute(*vPolyLine);
-  //      return xms::PyIterFromVecPt3d(rval);
-  //      },py::arg("poly_line"),py::arg("size"));
+  // ---------------------------------------------------------------------------
+  // function: redistribute_line
+  // ---------------------------------------------------------------------------
+    modMeshUtils.def("redistribute_poly_line",
+     [](py::iterable poly_line, double size) -> py::iterable {
+        BSHP<xms::MePolyRedistributePts> redist(xms::MePolyRedistributePts::New());
+        redist->SetConstantSizeFunc(size);
+        BSHP<xms::VecPt3d> vPolyLine = xms::VecPt3dFromPyIter(poly_line);
+        xms::VecPt3d rval = redist->Redistribute(*vPolyLine);
+        return xms::PyIterFromVecPt3d(rval);
+        },py::arg("poly_line"),py::arg("size"));
 
 }
