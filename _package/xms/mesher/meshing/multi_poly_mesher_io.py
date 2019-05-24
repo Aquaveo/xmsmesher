@@ -1,5 +1,6 @@
 from .._xmsmesher.meshing import MultiPolyMesherIo as MesherIo
 from .refine_point import RefinePoint
+from .poly_input import PolyInput
 
 
 class MultiPolyMesherIo(object):
@@ -21,11 +22,12 @@ class MultiPolyMesherIo(object):
     @property
     def polygons(self):
         """"""
-        return self._instance.polys
+        return [PolyInput(instance=x) for x in self._instance.polys]
 
     @polygons.setter
     def polygons(self, value):
-        self._instance.polys = value
+        polygons = [v._instance for v in value]
+        self._instance.polys = polygons
 
     @property
     def refine_points(self):
@@ -34,7 +36,7 @@ class MultiPolyMesherIo(object):
 
     @refine_points.setter
     def refine_points(self, value):
-        ref_points = [x._instance for x in value]
+        ref_points = [v._instance for v in value]
         self._instance.refPts = ref_points
 
     @property

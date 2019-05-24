@@ -1,4 +1,4 @@
-from .._xms.mesher.meshing import mesh_utils
+from .._xmsmesher.meshing import mesh_utils
 from .multi_poly_mesher_io import MultiPolyMesherIo
 
 

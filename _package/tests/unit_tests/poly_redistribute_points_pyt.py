@@ -5,8 +5,8 @@ from xms.mesher.meshing import PolyRedistributePoints
 from xms.mesher.meshing import MultiPolyMesherIo
 from xms.mesher.meshing import PolyInput
 from xms.mesher.meshing import RefinePoint
-from xmsinterp.interpolate import InterpLinear
-from xmsinterp.interpolate import InterpIdw
+from xms.interp.interpolate import InterpLinear
+from xms.interp.interpolate import InterpIdw
 
 
 class TestPolyRedistributePoints(unittest.TestCase):

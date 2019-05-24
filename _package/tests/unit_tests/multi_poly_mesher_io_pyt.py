@@ -4,8 +4,8 @@ import numpy as np
 from xms.mesher.meshing import MultiPolyMesherIo
 from xms.mesher.meshing import PolyInput
 from xms.mesher.meshing import RefinePoint
-from xmsinterp.interpolate import InterpLinear
-from xmsinterp.interpolate import InterpIdw
+from xms.interp.interpolate import InterpLinear
+from xms.interp.interpolate import InterpIdw
 
 
 class TestMultiPolyMesherIo(unittest.TestCase):

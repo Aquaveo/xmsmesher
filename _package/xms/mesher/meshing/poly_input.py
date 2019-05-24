@@ -1,5 +1,5 @@
-from .._xms.mesher.meshing import PolyInput as PInput
-import xmsinterp
+from .._xmsmesher.meshing import PolyInput as PInput
+from xms import interp
 
 
 class PolyInput(object):

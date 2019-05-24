@@ -160,7 +160,7 @@ class TestMeshUtils(unittest.TestCase):
     def test_check_for_intersections(self):
         io = MultiPolyMesherIo(())
         poly_input = PolyInput(outside_polygon=((0, 0, 0), (100, 0, 0), (100, 10, 0), (0, -10, 0)))
-        io.poly_inputs = (poly_input,)
+        io.polygons = (poly_input,)
 
         expected = \
             "Error: Input polygon segments intersect. The segment defined by points 0 and 1 of outer " \
@@ -175,7 +175,7 @@ class TestMeshUtils(unittest.TestCase):
         io.check_topology = True
 
         poly_input = PolyInput(outside_polygon=((0, 0, 0), (100, 0, 0), (100, 10, 0), (0, -10, 0)))
-        io.poly_inputs = (poly_input,)
+        io.polygons = (poly_input,)
 
         expected = \
             "---Error: Input polygon segments intersect. The segment defined by points 0 and 1 of outer " \
@@ -193,7 +193,7 @@ class TestMeshUtils(unittest.TestCase):
         outside_poly = ((0, 0, 0), (100, 0, 0), (100, 100, 0), (0, 100, 0))
         inside_polys = (((10, 50, 0), (90, 50, 0), (90, 90, 0), (10, 10, 0)),)
         poly_input = PolyInput(outside_poly, inside_polys)
-        io.poly_inputs = (poly_input,)
+        io.polygons = (poly_input,)
 
         expected = \
             "---Error: Input polygon segments intersect. The segment defined by points 0 and 1 of inner " \
@@ -212,7 +212,7 @@ class TestMeshUtils(unittest.TestCase):
         outside_poly = ((0, 0, 0), (100, 0, 0), (100, 100, 0), (0, 100, 0))
         inside_polys = (((90, 10, 0), (110, 10, 0), (110, 20, 0), (90, 20, 0)),)
         poly_inputs = PolyInput(outside_poly, inside_polys)
-        io.poly_inputs = (poly_inputs,)
+        io.polygons = (poly_inputs,)
 
         expected = "---Error: Input polygon segments intersect. The segment defined by points 1 and 2 of outer " \
                    "polygon 0 intersects with the segment defined by points 0 and 1 of inner polygon 0 of outer " \
@@ -234,7 +234,7 @@ class TestMeshUtils(unittest.TestCase):
         outside_poly2 = ((10, 10, 0), (10, 110, 0), (110, 110, 0), (110, 10, 0))
         poly_input1 = PolyInput(outside_poly1)
         poly_input2 = PolyInput(outside_poly2)
-        io.poly_inputs = (poly_input1, poly_input2)
+        io.polygons = (poly_input1, poly_input2)
 
         expected = \
             "---Error: Input polygon segments intersect. The segment defined by points 1 and 2 of outer " \
@@ -255,7 +255,7 @@ class TestMeshUtils(unittest.TestCase):
         inside_polys = (((10, 10, 0), (60, 10, 0), (60, 60, 0), (10, 60, 0)),
                              ((40, 40, 0), (90, 40, 0), (90, 90, 0), (40, 90, 0)))
         poly_input = PolyInput(outside_poly, inside_polys)
-        io.poly_inputs = (poly_input,)
+        io.polygons = (poly_input,)
 
         expected = \
             "---Error: Input polygon segments intersect. The segment defined by points 1 and 2 of inner " \
@@ -283,9 +283,8 @@ class TestMeshUtils(unittest.TestCase):
             [(40, 40, 0), (50, 40, 0), (60, 40, 0), (60, 50, 0),
              (60, 60, 0), (50, 60, 0), (40, 60, 0), (40, 50, 0)]
         ]
-        input_poly = PolyInput(outside_poly, inside_polys)
-        input = MultiPolyMesherIo(())
-        input.poly_inputs = [input_poly]
+        input_poly = PolyInput(outside_polygon=outside_poly, inside_polygons=inside_polys)
+        input = MultiPolyMesherIo(polygons=[input_poly])
         status, error = mesh_utils.generate_mesh(input)
         self.assertEqual(139, len(input.points))
         self.assertEqual(1150, len(input.cells))
@@ -307,9 +306,8 @@ class TestMeshUtils(unittest.TestCase):
         ]
         outside_poly.reverse()
         inside_polys[0].reverse()
-        input_poly = PolyInput(outside_poly, inside_polys)
-        input = MultiPolyMesherIo(())
-        input.poly_inputs = [input_poly]
+        input_poly = PolyInput(outside_polygon=outside_poly, inside_polygons=inside_polys)
+        input = MultiPolyMesherIo(polygons=[input_poly])
         status, error = mesh_utils.generate_mesh(input)
         self.assertEqual(139, len(input.points))
         self.assertEqual(1150, len(input.cells))
@@ -320,7 +318,7 @@ class TestMeshUtils(unittest.TestCase):
         io = MultiPolyMesherIo(())
         _ = mesh_utils.generate_2dm(io, "fname.2dm")
         self.assertTrue(os.path.isfile("fname.2dm"))
-        base_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'test_files', 'python', 'fname.2dm')
+        base_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'files', 'fname.2dm')
         self.assertTrue(filecmp.cmp(base_file, "fname.2dm"), "Files not equal")
 
     def test_case_4(self):
@@ -346,7 +344,7 @@ class TestMeshUtils(unittest.TestCase):
         poly_input_b = PolyInput(outside_poly_b, inside_polys_b, bias=bias_b)
 
         io = MultiPolyMesherIo(())
-        io.poly_inputs = (poly_input_a, poly_input_b)
+        io.polygons = (poly_input_a, poly_input_b)
 
         # Value Error when file not specified
         with self.assertRaises(ValueError) as context:
@@ -357,7 +355,8 @@ class TestMeshUtils(unittest.TestCase):
         (success, result) = mesh_utils.generate_2dm(io, "out_file.2dm", 3)
         self.assertTrue(success)
         self.assertTrue(os.path.isfile("out_file.2dm"))
-        self.assertFileLinesEqual("../test_files/python/out_file.2dm", "out_file.2dm")
+        base_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "files", "out_file.2dm")
+        self.assertFileLinesEqual(base_file, "out_file.2dm")
 
     def test_repeated_first_and_last(self):
         # build test case 4 polys
@@ -379,16 +378,16 @@ class TestMeshUtils(unittest.TestCase):
         outside_poly_b = self.array_to_vec_pt3d(out_b)
         inside_polys_b = (self.array_to_vec_pt3d(in_b1), self.array_to_vec_pt3d(in_b2))
         bias_b = 1.0
-        poly_input_b = PolyInput(outside_poly_b, inside_polys_b, bias=bias_b)
+        poly_input_b = PolyInput(outside_polygon=outside_poly_b, inside_polygons=inside_polys_b, bias=bias_b)
 
-        io = MultiPolyMesherIo(())
-        io.poly_inputs = (poly_input_a, poly_input_b)
+        io = MultiPolyMesherIo(polygons=[poly_input_a, poly_input_b])
 
         # mesh the polys
         (success, result) = mesh_utils.generate_2dm(io, "out_file_02_repeated.2dm", 3)
         self.assertTrue(success)
         self.assertTrue(os.path.isfile("out_file_02_repeated.2dm"))
-        self.assertFileLinesEqual("../test_files/python/out_file.2dm", "out_file_02_repeated.2dm")
+        base_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "files", "out_file.2dm")
+        self.assertFileLinesEqual(base_file, "out_file_02_repeated.2dm")
 
 
     def test_redistribute_polyline(self):
