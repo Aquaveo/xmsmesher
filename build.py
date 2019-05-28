@@ -21,7 +21,6 @@ if __name__ == "__main__":
         # General Options
         env_vars.update({
             'XMS_VERSION': XMS_VERSION,
-            'VERBOSE': 1,
             'PYTHON_TARGET_VERSION': python_target_version,
             'RELEASE_PYTHON': release_python,
             'AQUAPI_USERNAME': aquapi_username,
