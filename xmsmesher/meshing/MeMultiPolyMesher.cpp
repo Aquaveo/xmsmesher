@@ -291,6 +291,8 @@ void MeMultiPolyMesherImpl::EnsureProperPolygonInputs(MeMultiPolyMesherIo& a_io)
   for (size_t i = 0; i < a_io.m_polys.size(); ++i)
   {
     MePolyInput& polyInput = a_io.m_polys[i];
+    if (polyInput.m_outPoly.empty())
+      continue;
     auto &first = polyInput.m_outPoly.front();
     auto &last = polyInput.m_outPoly.back();
     if (gmEqualPointsXY(first, last, tol))
@@ -313,6 +315,8 @@ void MeMultiPolyMesherImpl::EnsureProperPolygonInputs(MeMultiPolyMesherIo& a_io)
   for (size_t i = 0; i < a_io.m_polys.size(); ++i)
   {
     MePolyInput& polyInput = a_io.m_polys[i];
+    if (polyInput.m_outPoly.empty())
+      continue;
     double area = gmPolygonArea(&polyInput.m_outPoly[0], polyInput.m_outPoly.size());
     if (area > 0)
     {

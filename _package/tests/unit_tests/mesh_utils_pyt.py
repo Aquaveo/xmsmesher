@@ -4,7 +4,7 @@ import os
 import unittest
 import filecmp
 
-from xmsgrid.triangulate import Tin
+from xms.grid.triangulate import Tin
 
 from xms.mesher.meshing import mesh_utils
 from xms.mesher.meshing import MultiPolyMesherIo

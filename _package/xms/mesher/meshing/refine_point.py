@@ -21,6 +21,13 @@ class RefinePoint(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __str__(self):
+        return "<RefinePoint: point=({}, {}, {}) size={}, create_mesh_point={}".format(
+            self.point[0], self.point[1], self.point[2],
+            self.size,
+            self.create_mesh_point,
+        )
+
     @property
     def point(self):
         """"""
