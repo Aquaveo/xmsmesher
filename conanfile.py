@@ -55,6 +55,7 @@ class XmsinterpConan(ConanFile):
         # If building for XMS, use the older, custom boost
         if self.options.xms:
             self.requires("boost/1.60.0@aquaveo/testing")
+            self.requires("zlib/1.2.11@conan/stable")
         else:
             self.requires("boost/1.66.0@conan/stable")
 
