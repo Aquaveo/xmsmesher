@@ -18,7 +18,7 @@ Example:
     polygon_corners = [(0, 0, 0), (0, 100, 0), (100, 100, 0),
                        (100, 0, 0), (0, 0, 0)]
     rp = PolyRedistributePoints()
-    rp.set_constant_size_func(10)
+    rp.set_constant_size_function(10)
     redistributed_points = rp.redistribute(polygon_corners)
 
 

@@ -33,5 +33,3 @@ each cell came from.
 
 .. autoclass:: xms.mesher.meshing.MultiPolyMesherIo
    :members:
-
-   .. automethod:: __init__

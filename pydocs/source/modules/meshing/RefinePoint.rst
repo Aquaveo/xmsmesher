@@ -9,5 +9,3 @@ your :class:`MultiPolyMesherIo <xms.mesher.meshing.MultiPolyMesherIo>` object.
 
 .. autoclass:: xms.mesher.meshing.RefinePoint
    :members:
-
-   .. automethod:: __init__
