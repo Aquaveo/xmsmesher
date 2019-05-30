@@ -990,7 +990,7 @@ void TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover()
   // PreMakeQuads returns the number of boundary edges of the triangular mesh.
   // An even number of boundary edges insures no triangles in the output UGrid. 
   int nBoundaryEdges = quadBlossom->PreMakeQuads();
-  TS_ASSERT((nBoundaryEdges & 0x1) == 0); 
+  TS_ASSERT((nBoundaryEdges & 0x1) == 1); 
 
   // The MeQuadBlossom basic algorithm is O(N^3). Check the estimated minutes.  If too large,
   // Then split the mesh into smaller sub-UGrids, then call MakeQuads on each one.

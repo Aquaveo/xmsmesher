@@ -55,6 +55,7 @@ class XmsinterpConan(ConanFile):
         # If building for XMS, use the older, custom boost
         if self.options.xms:
             self.requires("boost/1.60.0@aquaveo/testing")
+            self.requires("zlib/1.2.11@conan/stable")
         else:
             self.requires("boost/1.66.0@conan/stable")
 
@@ -64,9 +65,9 @@ class XmsinterpConan(ConanFile):
                 and self.options.pybind:
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
-        self.requires("xmscore/[>=3.0.4,<4.0.0]@aquaveo/stable")
-        self.requires("xmsgrid/[>=3.0.2,<4.0.0]@aquaveo/stable")
-        self.requires("xmsinterp/[>=3.0.2,<4.0.0]@aquaveo/stable")
+        self.requires("xmscore/[>=3.0.5,<4.0.0]@aquaveo/stable")
+        self.requires("xmsgrid/[>=3.0.3,<4.0.0]@aquaveo/stable")
+        self.requires("xmsinterp/[>=3.0.3,<4.0.0]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
