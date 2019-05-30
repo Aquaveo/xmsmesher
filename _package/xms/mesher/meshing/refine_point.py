@@ -2,6 +2,14 @@ from .._xmsmesher.meshing import RefinePoint as RefPoint
 
 
 class RefinePoint(object):
+    """
+    Refine Point for mesh.
+
+    Args:
+        point: *see below*
+        size:  *see below*
+        create_mesh_point: *see below*
+    """
 
     def __init__(self, point=None, size=None, create_mesh_point=True, **kwargs):
         if 'instance' in kwargs:
@@ -28,9 +36,16 @@ class RefinePoint(object):
             self.create_mesh_point,
         )
 
+    def __repr__(self):
+        return "<RefinePoint: point=({}, {}, {}) size={}, create_mesh_point={}".format(
+            self.point[0], self.point[1], self.point[2],
+            self.size,
+            self.create_mesh_point,
+        )
+
     @property
     def point(self):
-        """"""
+        """Location of the refine point."""
         return self._instance.pt
 
     @point.setter
@@ -39,7 +54,7 @@ class RefinePoint(object):
 
     @property
     def size(self):
-        """"""
+        """Element size at the refine point."""
         return self._instance.size
 
     @size.setter
@@ -48,7 +63,7 @@ class RefinePoint(object):
 
     @property
     def create_mesh_point(self):
-        """"""
+        """Create a mesh point at this location with attached cells at the specified size."""
         return self._instance.createMeshPoint
 
     @create_mesh_point.setter

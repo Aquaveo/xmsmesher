@@ -4,6 +4,15 @@ from .poly_input import PolyInput
 
 
 class MultiPolyMesherIo(object):
+    """
+    Multi-Polygon Mesher IO.
+
+    Args:
+        polygons: *see below*
+        refine_points: *see below*
+        check_topology: *see below*
+        return_cell_polygons: *see below*
+    """
 
     def __init__(self, polygons=None, refine_points=None, check_topology=None, return_cell_polygons=None, **kwargs):
         if 'instance' in kwargs:
@@ -21,7 +30,7 @@ class MultiPolyMesherIo(object):
 
     @property
     def polygons(self):
-        """"""
+        """A list of :class:`xms.mesher.meshing.PolyInput` objects to be used by the meshing functions."""
         return [PolyInput(instance=x) for x in self._instance.polys]
 
     @polygons.setter
@@ -31,7 +40,7 @@ class MultiPolyMesherIo(object):
 
     @property
     def refine_points(self):
-        """"""
+        """A list of :class:`xms.mesher.meshingRefinePoint` objects used for mesh refinement."""
         return [RefinePoint(instance=x) for x in self._instance.refPts]
 
     @refine_points.setter
@@ -41,7 +50,7 @@ class MultiPolyMesherIo(object):
 
     @property
     def check_topology(self):
-        """"""
+        """If True, checks :class:`xms.mesher.meshing.PolyInput` topology for errors."""
         return self._instance.checkTopology
 
     @check_topology.setter
@@ -50,7 +59,7 @@ class MultiPolyMesherIo(object):
 
     @property
     def return_cell_polygons(self):
-        """"""
+        """If True, the cell_polygons list will be be filled when meshing occurs."""
         return self._instance.returnCellPolygons
 
     @return_cell_polygons.setter
@@ -60,15 +69,15 @@ class MultiPolyMesherIo(object):
     # Read only outputs
     @property
     def points(self):
-        """"""
+        """A list of (x, y, z) coordinates of the resulting mesh. (Populated by meshing functions)"""
         return self._instance.points
 
     @property
     def cells(self):
-        """"""
+        """A cell stream representing the mesh. (Populated by meshing functions)"""
         return self._instance.cells
 
     @property
     def cell_polygons(self):
-        """"""
+        """The index of the :class:`xms.mesher.meshing.PolyInput` in cell_polygons that each cell was generated from."""
         return self._instance.cellPolygons

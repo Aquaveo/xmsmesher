@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'build_py', 'install
 
 # -- Project information -----------------------------------------------------
 
-project = 'Xmsmesher Library'
+project = 'XmsMesher Library'
 copyright = '2018, aquaveo'
 author = 'aquaveo'
 

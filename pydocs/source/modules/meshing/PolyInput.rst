@@ -14,5 +14,3 @@ that are described below.
 
 .. autoclass:: xms.mesher.meshing.PolyInput
    :members:
-
-   .. automethod:: __init__

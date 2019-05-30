@@ -1,6 +1,6 @@
-*******************
-PolyRedistributePts
-*******************
+**********************
+PolyRedistributePoints
+**********************
 
 The PolyRedistributePts class is used to help redistribute pts on a polyline.
 There are several functions on this class used to set options
@@ -13,14 +13,14 @@ Example:
 
 .. code-block:: python
 
-    from xms.mesher.meshing import PolyRedistributePts
+    from xms.mesher.meshing import PolyRedistributePoints
 
     polygon_corners = [(0, 0, 0), (0, 100, 0), (100, 100, 0),
                        (100, 0, 0), (0, 0, 0)]
-    rp = PolyRedistributePts()
+    rp = PolyRedistributePoints()
     rp.set_constant_size_func(10)
     redistributed_points = rp.redistribute(polygon_corners)
 
 
-.. autoclass:: xms.mesher.meshing.PolyRedistributePts
+.. autoclass:: xms.mesher.meshing.PolyRedistributePoints
    :members:
