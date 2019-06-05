@@ -22,7 +22,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
 fi
 
 export PATH=$(pyenv root)/versions/3.6.8/bin:/hom/conan/.local/bin:$PATH
-pip install conan==1.11.2
+pip install conan
 pip install conan_package_tools devpi-client wheel
 
 python --version
