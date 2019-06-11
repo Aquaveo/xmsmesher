@@ -17,6 +17,17 @@ class PolyRedistributePoints(object):
         """
         self._instance.SetSizeFunc(size_function._instance)
 
+    def set_size_function_from_polygon(self, outside_polygon, inside_polygons, size_bias):
+        """
+        Creates an interpolator that uses the spacing on the input polygon as its scalar.
+
+        Args:
+            outside_polygon (): The outside polygon
+            inside_polygons (iterable): Inside polygons that are inside of a_outPoly
+            size_bias (float): A factor used in transitioning the size
+        """
+        self._instance.SetSizeFuncFromPoly(outside_polygon, inside_polygons, size_bias)
+
     def set_constant_size_function(self, size):
         """
         Sets the size function to a constant value.
