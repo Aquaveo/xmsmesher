@@ -22,7 +22,7 @@ class PolyRedistributePoints(object):
         Creates an interpolator that uses the spacing on the input polygon as its scalar.
 
         Args:
-            outside_polygon (): The outside polygon
+            outside_polygon (iterable): The outside polygon
             inside_polygons (iterable): Inside polygons that are inside of a_outPoly
             size_bias (float): A factor used in transitioning the size
         """
