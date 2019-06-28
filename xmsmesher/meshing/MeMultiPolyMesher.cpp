@@ -1122,7 +1122,6 @@ void MeMultiPolyMesherUnitTests::testEmptyOuterPolygon()
 
   TS_ASSERT_EQUALS(expected, errors);
 } // MeMultiPolyMesherUnitTests::testEmptyOuterPolygon
-
 //} // namespace xms
 
 #endif // CXX_TEST

@@ -44,6 +44,9 @@ public:
   void testRedistPolyLine();
   void testRedistPolyLine1();
   void testRedistPolyLine2();
+  void testRedistPolyLineStretch();
+  void testRedistPolyLineCompress();
+
 };
 //----- Function prototypes ----------------------------------------------------
 

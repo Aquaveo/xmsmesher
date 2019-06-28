@@ -64,7 +64,6 @@ public:
   , m_sizeBias(1.0)
   , m_polyPts(new VecPt3d())
   , m_intersectWithTris(false)
-  , m_distSqTol(0)
   , m_biasConstSize(false)
   , m_polyOffsetIter(0)
   , m_featureSizeCurvature(0)
@@ -159,7 +158,6 @@ public:
   VecInt2d m_polys; ///< polygon definition of triangles for m_polyIntersector
   /// flag to indicate that polygon should be intersected with the triangles
   bool   m_intersectWithTris;
-  double m_distSqTol;    ///< tolerance used to speed up interpolation
   bool m_biasConstSize;  ///< flag to indicate transitioning to constant size function
   int m_polyOffsetIter;  ///< number of iterations from the polygon boundary
   /// Used by curvature redistribution. The size of the smallest feature in the polyline to be
@@ -283,9 +281,6 @@ void MePolyRedistributePtsImpl::SetSizeFuncFromPoly(const VecPt3d& a_outPoly,
       if (p[i].y > pMax.y)
         pMax.y = p[i].y;
     }
-    // compute distance to avoid interpolating too much
-    double boundsDistSq = MdistSq(pMin.x, pMin.y, pMax.x, pMax.y);
-    m_distSqTol = 1e-4 * boundsDistSq;
   }
 } // MePolyRedistributePtsImpl::SetSizeFuncFromPoly
 //------------------------------------------------------------------------------
@@ -515,11 +510,6 @@ void MePolyRedistributePtsImpl::InterpEdgeLengths(const VecPt3d& a_pts, VecDbl& 
     for (size_t i = 1; i < a_pts.size(); ++i)
     {
       distSq = MdistSq(aPt.x, aPt.y, a_pts[i].x, a_pts[i].y);
-      if (distSq < m_distSqTol)
-      {
-        a_lengths[i] = lastInterp;
-        continue;
-      }
       InterpToPoint(i, a_pts, a_lengths, wt, d2, bias);
       lastInterp = a_lengths[i];
       aPt = a_pts[i];
@@ -657,13 +647,6 @@ VecPt3d MePolyRedistributePtsImpl::RedistPts(const VecPt3d& a_pts, const VecDbl&
       nextIdx = i + 1;
     TvaluesForSeg(i, nextIdx, segLength, segTvalues, a_interpLengths, pcntin, tVals);
   }
-  double aveTincrement(0);
-  for (size_t i = 1; i < tVals.size(); ++i)
-  {
-    aveTincrement += tVals[i] - tVals[i - 1];
-  }
-  if (tVals.size() > 1)
-    aveTincrement /= (tVals.size() - 1);
 
   VecPt3d ret;
   // adjust the tvals based on what was left over when processing the last
@@ -672,15 +655,29 @@ VecPt3d MePolyRedistributePtsImpl::RedistPts(const VecPt3d& a_pts, const VecDbl&
   double leftOverTval = 1 - tVals.back();
   if (tVals.size() < 2)
     return ret;
+  double redistT(0);
   if (pcntin < .5)
-  {
+  { // we have less than 1/2 a segment left over so we will remove the last segment
+    // and stretch all segments forward
     tVals.pop_back();
-    if (leftOverTval >= 0)
-      leftOverTval = 1 - tVals.back();
+    //if (leftOverTval >= 0)
+    //  leftOverTval = 1 - tVals.back();
+    redistT = leftOverTval / tVals.size();
+  }
+  else
+  { // we have more than 1/2 a segment left over so we will compress segments back
+    //
+    //  *---------------------*          * (pcntin - 1) is the % of segment that would go past the end point
+    // pt                  end pt        location of full segment end
+    //
+    double fullSegmentT = leftOverTval / pcntin;
+    double factor = (pcntin - 1) * fullSegmentT;
+    redistT = factor / tVals.size();
   }
   if (tVals.size() > 2)
   { // redistribute the leftover tvalue to all the tVals
-    double redistT = (leftOverTval - aveTincrement) / tVals.size();
+    //double redistT = (leftOverTval - aveTincrement) / tVals.size();
+    //double redistT = leftOverTval / tVals.size();
     for (size_t i = 1; i < tVals.size(); ++i)
       tVals[i] += (i * redistT);
   }
@@ -1278,9 +1275,9 @@ void MePolyRedistributePtsUnitTests::testRedistPts3()
 
   MePolyRedistributePtsImpl r;
   VecPt3d outPts = r.RedistPts(pts, lengths);
-  VecPt3d basePts = {{0, 0, 0},     {0, 3.34, 0},  {0, 7.43, 0},  {2.2, 10, 0},
-                     {6.36, 10, 0}, {9.76, 10, 0}, {10, 6.95, 0}, {10, 2.95, 0},
-                     {8.19, 0, 0},  {3.95, 0, 0},  {0, 0, 0}};
+  VecPt3d basePts = {{0, 0, 0},     {0, 3.39, 0},  {0, 7.52, 0},  {2.34, 10, 0},
+                     {6.55, 10, 0},  {10, 10, 0}, {10, 6.66, 0}, {10, 2.61, 0},
+                     {7.80, 0, 0},  {3.52, 0, 0},  {0, 0, 0}};
   TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 0.01);
 } // MePolyRedistributePtsUnitTests::testRedistPts3
 //------------------------------------------------------------------------------
@@ -1368,10 +1365,36 @@ void MePolyRedistributePtsUnitTests::testRedistPolyLine2()
 
   MePolyRedistributePtsImpl r;
   VecPt3d outPts = r.RedistPts(pts, lengths);
-  VecPt3d basePts = {{0, 0, 0},     {0, 3.42, 0},  {0, 7.58, 0},  {2.43, 10, 0}, {6.66, 10, 0},
-                     {10, 9.85, 0}, {10, 6.76, 0}, {10, 3.68, 0}, {10, 0, 0}};
+  VecPt3d basePts = {{0, 0, 0},     {0, 3.49, 0},  {0, 7.72, 0},  {2.65, 10, 0}, {6.96, 10, 0},
+                     {10, 9.48, 0}, {10, 6.32, 0}, {10, 3.16, 0}, {10, 0, 0}};
   TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 0.01);
 } // MePolyRedistributePtsUnitTests::testRedistPolyLine2
+//------------------------------------------------------------------------------
+/// \brief test redistributing the points on a polyline
+//------------------------------------------------------------------------------
+void MePolyRedistributePtsUnitTests::testRedistPolyLineStretch()
+{
+  VecPt3d pts = { { 0, 0, 0 }, { 1, 0, 0 }, { 2, 0, 0 }, { 3, 0, 0 }, { 4, 0, 0 }, { 4.25, 0, 0 } };
+  VecDbl lengths = { 1, 1, 1, 1, 1 };
+
+  MePolyRedistributePtsImpl r;
+  VecPt3d outPts = r.RedistPts(pts, lengths);
+  VecPt3d basePts = { { 0, 0, 0 }, { 1.0625, 0, 0 }, { 2.125, 0, 0 }, { 3.1875, 0, 0 }, { 4.25, 0, 0 } };
+  TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 0.01);
+} // MePolyRedistributePtsUnitTests::testRedistPolyLineStretch
+//------------------------------------------------------------------------------
+/// \brief test redistributing the points on a polyline
+//------------------------------------------------------------------------------
+void MePolyRedistributePtsUnitTests::testRedistPolyLineCompress()
+{
+  VecPt3d pts = { { 0, 0, 0 }, { 1, 0, 0 }, { 2, 0, 0 }, { 3, 0, 0 }, { 4, 0, 0 }, { 4.75, 0, 0 } };
+  VecDbl lengths = { 1, 1, 1, 1, 1 };
+
+  MePolyRedistributePtsImpl r;
+  VecPt3d outPts = r.RedistPts(pts, lengths);
+  VecPt3d basePts = { { 0, 0, 0 }, { 0.95, 0, 0 }, { 1.9, 0, 0 }, { 2.85, 0, 0 }, { 3.8, 0, 0 }, { 4.75, 0, 0 } };
+  TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 0.01);
+} // MePolyRedistributePtsUnitTests::testRedistPolyLineCompress
 
 //} // namespace xms
 #endif
