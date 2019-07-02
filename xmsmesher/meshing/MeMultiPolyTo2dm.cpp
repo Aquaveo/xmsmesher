@@ -586,7 +586,7 @@ void MeMultiPolyTo2dmIntermediateTests::testCase2()
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testCase100()
 {
-  iTestFromPolyFile("case100", 7);
+  iTestFromPolyFile("case100", 6);
 } // MeMultiPolyTo2dmIntermediateTests::testCase100
 //------------------------------------------------------------------------------
 /// \brief tests meshing a square with a "c" shaped hole in it
