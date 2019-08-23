@@ -22,7 +22,7 @@ requires = [
 version = __version__
 
 setup(
-    python_requires='==3.6.*',
+    python_requires='>=3.6',
     name='xmsmesher',
     version=version,
     packages=['xms.mesher', 'xms.mesher.meshing', 'xms.mesher.api'],
