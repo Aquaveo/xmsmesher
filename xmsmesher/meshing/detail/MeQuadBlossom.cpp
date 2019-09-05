@@ -101,16 +101,14 @@ public:
   MeQuadBlossomImpl(const VecPt3d& a_points, const VecInt2d& a_triangles);
 
   virtual int PreMakeQuads() override;
-  virtual BSHP<XmUGrid> MakeQuads(bool a_splitBoundaryPoints,
-                                  bool a_useAngle) override;
+  virtual std::shared_ptr<XmUGrid> MakeQuads(bool a_splitBoundaryPoints, bool a_useAngle) override;
 
-  virtual BSHP<XmUGrid> _MakeQuads(bool a_splitBoundaryPoints = true,
-                                   bool a_useAngle = false,
-                                   int cost = -10);
+  virtual std::shared_ptr<XmUGrid> _MakeQuads(bool a_splitBoundaryPoints = true,
+                                              bool a_useAngle = false,
+                                              int cost = -10);
   const VecPt3d& GetLocations() const;
 
-  void PrepareForMatch(int a_cost,
-                       bool a_useAngle);
+  void PrepareForMatch(int a_cost, bool a_useAngle);
   VecInt MatchTriangles(bool a_splitBoundaryPoints);
   void GetEdges(int a_cost);
   void ProcessPointChains(int a_p,
@@ -134,7 +132,7 @@ public:
                         VecMeEdge& a_extraEdges,
                         VecInt2d& a_extraPoints);
 
-//private: // all public for testing
+  // private: // all public for testing
   VecPt3d m_points;        ///< points of the triangular mesh
   VecInt2d m_faces;        ///< initially triangles becomes quads
   VecPt3d m_splitPoints;   ///< The potential new points for split points.
@@ -168,7 +166,7 @@ typedef std::vector<VecAdjPointMidpoint> VecVecAdjPointMidpoint;
 /// \param[in] a_ugrid The UGrid to convert.
 /// \return A vector of triangle indices for each cell.
 //------------------------------------------------------------------------------
-VecInt2d UGrid2dToVecInt2d(BSHP<XmUGrid> a_ugrid)
+VecInt2d UGrid2dToVecInt2d(std::shared_ptr<XmUGrid> a_ugrid)
 {
   int numCells = a_ugrid->GetCellCount();
   VecInt2d cells(numCells, VecInt());
@@ -194,7 +192,7 @@ VecInt2d UGrid2dToVecInt2d(BSHP<XmUGrid> a_ugrid)
 /// \param[in] a_faces A vector of vectors containing 3 or 4 point indices.
 /// \return The UGrid generated from the points and faces.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> BuildUGrid(const VecPt3d& a_points, const VecInt2d& a_faces)
+std::shared_ptr<XmUGrid> BuildUGrid(const VecPt3d& a_points, const VecInt2d& a_faces)
 {
   VecInt cells;
   for (auto& face : a_faces)
@@ -302,16 +300,16 @@ int GetEtaDistance(const Pt3d& p0, const Pt3d& p1, const Pt3d& p2, const Pt3d& p
   double d = gmXyDistanceSquared(p3, p2);
   double e = gmXyDistanceSquared(p1, p2);
   double f = gmXyDistanceSquared(p0, p3);
-  //XM_ASSERT(a + b >= e);
-  //XM_ASSERT(c + d >= e);
-  //XM_ASSERT(a + c >= f);
-  //XM_ASSERT(b + d >= f);
+  // XM_ASSERT(a + b >= e);
+  // XM_ASSERT(c + d >= e);
+  // XM_ASSERT(a + c >= f);
+  // XM_ASSERT(b + d >= f);
   double inveta1 = std::max((a + b) / e, e / (a + b));
   double inveta2 = std::max((c + d) / e, e / (c + d));
   double inveta3 = std::max((a + c) / f, f / (a + c));
   double inveta4 = std::max((b + d) / f, f / (b + d));
   double inveta = std::max(inveta1 + inveta2, inveta3 + inveta4);
-  //XM_ASSERT(inveta - (a + b + c + d)/std::min(e, f) < 1e-5);
+  // XM_ASSERT(inveta - (a + b + c + d)/std::min(e, f) < 1e-5);
   return int(1000.0 * 2.0 / inveta + 0.5);
 } // GetEtaDistance
 //------------------------------------------------------------------------------
@@ -320,7 +318,9 @@ int GetEtaDistance(const Pt3d& p0, const Pt3d& p1, const Pt3d& p2, const Pt3d& p
 /// \param[in] a_pointIdx The point to get adjacent points from.
 /// \param[out] a_edgePoints The adjacent points.
 //------------------------------------------------------------------------------
-void GetPointIdxsAttachedByEdge(BSHP<XmUGrid> a_ugrid, int a_pointIdx, VecInt& a_edgePoints)
+void GetPointIdxsAttachedByEdge(std::shared_ptr<XmUGrid> a_ugrid,
+                                int a_pointIdx,
+                                VecInt& a_edgePoints)
 {
   // TODO: Use new UGrid code in xmsgrid
   a_edgePoints.clear();
@@ -412,8 +412,7 @@ int MeQuadBlossomImpl::PreMakeQuads()
 /// to compute the interior edge cost.
 /// \return An XmUGrid with the quads and any new points.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> MeQuadBlossomImpl::MakeQuads(bool a_splitBoundaryPoints,
-                                           bool a_useAngle)
+std::shared_ptr<XmUGrid> MeQuadBlossomImpl::MakeQuads(bool a_splitBoundaryPoints, bool a_useAngle)
 {
   return _MakeQuads(a_splitBoundaryPoints, a_useAngle);
 } // MeQuadBlossomImpl::MakeQuads
@@ -428,14 +427,14 @@ BSHP<XmUGrid> MeQuadBlossomImpl::MakeQuads(bool a_splitBoundaryPoints,
 /// to compute the interior edge cost.
 /// \return An XmUGrid with the quads and any new points.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> MeQuadBlossomImpl::_MakeQuads(bool a_splitBoundaryPoints /*= true */,
-                                            bool a_useAngle /*= false*/,
-                                            int a_cost /*= -10*/)
+std::shared_ptr<XmUGrid> MeQuadBlossomImpl::_MakeQuads(bool a_splitBoundaryPoints /*= true */,
+                                                       bool a_useAngle /*= false*/,
+                                                       int a_cost /*= -10*/)
 {
   PrepareForMatch(a_cost, a_useAngle);
   VecInt eliminate = MatchTriangles(a_splitBoundaryPoints);
   EliminateEdges(eliminate);
-  BSHP<XmUGrid> ugrid = BuildUGrid(m_points, m_faces);
+  std::shared_ptr<XmUGrid> ugrid = BuildUGrid(m_points, m_faces);
   return ugrid;
 } // MeQuadBlossomImpl::MakeQuads
 //------------------------------------------------------------------------------
@@ -451,8 +450,7 @@ BSHP<XmUGrid> MeQuadBlossomImpl::_MakeQuads(bool a_splitBoundaryPoints /*= true 
 /// \param[in] a_useAngle If true, use the angle method of computing edge costs;
 /// otherwise, use the distance method.
 //------------------------------------------------------------------------------
-void MeQuadBlossomImpl::PrepareForMatch(int a_cost,
-                                        bool a_useAngle)
+void MeQuadBlossomImpl::PrepareForMatch(int a_cost, bool a_useAngle)
 {
   if (m_boundaryEdges.empty())
   {
@@ -784,8 +782,8 @@ VecInt2d MeQuadBlossomImpl::EliminateEdges(const VecInt& eliminate)
       int last = edge.m_f1;
       int px = (int)m_points.size();
       m_points.push_back(m_splitPoints[j]);
-      m_faces[first] = { firstVertexOut, firstVertexIn, p, px };
-      m_faces[last] = { p, lastVertexOut, lastVertexIn, px };
+      m_faces[first] = {firstVertexOut, firstVertexIn, p, px};
+      m_faces[last] = {p, lastVertexOut, lastVertexIn, px};
 
       splitPointsRedir[p] = px;
     }
@@ -922,7 +920,7 @@ Edge MeQuadBlossomImpl::GetBoundaryEdges(int a_p,
 /// \param[in] a_ugrid The UGrid to be converted from triangles to quads.
 /// \return The new MeQuadBlossom.
 //------------------------------------------------------------------------------
-BSHP<MeQuadBlossom> MeQuadBlossom::New(BSHP<XmUGrid> a_ugrid)
+BSHP<MeQuadBlossom> MeQuadBlossom::New(std::shared_ptr<XmUGrid> a_ugrid)
 {
   const VecPt3d& points = a_ugrid->GetLocations();
   VecInt2d triangles = UGrid2dToVecInt2d(a_ugrid);
@@ -957,7 +955,7 @@ double MeQuadBlossom::EstimatedRunTimeInMinutes(int a_numPoints)
 /// \param[in] a_ugrid The input UGrid that contains only 2D cells.
 /// \return The UGrid with cells split into quads.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> MeQuadBlossom::SplitToQuads(BSHP<XmUGrid> a_ugrid)
+std::shared_ptr<XmUGrid> MeQuadBlossom::SplitToQuads(std::shared_ptr<XmUGrid> a_ugrid)
 {
   VecPt3d points = a_ugrid->GetLocations();
   VecInt cells;
@@ -978,7 +976,7 @@ BSHP<XmUGrid> MeQuadBlossom::SplitToQuads(BSHP<XmUGrid> a_ugrid)
         Pt3d midPoint = (p0 + p1) * 0.5;
         int midIdx = (int)points.size();
         points.push_back(midPoint);
-        adjPoints2.push_back({ otherIdx, midIdx });
+        adjPoints2.push_back({otherIdx, midIdx});
       }
     }
     // sort adjPoint2 by element 0
@@ -1608,7 +1606,7 @@ void MeQuadBlossomUnitTests::testGetEdges()
     VecInt2d triangles = {{4, 3, 0}, {1, 4, 0}, {2, 4, 1}, {5, 4, 2},
                           {3, 7, 9}, {8, 7, 4}, {5, 8, 4}, {3, 9, 6}};
     VecPt3d points(10, Pt3d());
-    
+
     MeQuadBlossomImpl blossom(points, triangles);
     blossom.GetEdges(17);
     VecEdge expect_interior = {
@@ -1665,7 +1663,7 @@ void MeQuadBlossomUnitTests::testEliminateEdges()
     MeQuadBlossomImpl blossom(points, triangles);
     blossom.GetEdges(17);
     VecInt2d quads = blossom.EliminateEdges({2, 5, 3, 0});
-    
+
     VecInt2d expect = {{0, 1, 4, 3}, {2, 5, 4, 1}, {4, 5, 8, 7}, {3, 7, 9, 6}};
     TS_ASSERT_EQUALS(expect, quads);
   }
@@ -1693,15 +1691,15 @@ void MeQuadBlossomUnitTests::testSimpleTriangle()
     int cost = -10;
     bool splitBoundaryPoints = false;
     bool useAngleCost = true;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
-      XMU_QUAD, 4, 1, 5, 4, 0,  // 0
-      XMU_QUAD, 4, 2, 6, 5, 1,  // 1
-      XMU_TRIANGLE, 3, 2, 3, 6, // 2
-      XMU_QUAD, 4, 5, 8, 7, 4,  // 3
-      XMU_TRIANGLE, 3, 5, 6, 8, // 4
-      XMU_TRIANGLE, 3, 7, 8, 9  // 5
+      XMU_QUAD,     4, 1, 5, 4, 0, // 0
+      XMU_QUAD,     4, 2, 6, 5, 1, // 1
+      XMU_TRIANGLE, 3, 2, 3, 6,    // 2
+      XMU_QUAD,     4, 5, 8, 7, 4, // 3
+      XMU_TRIANGLE, 3, 5, 6, 8,    // 4
+      XMU_TRIANGLE, 3, 7, 8, 9     // 5
     };
     TS_ASSERT_EQUALS(expectedCells, cells);
     const VecPt3d& actualPoints = ugrid->GetLocations();
@@ -1713,20 +1711,20 @@ void MeQuadBlossomUnitTests::testSimpleTriangle()
     int cost = -10;
     bool splitBoundaryPoints = true;
     bool useAngleCost = true;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
-      XMU_QUAD, 4, 1, 5, 4, 0,  // 0
-      XMU_QUAD, 4, 2, 10, 5, 1, // 1
-      XMU_QUAD, 4, 2, 3, 6, 10, // 2
-      XMU_QUAD, 4, 5, 8, 7, 4,  // 3
-      XMU_QUAD, 4, 6, 8, 5, 10, // 4
-      XMU_TRIANGLE, 3, 7, 8, 9  // 5
+      XMU_QUAD,     4, 1, 5,  4, 0,  // 0
+      XMU_QUAD,     4, 2, 10, 5, 1,  // 1
+      XMU_QUAD,     4, 2, 3,  6, 10, // 2
+      XMU_QUAD,     4, 5, 8,  7, 4,  // 3
+      XMU_QUAD,     4, 6, 8,  5, 10, // 4
+      XMU_TRIANGLE, 3, 7, 8,  9      // 5
     };
     TS_ASSERT_EQUALS(expectedCells, cells);
     const VecPt3d& actualPoints = ugrid->GetLocations();
     VecPt3d expectedPoints = points;
-    expectedPoints.push_back(Pt3d(50.0/3.0, 20.0/3.0, 0.0));
+    expectedPoints.push_back(Pt3d(50.0 / 3.0, 20.0 / 3.0, 0.0));
     TS_ASSERT_DELTA_VECPT3D(expectedPoints, actualPoints, 1.0e-5);
   }
 
@@ -1734,18 +1732,18 @@ void MeQuadBlossomUnitTests::testSimpleTriangle()
     // clang-format off
     VecPt3d points = { {-10, 0, 0}, {0, 0, 0}, {10, 0, 0}, {-5, 7.07, 0}, {5, 7.07, 0}, {0, 14.14, 0} };
     // clang-format on
-    VecInt2d triangles = { {0, 1, 3}, {1, 2, 4}, {1, 4, 3}, {3, 4, 5} };
+    VecInt2d triangles = {{0, 1, 3}, {1, 2, 4}, {1, 4, 3}, {3, 4, 5}};
 
     MeQuadBlossomImpl blossom(points, triangles);
     int cost = -10;
     bool splitBoundaryPoints = true;
     bool useAngleCost = false;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
-      XMU_QUAD, 4, 3, 0, 1, 6,  // 0
-      XMU_QUAD, 4, 1, 2, 4, 6,  // 1
-      XMU_QUAD, 4, 3, 6, 4, 5   // 2
+      XMU_QUAD, 4, 3, 0, 1, 6, // 0
+      XMU_QUAD, 4, 1, 2, 4, 6, // 1
+      XMU_QUAD, 4, 3, 6, 4, 5  // 2
     };
     TS_ASSERT_EQUALS(expectedCells, cells);
     const VecPt3d& actualPoints = ugrid->GetLocations();
@@ -1776,7 +1774,7 @@ void MeQuadBlossomUnitTests::testSimpleQuad()
     int cost = -10;
     bool splitBoundaryPoints = false;
     bool useAngleCost = true;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
       XMU_QUAD, 4, 1, 5, 4, 0,     // 0
@@ -1800,7 +1798,7 @@ void MeQuadBlossomUnitTests::testSimpleQuad()
     int cost = -10;
     bool splitBoundaryPoints = true;
     bool useAngleCost = true;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
       XMU_QUAD, 4, 1, 5, 4, 0,     // 0
@@ -1845,7 +1843,7 @@ void MeQuadBlossomUnitTests::testComplexQuad()
     bool useAngleCost = true;
     int numBoundaryEdges = blossom.PreMakeQuads();
     TS_ASSERT_EQUALS(16, numBoundaryEdges);
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
       XMU_TRIANGLE, 3, 0, 4, 3,    //  0
@@ -1878,7 +1876,7 @@ void MeQuadBlossomUnitTests::testComplexQuad()
     int cost = -10;
     bool splitBoundaryPoints = true;
     bool useAngleCost = true;
-    BSHP<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
+    std::shared_ptr<XmUGrid> ugrid = blossom._MakeQuads(splitBoundaryPoints, useAngleCost, cost);
     const VecInt& cells = ugrid->GetCellstream();
     VecInt expectedCells = {
       XMU_QUAD, 4, 3, 0, 4, 25,    //  0
@@ -1937,9 +1935,9 @@ void MeQuadBlossomUnitTests::testSplitToQuads()
   //! [snip_test_2DShapes]
   // clang-format on
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
-  BSHP<XmUGrid> quadUGrid = MeQuadBlossom::SplitToQuads(ugrid);
+  std::shared_ptr<XmUGrid> quadUGrid = MeQuadBlossom::SplitToQuads(ugrid);
 
   VecPt3d quadPoints = quadUGrid->GetLocations();
   // clang-format off
@@ -2039,11 +2037,11 @@ void MeQuadBlossomUnitTests::testPreMakeQuads()
     TS_ASSERT_EQUALS(expect_boundary, blossom.m_boundaryEdges);
     TS_ASSERT_EQUALS(expect_extra, blossom.m_extraEdges);
     TS_ASSERT_EQUALS(expectExtraVertices, blossom.m_extraPoints);
-    
+
     bool splitBoundaryPoints = true;
     bool useAngle = false;
     blossom.MakeQuads(splitBoundaryPoints, useAngle);
-    
+
     VecInt2d faces = blossom.m_faces;
     TS_ASSERT_EQUALS(triangles, faces);
   }
@@ -2067,19 +2065,18 @@ void MeQuadBlossomUnitTests::testPreMakeQuads()
     VecEdge expect_boundary = {{3, 2, 0, XM_NONE, 0, XM_NONE},
                                {2, 0, 0, XM_NONE, 3, XM_NONE},
                                {1, 3, 1, XM_NONE, 0, XM_NONE},
-                               {0, 1, 1, XM_NONE, 3, XM_NONE}
-    };
+                               {0, 1, 1, XM_NONE, 3, XM_NONE}};
     VecMeEdge expect_extra = {};
     VecInt2d expectExtraVertices = {};
     TS_ASSERT_EQUALS(expect_interior, blossom.m_interiorEdges);
     TS_ASSERT_EQUALS(expect_boundary, blossom.m_boundaryEdges);
     TS_ASSERT_EQUALS(expect_extra, blossom.m_extraEdges);
     TS_ASSERT_EQUALS(expectExtraVertices, blossom.m_extraPoints);
-    
+
     bool splitBoundaryPoints = true;
     bool useAngle = false;
     blossom.MakeQuads(splitBoundaryPoints, useAngle);
-    
+
     VecInt2d faces = blossom.m_faces;
     VecInt2d expectedFaces = {{0, 1, 3, 2}};
     TS_ASSERT_EQUALS(expectedFaces, faces);
@@ -2094,7 +2091,6 @@ void MeQuadBlossomUnitTests::testPreMakeQuads()
     points[4] = {0, 20, 0};
     points[6] = {0, 10, 0};
     points[9] = {10, 10, 0};
-    
 
     MeQuadBlossomImpl blossom(points, triangles);
     int numBoundaryEdges = blossom.PreMakeQuads();
@@ -2115,11 +2111,11 @@ void MeQuadBlossomUnitTests::testPreMakeQuads()
     TS_ASSERT_EQUALS(expect_boundary, blossom.m_boundaryEdges);
     TS_ASSERT_EQUALS(expect_extra, blossom.m_extraEdges);
     TS_ASSERT_EQUALS(expectExtraVertices, blossom.m_extraPoints);
-    
+
     bool splitBoundaryPoints = true;
     bool useAngle = false;
     blossom.MakeQuads(splitBoundaryPoints, useAngle);
-    
+
     VecInt2d faces = blossom.m_faces;
     VecInt2d expectedFaces = {{2, 9, 6}, {4, 6, 9, 3}};
     TS_ASSERT_EQUALS(expectedFaces, faces);

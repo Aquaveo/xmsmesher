@@ -851,27 +851,23 @@ void TutRedistributionIntermediateTests::test_Example_Redistribute_SizeFunction(
   xms::VecPt3d outPts = redist->Redistribute(polygon);
   {
     xms::VecPt3d expectedPts = {
-         { 0.0, 0.0, 0 },    { 0.0, 8.7, 0 },   { 0.0, 17.5, 0 },   { 0.0, 26.2, 0 },
-        { 0.0, 34.9, 0 },   { 0.0, 43.7, 0 },   { 0.0, 52.4, 0 },   { 0.0, 61.1, 0 },
-        { 0.0, 69.9, 0 },   { 0.0, 78.6, 0 },   { 0.0, 87.3, 0 },   { 0.0, 96.1, 0 },
-       { 4.6, 100.0, 0 }, { 12.4, 100.0, 0 }, { 19.5, 100.0, 0 }, { 26.2, 100.0, 0 },
-      { 32.3, 100.0, 0 }, { 38.0, 100.0, 0 }, { 43.3, 100.0, 0 }, { 48.3, 100.0, 0 },
-      { 52.8, 100.0, 0 }, { 57.1, 100.0, 0 }, { 61.0, 100.0, 0 }, { 64.6, 100.0, 0 },
-      { 68.0, 100.0, 0 }, { 71.2, 100.0, 0 }, { 74.1, 100.0, 0 }, { 76.8, 100.0, 0 },
-      { 79.3, 100.0, 0 }, { 81.6, 100.0, 0 }, { 83.8, 100.0, 0 }, { 85.8, 100.0, 0 },
-      { 87.7, 100.0, 0 }, { 89.4, 100.0, 0 }, { 91.0, 100.0, 0 }, { 92.5, 100.0, 0 },
-      { 93.9, 100.0, 0 }, { 95.2, 100.0, 0 }, { 96.4, 100.0, 0 }, { 97.5, 100.0, 0 },
-      { 98.5, 100.0, 0 }, { 99.6, 100.0, 0 }, { 100.0, 99.3, 0 }, { 100.0, 98.1, 0 },
-      { 100.0, 96.8, 0 }, { 100.0, 95.3, 0 }, { 100.0, 93.8, 0 }, { 100.0, 92.2, 0 },
-      { 100.0, 90.4, 0 }, { 100.0, 88.6, 0 }, { 100.0, 86.5, 0 }, { 100.0, 84.3, 0 },
-      { 100.0, 82.0, 0 }, { 100.0, 79.4, 0 }, { 100.0, 76.7, 0 }, { 100.0, 73.7, 0 },
-      { 100.0, 70.5, 0 }, { 100.0, 67.1, 0 }, { 100.0, 63.4, 0 }, { 100.0, 59.4, 0 },
-      { 100.0, 55.1, 0 }, { 100.0, 50.5, 0 }, { 100.0, 45.5, 0 }, { 100.0, 40.1, 0 },
-      { 100.0, 34.4, 0 }, { 100.0, 28.1, 0 }, { 100.0, 21.4, 0 }, { 100.0, 14.1, 0 },
-       { 100.0, 6.3, 0 },   { 97.8, 0.0, 0 },   { 88.9, 0.0, 0 },   { 80.0, 0.0, 0 },
-        { 71.1, 0.0, 0 },   { 62.2, 0.0, 0 },   { 53.4, 0.0, 0 },   { 44.5, 0.0, 0 },
-        { 35.6, 0.0, 0 },   { 26.7, 0.0, 0 },   { 17.8, 0.0, 0 },    { 8.9, 0.0, 0 },
-         { 0.0, 0.0, 0 }};
+      {0.0, 0.0, 0},    {0.0, 8.7, 0},    {0.0, 17.5, 0},   {0.0, 26.2, 0},   {0.0, 34.9, 0},
+      {0.0, 43.7, 0},   {0.0, 52.4, 0},   {0.0, 61.1, 0},   {0.0, 69.9, 0},   {0.0, 78.6, 0},
+      {0.0, 87.3, 0},   {0.0, 96.1, 0},   {4.6, 100.0, 0},  {12.4, 100.0, 0}, {19.5, 100.0, 0},
+      {26.2, 100.0, 0}, {32.3, 100.0, 0}, {38.0, 100.0, 0}, {43.3, 100.0, 0}, {48.3, 100.0, 0},
+      {52.8, 100.0, 0}, {57.1, 100.0, 0}, {61.0, 100.0, 0}, {64.6, 100.0, 0}, {68.0, 100.0, 0},
+      {71.2, 100.0, 0}, {74.1, 100.0, 0}, {76.8, 100.0, 0}, {79.3, 100.0, 0}, {81.6, 100.0, 0},
+      {83.8, 100.0, 0}, {85.8, 100.0, 0}, {87.7, 100.0, 0}, {89.4, 100.0, 0}, {91.0, 100.0, 0},
+      {92.5, 100.0, 0}, {93.9, 100.0, 0}, {95.2, 100.0, 0}, {96.4, 100.0, 0}, {97.5, 100.0, 0},
+      {98.5, 100.0, 0}, {99.6, 100.0, 0}, {100.0, 99.3, 0}, {100.0, 98.1, 0}, {100.0, 96.8, 0},
+      {100.0, 95.3, 0}, {100.0, 93.8, 0}, {100.0, 92.2, 0}, {100.0, 90.4, 0}, {100.0, 88.6, 0},
+      {100.0, 86.5, 0}, {100.0, 84.3, 0}, {100.0, 82.0, 0}, {100.0, 79.4, 0}, {100.0, 76.7, 0},
+      {100.0, 73.7, 0}, {100.0, 70.5, 0}, {100.0, 67.1, 0}, {100.0, 63.4, 0}, {100.0, 59.4, 0},
+      {100.0, 55.1, 0}, {100.0, 50.5, 0}, {100.0, 45.5, 0}, {100.0, 40.1, 0}, {100.0, 34.4, 0},
+      {100.0, 28.1, 0}, {100.0, 21.4, 0}, {100.0, 14.1, 0}, {100.0, 6.3, 0},  {97.8, 0.0, 0},
+      {88.9, 0.0, 0},   {80.0, 0.0, 0},   {71.1, 0.0, 0},   {62.2, 0.0, 0},   {53.4, 0.0, 0},
+      {44.5, 0.0, 0},   {35.6, 0.0, 0},   {26.7, 0.0, 0},   {17.8, 0.0, 0},   {8.9, 0.0, 0},
+      {0.0, 0.0, 0}};
     TS_ASSERT_DELTA_VECPT3D(expectedPts, outPts, 0.1);
   }
 
@@ -989,16 +985,16 @@ void TutRedistributionIntermediateTests::test_Example_Redistribute_Polygon_Curva
 void TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover()
 {
   // read a UGrid from a file.
-  const std::string path(std::string(XMS_TEST_PATH) + 
-                         "Tutorial_Meshing/");
+  const std::string path(std::string(XMS_TEST_PATH) + "Tutorial_Meshing/");
   const std::string inputFilePath = path + "Example_QuadBlossom_triangleUGridInput.txt";
-  BSHP<xms::XmUGrid> ugrid = xms::XmReadUGridFromAsciiFile(inputFilePath); // read from file.
+  std::shared_ptr<xms::XmUGrid> ugrid =
+    xms::XmReadUGridFromAsciiFile(inputFilePath); // read from file.
   BSHP<xms::MeQuadBlossom> quadBlossom = xms::MeQuadBlossom::New(ugrid);
 
   // PreMakeQuads returns the number of boundary edges of the triangular mesh.
-  // An even number of boundary edges insures no triangles in the output UGrid. 
+  // An even number of boundary edges insures no triangles in the output UGrid.
   int nBoundaryEdges = quadBlossom->PreMakeQuads();
-  TS_ASSERT((nBoundaryEdges & 0x1) == 1); 
+  TS_ASSERT((nBoundaryEdges & 0x1) == 1);
 
   // The MeQuadBlossom basic algorithm is O(N^3). Check the estimated minutes.  If too large,
   // Then split the mesh into smaller sub-UGrids, then call MakeQuads on each one.
@@ -1007,7 +1003,7 @@ void TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover()
 
   bool splitVertices = true;
   bool useAngle = false;
-  BSHP<xms::XmUGrid> quadUGrid = quadBlossom->MakeQuads(splitVertices, useAngle);
+  std::shared_ptr<xms::XmUGrid> quadUGrid = quadBlossom->MakeQuads(splitVertices, useAngle);
 
   // Test the quad UGrid generated by the Quad Blossom algorithm
   const std::string outFile = path + "Example_QuadBlossom_quadUGrid_out.txt";
@@ -1018,7 +1014,7 @@ void TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover()
   // Use MeBadQuadRemover to remove bad quads from the quad UGrid.
   double maxAspect = 0.7;
   BSHP<xms::MeBadQuadRemover> badQuadRemover = xms::MeBadQuadRemover::New(quadUGrid);
-  BSHP<xms::XmUGrid> quadUGridImproved = badQuadRemover->RemoveBadQuads(maxAspect);
+  std::shared_ptr<xms::XmUGrid> quadUGridImproved = badQuadRemover->RemoveBadQuads(maxAspect);
 
   // Test the improved quad UGrid returned from the Bad Quad Remover algorithm
   const std::string outFile2 = path + "Example_QuadBlossom_quadUGridImproved_out.txt";
@@ -1029,13 +1025,13 @@ void TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover()
   // Use MeBadQuadRemover to remove bad quads from the quad UGrid a second time.
   maxAspect = 0.7;
   badQuadRemover = xms::MeBadQuadRemover::New(quadUGridImproved);
-  BSHP<xms::XmUGrid> quadUGridImproved2 = badQuadRemover->RemoveBadQuads(maxAspect);
+  std::shared_ptr<xms::XmUGrid> quadUGridImproved2 = badQuadRemover->RemoveBadQuads(maxAspect);
 
   // Test the improved quad UGrid returned from the Bad Quad Remover algorithm
   const std::string outFile3 = path + "Example_QuadBlossom_quadUGridImproved2_out.txt";
   xms::XmWriteUGridToAsciiFile(quadUGridImproved2, outFile3);
   const std::string baseFile3 = path + "Example_QuadBlossom_quadUGridImproved2_base.txt";
   TS_ASSERT_TXT_FILES_EQUAL(baseFile3, outFile3);
-}  // TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover
+} // TutMeshingIntermediateTests::test_Example_QuadBlossom_BadQuadRemover
 //! [snip_test_Example_QuadBlossom_BadQuadRemover]
 #endif

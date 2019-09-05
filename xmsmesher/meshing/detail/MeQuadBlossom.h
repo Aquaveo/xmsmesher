@@ -34,19 +34,18 @@ class XmUGrid;
 class MeQuadBlossom
 {
 public:
-  static BSHP<MeQuadBlossom> New(BSHP<XmUGrid> a_ugrid);
+  static BSHP<MeQuadBlossom> New(std::shared_ptr<XmUGrid> a_ugrid);
   MeQuadBlossom();
   virtual ~MeQuadBlossom();
 
   /// \cond
   virtual int PreMakeQuads() = 0;
-  virtual BSHP<XmUGrid> MakeQuads(bool a_splitBoundaryPoints,
-                                  bool a_useAngle) = 0;
+  virtual std::shared_ptr<XmUGrid> MakeQuads(bool a_splitBoundaryPoints, bool a_useAngle) = 0;
   /// \endcond
-  
+
   static double EstimatedRunTimeInMinutes(int a_numPoints);
-  static BSHP<XmUGrid> SplitToQuads(BSHP<XmUGrid> a_ugrid);
-  
+  static std::shared_ptr<XmUGrid> SplitToQuads(std::shared_ptr<XmUGrid> a_ugrid);
+
 private:
   /// \cond
   XM_DISALLOW_COPY_AND_ASSIGN(MeQuadBlossom);

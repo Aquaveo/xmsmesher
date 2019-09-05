@@ -34,12 +34,12 @@ class XmUGrid;
 class MeBadQuadRemover
 {
 public:
-  static BSHP<MeBadQuadRemover> New(BSHP<XmUGrid> a_ugrid);
+  static BSHP<MeBadQuadRemover> New(std::shared_ptr<XmUGrid> a_ugrid);
   MeBadQuadRemover();
   virtual ~MeBadQuadRemover();
 
   /// \cond
-  virtual BSHP<XmUGrid> RemoveBadQuads(double a_maxAspect = 0.7) = 0;
+  virtual std::shared_ptr<XmUGrid> RemoveBadQuads(double a_maxAspect = 0.7) = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(MeBadQuadRemover);
