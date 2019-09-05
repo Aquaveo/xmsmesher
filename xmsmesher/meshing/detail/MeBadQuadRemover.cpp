@@ -70,15 +70,15 @@ typedef std::vector<CellData> VecCellData; ///< Vector of CellData.
 class MeBadQuadRemoverImpl : public MeBadQuadRemover
 {
 public:
-  MeBadQuadRemoverImpl(BSHP<XmUGrid> a_ugrid);
+  MeBadQuadRemoverImpl(std::shared_ptr<XmUGrid> a_ugrid);
 
-  virtual BSHP<XmUGrid> RemoveBadQuads(double a_maxAspect = 0.7) override;
+  virtual std::shared_ptr<XmUGrid> RemoveBadQuads(double a_maxAspect = 0.7) override;
 
   // implementation helpers
   bool ReplacePoint(int a_ptIdx, int a_newPtIdx);
   void MovePoint(int a_ptIdx, const Pt3d& a_newPoint);
   void DeleteCell(int a_cellIdx);
-  BSHP<XmUGrid> BuildUGridFromReplacedPoints();
+  std::shared_ptr<XmUGrid> BuildUGridFromReplacedPoints();
   void CollapseFromPoint(int a_cellIdx, int a_pointIdx_w3, const VecInt& a_adjCells);
   void ComputeCellData(int a_cellIdx, double max_aspect);
   bool CanCollapse(int a_cellIdx, int pointIdx_w3, VecInt& a_adjCells);
@@ -86,7 +86,7 @@ public:
 private:
   typedef std::pair<int, Pt3d> MovedPoint;       ///< Index of point and new location.
   typedef std::vector<MovedPoint> MovedPointVec; ///< Vector of moved points.
-  BSHP<XmUGrid> m_ugrid;                         ///< The input UGrid containing the bad quads.
+  std::shared_ptr<XmUGrid> m_ugrid;              ///< The input UGrid containing the bad quads.
   VecInt m_pointIdxMap;        ///< A mapping of original index to new point index.
   DynBitset m_cellsToDelete;   ///< True if a cell is to be deleted.
   MovedPointVec m_movedPoints; ///< List of points moved with new location.
@@ -108,7 +108,7 @@ private:
 /// indices. Must be 3 or 4 indices.
 /// \return The UGrid created from the points and faces.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> BuildUGrid(const VecPt3d& a_points, const VecInt2d& a_faces)
+std::shared_ptr<XmUGrid> BuildUGrid(const VecPt3d& a_points, const VecInt2d& a_faces)
 {
   VecInt cells;
   for (auto& face : a_faces)
@@ -139,7 +139,9 @@ BSHP<XmUGrid> BuildUGrid(const VecPt3d& a_points, const VecInt2d& a_faces)
 /// \param[in] a_pointIdx The point index to get the adjacent points from.
 /// \param[out] a_edgePoints The point indices that are adjacent to the point.
 //------------------------------------------------------------------------------
-void GetPointIdxsAttachedByEdge(BSHP<XmUGrid> a_ugrid, int a_pointIdx, VecInt& a_edgePoints)
+void GetPointIdxsAttachedByEdge(std::shared_ptr<XmUGrid> a_ugrid,
+                                int a_pointIdx,
+                                VecInt& a_edgePoints)
 {
   // TODO: Use new UGrid code in xmsgrid
   a_edgePoints.clear();
@@ -175,7 +177,7 @@ void GetPointIdxsAttachedByEdge(BSHP<XmUGrid> a_ugrid, int a_pointIdx, VecInt& a
 /// \return The number of edges eminating from each vertex (but negative if the
 /// vertex is on the boundary.
 //------------------------------------------------------------------------------
-int GetAdjacentPointCount(BSHP<XmUGrid> a_ugrid, int a_pointIdx)
+int GetAdjacentPointCount(std::shared_ptr<XmUGrid> a_ugrid, int a_pointIdx)
 {
   VecInt adjacentPoints;
   GetPointIdxsAttachedByEdge(a_ugrid, a_pointIdx, adjacentPoints);
@@ -200,7 +202,7 @@ int GetAdjacentPointCount(BSHP<XmUGrid> a_ugrid, int a_pointIdx)
 /// \return The number of edges eminating from each point (but negative if the
 /// point is on the boundary.
 //------------------------------------------------------------------------------
-VecInt GetAdjacentPointCounts(BSHP<XmUGrid> a_ugrid)
+VecInt GetAdjacentPointCounts(std::shared_ptr<XmUGrid> a_ugrid)
 {
   VecInt counts(a_ugrid->GetPointCount());
   int numPoints = a_ugrid->GetPointCount();
@@ -225,7 +227,7 @@ VecInt GetAdjacentPointCounts(BSHP<XmUGrid> a_ugrid)
 /// \brief Constructor.
 /// \param[in] a_ugrid The UGrid to remove badly formed quads from.
 //------------------------------------------------------------------------------
-MeBadQuadRemoverImpl::MeBadQuadRemoverImpl(BSHP<XmUGrid> a_ugrid)
+MeBadQuadRemoverImpl::MeBadQuadRemoverImpl(std::shared_ptr<XmUGrid> a_ugrid)
 : m_ugrid(a_ugrid)
 , m_pointIdxMap(a_ugrid->GetPointCount(), -1)
 , m_adjPointCnts(GetAdjacentPointCounts(a_ugrid))
@@ -239,7 +241,7 @@ MeBadQuadRemoverImpl::MeBadQuadRemoverImpl(BSHP<XmUGrid> a_ugrid)
 /// \param[in] a_maxAspect The maximum aspect ratio for the diagonals.
 /// \return The reconstructed UGrid with the bad quads removed.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> MeBadQuadRemoverImpl::RemoveBadQuads(double a_maxAspect)
+std::shared_ptr<XmUGrid> MeBadQuadRemoverImpl::RemoveBadQuads(double a_maxAspect)
 {
   if (a_maxAspect != 0.0)
   {
@@ -284,7 +286,7 @@ BSHP<XmUGrid> MeBadQuadRemoverImpl::RemoveBadQuads(double a_maxAspect)
     }
   }
 
-  BSHP<XmUGrid> newUgrid = BuildUGridFromReplacedPoints();
+  std::shared_ptr<XmUGrid> newUgrid = BuildUGridFromReplacedPoints();
   return newUgrid;
 } // MeBadQuadRemoverImpl::RemoveBadQuads
 //------------------------------------------------------------------------------
@@ -328,7 +330,7 @@ void MeBadQuadRemoverImpl::DeleteCell(int a_cellIdx)
 /// cells, moving points, and replacing points.
 /// \return The new UGrid with the actions performed.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> MeBadQuadRemoverImpl::BuildUGridFromReplacedPoints()
+std::shared_ptr<XmUGrid> MeBadQuadRemoverImpl::BuildUGridFromReplacedPoints()
 {
   VecPt3d oldPoints = m_ugrid->GetLocations();
   for (auto& movedPoint : m_movedPoints)
@@ -382,7 +384,7 @@ BSHP<XmUGrid> MeBadQuadRemoverImpl::BuildUGridFromReplacedPoints()
       }
     }
   }
-  BSHP<XmUGrid> newUGrid = XmUGrid::New(newPoints, cells);
+  std::shared_ptr<XmUGrid> newUGrid = XmUGrid::New(newPoints, cells);
   return newUGrid;
 } // MeBadQuadRemoverImpl::BuildUGridFromReplacedPoints
 //------------------------------------------------------------------------------
@@ -607,7 +609,7 @@ bool MeBadQuadRemoverImpl::CanCollapse(int a_cellIdx, int pointIdx_w3, VecInt& a
 /// \param[in] a_ugrid The UGrid to remove badly formed quads from.
 /// \return The new MeBadQuadRemover.
 //------------------------------------------------------------------------------
-BSHP<MeBadQuadRemover> MeBadQuadRemover::New(BSHP<XmUGrid> a_ugrid)
+BSHP<MeBadQuadRemover> MeBadQuadRemover::New(std::shared_ptr<XmUGrid> a_ugrid)
 {
   BSHP<MeBadQuadRemover> badQuadRemover(new MeBadQuadRemoverImpl(a_ugrid));
   return badQuadRemover;
@@ -655,7 +657,7 @@ void MeBadQuadRemoverUnitTests::testGetAdjacentPointCounts()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
   VecInt counts = GetAdjacentPointCounts(grid);
   VecInt expectedCounts = {-2, -3, -2, -3, 4, -3, -2, -3, -2};
   TS_ASSERT_EQUALS_VEC(expectedCounts, counts);
@@ -682,7 +684,7 @@ void MeBadQuadRemoverUnitTests::testReplacePoints()
                     XMU_QUAD, 4, 5, 6, 11, 10, XMU_QUAD, 4, 6, 7,  12, 11,
                     XMU_QUAD, 4, 2, 8, 12, 7,  XMU_QUAD, 4, 8, 9,  4,  12};
 
-    BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+    std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
     MeBadQuadRemoverImpl replacer(ugrid);
 
     replacer.MovePoint(8, {20, 10, 0});
@@ -696,7 +698,7 @@ void MeBadQuadRemoverUnitTests::testReplacePoints()
                             {30, 20, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0},
                             {30, 10, 0}, {0, 20, 0}, {10, 20, 0}, {20, 20, 0}};
 
-    BSHP<XmUGrid> newUGrid = replacer.BuildUGridFromReplacedPoints();
+    std::shared_ptr<XmUGrid> newUGrid = replacer.BuildUGridFromReplacedPoints();
 
     TS_ASSERT_DELTA_VECPT3D(expectPoints, newUGrid->GetLocations(), 1.0e-5);
 
@@ -831,9 +833,9 @@ void MeBadQuadRemoverUnitTests::testCollapse()
                     {77, -7, 0},
                     {74, -6, 0}};
 
-  BSHP<XmUGrid> ugridIn = BuildUGrid(points, faces);
+  std::shared_ptr<XmUGrid> ugridIn = BuildUGrid(points, faces);
   BSHP<MeBadQuadRemover> remover = MeBadQuadRemover::New(ugridIn);
-  BSHP<XmUGrid> collapsedUGrid = remover->RemoveBadQuads(0.7);
+  std::shared_ptr<XmUGrid> collapsedUGrid = remover->RemoveBadQuads(0.7);
   VecPt3d expectedPoints = {// top row (0-9)
                             {0, 20, 0},
                             {10, 20, 0},
@@ -908,9 +910,9 @@ void MeBadQuadRemoverUnitTests::testCollapseQuadTri()
     {0, 20, 0}  // row 3
   };
 
-  BSHP<XmUGrid> ugridIn = BuildUGrid(points, faces);
+  std::shared_ptr<XmUGrid> ugridIn = BuildUGrid(points, faces);
   BSHP<MeBadQuadRemover> remover = MeBadQuadRemover::New(ugridIn);
-  BSHP<XmUGrid> collapsedUGrid = remover->RemoveBadQuads(0.7);
+  std::shared_ptr<XmUGrid> collapsedUGrid = remover->RemoveBadQuads(0.7);
   VecPt3d expectedPoints = {{-10, 0, 0}, {10, 0, 0}, {0, 20, 0}};
 
   VecPt3d actualPoints = collapsedUGrid->GetLocations();

@@ -66,8 +66,8 @@ class XmsinterpConan(ConanFile):
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
         self.requires("xmscore/[>=3.0.5 <4.0.0]@aquaveo/stable")
-        self.requires("xmsgrid/[>=3.0.3 <4.0.0]@aquaveo/stable")
-        self.requires("xmsinterp/[>=3.0.3 <4.0.0]@aquaveo/stable")
+        self.requires("xmsgrid/[>=4.0.0 <5.0.0]@aquaveo/stable")
+        self.requires("xmsinterp/[>=3.1.1 <4.0.0]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
