@@ -299,18 +299,19 @@ void meSizeFunctionFromDepth(const VecDbl& a_depths,
 /// \param[out] a_size A size value at each grid point based on the connected
 /// edge lengths
 //------------------------------------------------------------------------------
-void meSizeFunctionFromEdgeLengths(const XmUGrid& a_grid,
+void meSizeFunctionFromEdgeLengths(std::shared_ptr<XmUGrid> a_grid,
                                    VecDbl& a_size)
 {
-  XM_ENSURE_TRUE(a_grid.GetCellCount() > 0);
-  VecPt3d locs = a_grid.GetLocations();
+  XM_ENSURE_TRUE(a_grid);
+  XM_ENSURE_TRUE(a_grid->GetCellCount() > 0);
+  VecPt3d locs = a_grid->GetLocations();
   XM_ENSURE_TRUE(locs.size() > 0);
   a_size.assign(locs.size(), 0.0);
   for (size_t i = 0; i < locs.size(); ++i)
   {
     Pt3d& pt(locs[i]);
     VecInt edgePoints;
-    a_grid.GetPointAdjacentPoints((int)i, edgePoints);
+    a_grid->GetPointAdjacentPoints((int)i, edgePoints);
     double dist = 0.0;
     for (size_t j = 0; j < edgePoints.size(); ++j)
     {
@@ -343,6 +344,31 @@ void meSmoothSizeFunction(BSHP<TrTin> a_tin,
                           const DynBitset& a_ptsFlag,
                           VecFlt& a_smoothSize)
 {
+  meSmoothSizeFunction(meiUGridFromTin(a_tin), a_sizes, a_sizeRatio, a_minSize,
+                       a_anchorType, a_ptsFlag, a_smoothSize);
+} // meSmoothSizeFunction
+//------------------------------------------------------------------------------
+/// \brief Smooths a size function. Ensures that the size function transitions
+/// over a sufficient distance so that the area change of adjacent elements
+/// meets the size ratio passed in.
+/// \param[in] a_grid Unstructure grid defining the connectivity of the size function.
+/// \param[in] a_sizes Array of the current sizes
+/// \param[in] a_sizeRatio Allowable size difference between adjacent elements
+/// \param[in] a_minSize Minimum specified element size
+/// \param[in] a_anchorType The minimum element edge size
+/// \param[in] a_ptsFlag Flag to indicate if the value at the point should be
+/// adjusted (a value of true will skip the point).
+/// Leave the bitset empty to process all points.
+/// \param[out] a_smoothSize Array of smoothed sizes
+//------------------------------------------------------------------------------
+void meSmoothSizeFunction(std::shared_ptr<XmUGrid> a_grid,
+                          const VecFlt& a_sizes,
+                          double a_sizeRatio,
+                          double a_minSize,
+                          int a_anchorType,
+                          const DynBitset& a_ptsFlag,
+                          VecFlt& a_smoothSize)
+{
   a_smoothSize.resize(0);
 
   // error checking
@@ -356,7 +382,7 @@ void meSmoothSizeFunction(BSHP<TrTin> a_tin,
   XM_ENSURE_TRUE(scaleFactor != 0.0);
 
   SmoothIo io;
-  io.m_grid = meiUGridFromTin(a_tin);
+  io.m_grid = a_grid;
   io.m_sizes = &a_sizes;
   io.m_anchorType = a_anchorType;
   io.m_ptsFlag = a_ptsFlag;
@@ -391,6 +417,29 @@ void meSmoothElevBySlope(BSHP<TrTin> a_tin,
                          const DynBitset& a_ptsFlag,
                          VecFlt& a_smoothElevs)
 {
+  meSmoothElevBySlope(meiUGridFromTin(a_tin), a_elevs, a_maxSlope, a_anchorType,
+                      a_ptsFlag, a_smoothElevs);
+} // meSmoothElevBySlope
+//------------------------------------------------------------------------------
+/// \brief Smooths a elevations based on max specified slope (a_maxSlope)
+/// preserving either the min or max based on a_anchorType
+/// \param[in] a_grid Unstructured grid defining the connectivity of the size function.
+/// \param[in] a_elevs Array of the current elevations
+/// \param[in] a_maxSlope Maximum allowable slope
+/// \param[in] a_anchorType Indicates if you are anchoring to the top or bottom
+/// of the slope
+/// \param[in] a_ptsFlag Flag to indicate if the value at the point should be
+/// adjusted (a value of true will skip the point).
+/// Leave the bitset empty to process all points.
+/// \param[out] a_smoothElevs Array of smoothed elevations
+//------------------------------------------------------------------------------
+void meSmoothElevBySlope(std::shared_ptr<XmUGrid> a_grid,
+                         const VecFlt& a_elevs,
+                         double a_maxSlope,
+                         int a_anchorType,
+                         const DynBitset& a_ptsFlag,
+                         VecFlt& a_smoothElevs)
+{
   a_smoothElevs.resize(0);
 
   // error checking
@@ -398,7 +447,7 @@ void meSmoothElevBySlope(BSHP<TrTin> a_tin,
   XM_ENSURE_TRUE(a_maxSlope > 0.0);
 
   SmoothIo io;
-  io.m_grid = meiUGridFromTin(a_tin);
+  io.m_grid = a_grid;
   io.m_sizes = &a_elevs;
   io.m_anchorType = a_anchorType;
   io.m_ptsFlag = a_ptsFlag;
@@ -460,11 +509,11 @@ void MeMeshUtilsUnitTests::testSizeFuncFromEdgeLengths()
 {
   std::shared_ptr<xms::XmUGrid> grid = xms::TEST_XmUGridSimpleQuad();
   xms::VecDbl sizeFunc;
-  xms::meSizeFunctionFromEdgeLengths(*grid, sizeFunc);
+  xms::meSizeFunctionFromEdgeLengths(grid, sizeFunc);
   xms::VecDbl baseSize(9, 10.0);
   TS_ASSERT_DELTA_VEC(baseSize, sizeFunc, 1e-15);
   grid = xms::TEST_XmUGrid1Left90Tri();
-  xms::meSizeFunctionFromEdgeLengths(*grid, sizeFunc);
+  xms::meSizeFunctionFromEdgeLengths(grid, sizeFunc);
   xms::VecDbl baseSize2 = { 20.0, 24.14, 24.14 };
   TS_ASSERT_DELTA_VEC(baseSize2, sizeFunc, 1e-2);
 } // MeMeshUtilsUnitTests::testSizeFuncFromEdgeLengths
