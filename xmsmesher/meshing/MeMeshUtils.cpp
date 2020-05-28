@@ -24,6 +24,7 @@
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/DynBitset.h>
 #include <xmsgrid/triangulate/TrTin.h>
+#include <xmsgrid/ugrid/XmUGrid.h>
 
 // 6. Non-shared code headers
 
@@ -283,6 +284,34 @@ void meSizeFunctionFromDepth(const VecDbl& a_depths,
   }
 } // meSizeFunctionFromDepth
 //------------------------------------------------------------------------------
+/// \brief Creates a size at each point based on the average length of the
+/// connected edges
+/// \param[in] a_ugrid The unstructured grid
+/// \param[out] a_size A size value at each grid point based on the connected
+/// edge lengths
+//------------------------------------------------------------------------------
+void meSizeFunctionFromEdgeLengths(const XmUGrid& a_grid,
+                                   VecDbl& a_size)
+{
+  XM_ENSURE_TRUE(a_grid.GetCellCount() > 0);
+  VecPt3d locs = a_grid.GetLocations();
+  XM_ENSURE_TRUE(locs.size() > 0);
+  a_size.assign(locs.size(), 0.0);
+  for (size_t i = 0; i < locs.size(); ++i)
+  {
+    Pt3d& pt(locs[i]);
+    VecInt edgePoints;
+    a_grid.GetPointAdjacentPoints((int)i, edgePoints);
+    double dist = 0.0;
+    for (size_t j = 0; j < edgePoints.size(); ++j)
+    {
+      Pt3d& pt1(locs[edgePoints[j]]);
+      dist += Mdist(pt.x, pt.y, pt1.x, pt1.y);
+    }
+    a_size[i] = dist / (double)(edgePoints.size());
+  }
+} // meSizeFunctionFromEdgeLengths
+//------------------------------------------------------------------------------
 /// \brief Smooths a size function. Ensures that the size function transitions
 /// over a sufficient distance so that the area change of adjacent elements
 /// meets the size ratio passed in.
@@ -415,6 +444,21 @@ void MeMeshUtilsUnitTests::testSizeFuncFromDepth()
   xms::VecDbl baseElemSize = {2, 22, 42, 82, 102, 22, 2};
   TS_ASSERT_DELTA_VEC(baseElemSize, elemSize, 1e-9);
 } // MeMeshUtilsUnitTests::testSizeFuncFromDepth
+//------------------------------------------------------------------------------
+/// \brief Tests creating a size function from existing ugrid
+//------------------------------------------------------------------------------
+void MeMeshUtilsUnitTests::testSizeFuncFromEdgeLengths()
+{
+  std::shared_ptr<xms::XmUGrid> grid = xms::TEST_XmUGridSimpleQuad();
+  xms::VecDbl sizeFunc;
+  xms::meSizeFunctionFromEdgeLengths(*grid, sizeFunc);
+  xms::VecDbl baseSize(9, 10.0);
+  TS_ASSERT_DELTA_VEC(baseSize, sizeFunc, 1e-15);
+  grid = xms::TEST_XmUGrid1Left90Tri();
+  xms::meSizeFunctionFromEdgeLengths(*grid, sizeFunc);
+  xms::VecDbl baseSize2 = { 20.0, 24.14, 24.14 };
+  TS_ASSERT_DELTA_VEC(baseSize2, sizeFunc, 1e-2);
+} // MeMeshUtilsUnitTests::testSizeFuncFromEdgeLengths
 //------------------------------------------------------------------------------
 /// \brief Tests size function smoothing
 /// \verbatim
