@@ -46,7 +46,7 @@ class SmoothIo
 {
 public:
   SmoothIo()
-  : m_tin()
+  : m_grid()
   , m_sizes(nullptr)
   , m_anchorType(0)
   , m_ptsFlag()
@@ -64,7 +64,8 @@ public:
   bool CalcMaxSize(double a_length, float a_smoothVal, double& a_maxSize);
   double CalcMinSize(double a_length, float a_smoothVal, double a_calcMaxSize);
 
-  BSHP<TrTin> m_tin;     ///< geometry defining connections between points
+  std::shared_ptr<XmUGrid> m_grid; ///< unstructured grid defining connections between points
+
   const VecFlt* m_sizes; ///< array of size values
   int m_anchorType;      ///< anchor to min or max value
   DynBitset m_ptsFlag;   ///< flags indicating whether a point should be processed
@@ -134,10 +135,10 @@ double SmoothIo::CalcMinSize(double a_length, float a_smoothVal, double a_calcMa
 static void meiDoSmooth(SmoothIo& a_)
 {
   if (a_.m_ptsFlag.empty())
-    a_.m_ptsFlag.resize(a_.m_tin->NumPoints(), true);
-  XM_ENSURE_TRUE(a_.m_ptsFlag.size() == (size_t)a_.m_tin->NumPoints());
+    a_.m_ptsFlag.resize(a_.m_grid->GetPointCount(), true);
+  XM_ENSURE_TRUE(a_.m_ptsFlag.size() == (size_t)a_.m_grid->GetPointCount());
 
-  DynBitset ptsFlag(a_.m_tin->NumPoints(), false);
+  DynBitset ptsFlag(a_.m_grid->GetPointCount(), false);
 
   VecFlt& smoothSize(*a_.m_smoothSize);
   const VecFlt& sz(*a_.m_sizes);
@@ -156,12 +157,8 @@ static void meiDoSmooth(SmoothIo& a_)
     vecIt.push_back(mapSizeIdx.insert(std::make_pair(val * sz[i], i)));
   }
 
-  // get references to the Tin
-  const VecPt3d& pts(a_.m_tin->Points());
-  const VecInt2d& trisAdjToPts(a_.m_tin->TrisAdjToPts());
-  const VecInt& tris(a_.m_tin->Triangles());
-
   // iterate through the points
+  const VecPt3d& pts(a_.m_grid->GetLocations());
   auto it = mapSizeIdx.begin();
   auto endIt = mapSizeIdx.end();
   for (; it != endIt; ++it)
@@ -173,84 +170,96 @@ static void meiDoSmooth(SmoothIo& a_)
     {
       smoothSize[i] = (float)a_.m_minSize;
     }
-    const VecInt adjTris(trisAdjToPts[i]); // triangles adjacent to the point
-    for (const auto& t : adjTris)
+    VecInt adjPts;
+    a_.m_grid->GetPointAdjacentPoints(i, adjPts);
+    for (size_t j = 0; j < adjPts.size(); ++j)
     {
-      int tIdx = t * 3;
-      int triPts[3];
-      // points in the adjacent triangle
-      triPts[0] = tris[tIdx];
-      triPts[1] = tris[tIdx + 1];
-      triPts[2] = tris[tIdx + 2];
-      for (int t1 = 0; t1 < 3; ++t1)
+      int ix = adjPts[j];
+      // make sure we have not already adjusted this point
+      if (ptsFlag[ix])
+        continue;
+
+      const Pt3d &p0(pts[i]), &p1(pts[ix]);
+      // calculate what the min or max size can be based on how close
+      // the elements are
+      double length = Mdist(p0.x, p0.y, p1.x, p1.y);
+      double maxSize(0);
+      XM_ENSURE_TRUE(a_.CalcMaxSize(length, smoothSize[i], maxSize));
+
+      switch (a_.m_anchorType)
       {
-        int ix = triPts[t1]; // index of triangle point
-        // make sure this is not the vertex in the "i" loop
-        if (ix == i)
-          continue;
-        // make sure we have not already adjusted this point
-        if (ptsFlag[ix])
-          continue;
-
-        const Pt3d &p0(pts[i]), &p1(pts[ix]);
-        // calculate what the min or max size can be based on how close
-        // the elements are
-        double length = Mdist(p0.x, p0.y, p1.x, p1.y);
-        double maxSize(0);
-        XM_ENSURE_TRUE(a_.CalcMaxSize(length, smoothSize[i], maxSize));
-
-        switch (a_.m_anchorType)
+      case 0: // anchor to the min size
+      {
+        if (a_.m_checkMinSize)
+          XM_ENSURE_TRUE(maxSize > a_.m_minSize);
+        XM_ENSURE_TRUE(maxSize >= (double)smoothSize[i]);
+        if (maxSize < (double)smoothSize[ix])
         {
-        case 0: // anchor to the min size
-        {
-          if (a_.m_checkMinSize)
-            XM_ENSURE_TRUE(maxSize > a_.m_minSize);
-          XM_ENSURE_TRUE(maxSize >= (double)smoothSize[i]);
-          if (maxSize < (double)smoothSize[ix])
-          {
-            smoothSize[ix] = (float)maxSize;
-            ptsFlag.set(ix, true);
-          }
-          else if (a_.m_checkMinSize && (double)smoothSize[ix] < a_.m_minSize)
-          {
-            smoothSize[ix] = (float)a_.m_minSize;
-            ptsFlag.set(ix, true);
-          }
+          smoothSize[ix] = (float)maxSize;
+          ptsFlag.set(ix, true);
         }
+        else if (a_.m_checkMinSize && (double)smoothSize[ix] < a_.m_minSize)
+        {
+          smoothSize[ix] = (float)a_.m_minSize;
+          ptsFlag.set(ix, true);
+        }
+      }
+      break;
+      case 1: // anchor to the max size
+      {
+        double minSize = a_.CalcMinSize(length, smoothSize[i], maxSize);
+        // double minSize = smoothSize[i] - (maxSize - smoothSize[i]);
+        XM_ENSURE_TRUE(minSize < smoothSize[i]);
+        if (minSize > (double)smoothSize[ix])
+        {
+          smoothSize[ix] = (float)minSize;
+          ptsFlag.set(ix, true);
+        }
+        else if (a_.m_checkMinSize && (double)smoothSize[ix] < a_.m_minSize)
+        {
+          smoothSize[ix] = (float)a_.m_minSize;
+          ptsFlag.set(ix, true);
+        }
+      }
+      break;
+      default:
+        XM_ASSERT(0);
         break;
-        case 1: // anchor to the max size
-        {
-          double minSize = a_.CalcMinSize(length, smoothSize[i], maxSize);
-          // double minSize = smoothSize[i] - (maxSize - smoothSize[i]);
-          XM_ENSURE_TRUE(minSize < smoothSize[i]);
-          if (minSize > (double)smoothSize[ix])
-          {
-            smoothSize[ix] = (float)minSize;
-            ptsFlag.set(ix, true);
-          }
-          else if (a_.m_checkMinSize && (double)smoothSize[ix] < a_.m_minSize)
-          {
-            smoothSize[ix] = (float)a_.m_minSize;
-            ptsFlag.set(ix, true);
-          }
-        }
-        break;
-        default:
-          XM_ASSERT(0);
-          break;
-        }
-        // resort the point if it changed size
-        if (ptsFlag[ix])
-        {
-          ptsFlag.set(ix, false);
-          mapSizeIdx.erase(vecIt[ix]);
-          vecIt[ix] = mapSizeIdx.insert(std::make_pair(val * smoothSize[ix], ix));
-        }
+      }
+      // resort the point if it changed size
+      if (ptsFlag[ix])
+      {
+        ptsFlag.set(ix, false);
+        mapSizeIdx.erase(vecIt[ix]);
+        vecIt[ix] = mapSizeIdx.insert(std::make_pair(val * smoothSize[ix], ix));
       }
     }
   }
 } // meiDoSmooth
-
+//------------------------------------------------------------------------------
+/// \brief Creates a XmUGrid from a TrTin
+/// \param[in] a_tin The TrTin input
+/// \returns XmUGrid class
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> meiUGridFromTin(BSHP<TrTin> a_tin)
+{
+  std::shared_ptr<XmUGrid> ugrid;
+  XM_ENSURE_TRUE(a_tin, ugrid);
+  XM_ENSURE_TRUE(a_tin->NumTriangles() > 0, ugrid);
+  VecInt cellStream;
+  const VecInt& tris = a_tin->Triangles();
+  cellStream.reserve(a_tin->NumTriangles() * 5);
+  for (size_t i = 0; i < tris.size(); i += 3)
+  {
+    cellStream.push_back(XMU_TRIANGLE);
+    cellStream.push_back(3);
+    cellStream.push_back(tris[i + 0]);
+    cellStream.push_back(tris[i + 1]);
+    cellStream.push_back(tris[i + 2]);
+  }
+  ugrid = XmUGrid::New(a_tin->Points(), cellStream);
+  return ugrid;
+} // meiUGridFromTin
 //------------------------------------------------------------------------------
 /// \brief Creates a size at each point based on the depth at the point and the
 /// min and max sizes
@@ -347,7 +356,7 @@ void meSmoothSizeFunction(BSHP<TrTin> a_tin,
   XM_ENSURE_TRUE(scaleFactor != 0.0);
 
   SmoothIo io;
-  io.m_tin = a_tin;
+  io.m_grid = meiUGridFromTin(a_tin);
   io.m_sizes = &a_sizes;
   io.m_anchorType = a_anchorType;
   io.m_ptsFlag = a_ptsFlag;
@@ -389,7 +398,7 @@ void meSmoothElevBySlope(BSHP<TrTin> a_tin,
   XM_ENSURE_TRUE(a_maxSlope > 0.0);
 
   SmoothIo io;
-  io.m_tin = a_tin;
+  io.m_grid = meiUGridFromTin(a_tin);
   io.m_sizes = &a_elevs;
   io.m_anchorType = a_anchorType;
   io.m_ptsFlag = a_ptsFlag;

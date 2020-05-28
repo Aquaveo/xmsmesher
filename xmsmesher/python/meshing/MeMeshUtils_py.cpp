@@ -13,6 +13,7 @@
 #include <xmscore/misc/XmError.h>
 #include <xmscore/python/misc/PyUtils.h>
 #include <xmsgrid/triangulate/TrTin.h>
+#include <xmsgrid/ugrid/XmUGrid.h>
 #include <xmsmesher/meshing/MeMeshUtils.h>
 #include <xmsmesher/meshing/MeMultiPolyMesher.h>
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
@@ -30,6 +31,9 @@ void initMeMeshUtils(py::module &m) {
 
     py::module modMeshUtils = m.def_submodule("mesh_utils");
 
+  // ---------------------------------------------------------------------------
+  // function: size_function_from_depth
+  // ---------------------------------------------------------------------------
     modMeshUtils.def("SizeFunctionFromDepth", [](py::iterable depths, double min_size,
                                          double max_size) -> py::iterable {
 
@@ -39,6 +43,14 @@ void initMeMeshUtils(py::module &m) {
         return xms::PyIterFromVecDbl(vec_size);
     },py::arg("depths"),py::arg("min_size"),
     py::arg("max_size"));
+	// ---------------------------------------------------------------------------
+	// function: size_function_from_edge_lengths
+	// ---------------------------------------------------------------------------
+	  modMeshUtils.def("SizeFunctionFromEdgeLengths", [](xms::XmUGrid& grid) -> py::iterable {
+      xms::VecDbl vec_size;
+		  xms::meSizeFunctionFromEdgeLengths(grid, vec_size);
+		  return xms::PyIterFromVecDbl(vec_size);
+	  }, py::arg("grid"));
   // ---------------------------------------------------------------------------
   // function: smooth_size_function
   // ---------------------------------------------------------------------------
