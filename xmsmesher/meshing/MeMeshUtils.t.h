@@ -22,6 +22,7 @@ class MeMeshUtilsUnitTests : public CxxTest::TestSuite
 {
 public:
   void testSizeFuncFromDepth();
+  void testSizeFuncFromEdgeLengths();
   void testSmoothSizeFunc();
   void testSmoothSizeFunc1();
   void testSmoothSizeFunc2();
