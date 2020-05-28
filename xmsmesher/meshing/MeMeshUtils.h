@@ -25,6 +25,7 @@ namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
 class TrTin;
+class XmUGrid;
 
 //----- Constants / Enumerations -----------------------------------------------
 
@@ -35,6 +36,8 @@ void meSizeFunctionFromDepth(const VecDbl& a_depths,
                              VecDbl& a_size,
                              double a_minSize,
                              double a_maxSize);
+void meSizeFunctionFromEdgeLengths(const XmUGrid& a_grid,
+                                   VecDbl& a_size);
 void meSmoothSizeFunction(BSHP<TrTin> a_tin,
                           const VecFlt& a_sizes,
                           double a_sizeRatio,
