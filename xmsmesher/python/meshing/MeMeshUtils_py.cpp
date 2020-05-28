@@ -46,11 +46,11 @@ void initMeMeshUtils(py::module &m) {
 	// ---------------------------------------------------------------------------
 	// function: size_function_from_edge_lengths
 	// ---------------------------------------------------------------------------
-	  modMeshUtils.def("SizeFunctionFromEdgeLengths", [](xms::XmUGrid& grid) -> py::iterable {
+	  modMeshUtils.def("SizeFunctionFromEdgeLengths", [](std::shared_ptr<xms::XmUGrid> ugrid) -> py::iterable {
       xms::VecDbl vec_size;
-		  xms::meSizeFunctionFromEdgeLengths(grid, vec_size);
+		  xms::meSizeFunctionFromEdgeLengths(ugrid, vec_size);
 		  return xms::PyIterFromVecDbl(vec_size);
-	  }, py::arg("grid"));
+	  }, py::arg("ugrid"));
   // ---------------------------------------------------------------------------
   // function: smooth_size_function
   // ---------------------------------------------------------------------------
@@ -67,6 +67,21 @@ void initMeMeshUtils(py::module &m) {
     }, py::arg("tin"),py::arg("sizes"), py::arg("size_ratio"), py::arg("min_size"), 
        py::arg("anchor_type"), py::arg("pts_flag"));
   // ---------------------------------------------------------------------------
+  // function: smooth_size_function_ugrid
+  // ---------------------------------------------------------------------------
+    modMeshUtils.def("SmoothSizeFunctionUGrid", [](std::shared_ptr<xms::XmUGrid> ugrid, py::iterable sizes,
+                                    double size_ratio, double min_size, int anchor_type,
+                                    py::iterable pts_flag) -> py::iterable {
+      xms::VecFlt vec_sizes = *xms::VecFltFromPyIter(sizes);
+      xms::VecFlt vec_smooth_sizes;
+      xms::DynBitset bitset =  xms::DynamicBitsetFromPyIter(pts_flag);
+
+      xms::meSmoothSizeFunction(ugrid, vec_sizes, size_ratio, min_size, anchor_type, bitset, vec_smooth_sizes);
+
+      return xms::PyIterFromVecFlt(vec_smooth_sizes);
+    }, py::arg("ugrid"),py::arg("sizes"), py::arg("size_ratio"), py::arg("min_size"), 
+       py::arg("anchor_type"), py::arg("pts_flag"));
+  // ---------------------------------------------------------------------------
   // function: smooth_elev_by_slope
   // ---------------------------------------------------------------------------
     modMeshUtils.def("SmoothElevBySlope", [](boost::shared_ptr<xms::TrTin> tin, py::iterable elevations,
@@ -79,6 +94,19 @@ void initMeMeshUtils(py::module &m) {
 
       return xms::PyIterFromVecFlt(vec_smooth_elevations);
     }, py::arg("tin"),py::arg("elevations"), py::arg("max_slope"),py::arg("anchor_to_max"), py::arg("pts_flag"));
+    // ---------------------------------------------------------------------------
+    // function: smooth_elev_by_slope_ugrid
+    // ---------------------------------------------------------------------------
+    modMeshUtils.def("SmoothElevBySlopeUGrid", [](std::shared_ptr<xms::XmUGrid> ugrid, py::iterable elevations,
+      double max_slope, int anchor_to_max,
+      py::iterable pts_flag) -> py::iterable {
+      xms::VecFlt vec_elevations = *xms::VecFltFromPyIter(elevations);
+      xms::VecFlt vec_smooth_elevations;
+      xms::DynBitset bitset = xms::DynamicBitsetFromPyIter(pts_flag);
+      xms::meSmoothElevBySlope(ugrid, vec_elevations, max_slope, anchor_to_max, bitset, vec_smooth_elevations);
+
+      return xms::PyIterFromVecFlt(vec_smooth_elevations);
+    }, py::arg("ugrid"), py::arg("elevations"), py::arg("max_slope"), py::arg("anchor_to_max"), py::arg("pts_flag"));
 
   // ---------------------------------------------------------------------------
   // function: check_mesh_input_topology
