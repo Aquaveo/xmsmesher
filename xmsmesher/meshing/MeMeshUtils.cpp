@@ -299,7 +299,7 @@ void meSizeFunctionFromDepth(const VecDbl& a_depths,
 /// \param[out] a_size A size value at each grid point based on the connected
 /// edge lengths
 //------------------------------------------------------------------------------
-void meSizeFunctionFromEdgeLengths(boost::shared_ptr<XmUGrid> a_grid,
+void meSizeFunctionFromEdgeLengths(std::shared_ptr<XmUGrid> a_grid,
                                    VecDbl& a_size)
 {
   XM_ENSURE_TRUE(a_grid);
@@ -361,7 +361,7 @@ void meSmoothSizeFunction(BSHP<TrTin> a_tin,
 /// Leave the bitset empty to process all points.
 /// \param[out] a_smoothSize Array of smoothed sizes
 //------------------------------------------------------------------------------
-void meSmoothSizeFunction(boost::shared_ptr<XmUGrid> a_grid,
+void meSmoothSizeFunction(std::shared_ptr<XmUGrid> a_grid,
                           const VecFlt& a_sizes,
                           double a_sizeRatio,
                           double a_minSize,
@@ -433,7 +433,7 @@ void meSmoothElevBySlope(BSHP<TrTin> a_tin,
 /// Leave the bitset empty to process all points.
 /// \param[out] a_smoothElevs Array of smoothed elevations
 //------------------------------------------------------------------------------
-void meSmoothElevBySlope(boost::shared_ptr<XmUGrid> a_grid,
+void meSmoothElevBySlope(std::shared_ptr<XmUGrid> a_grid,
                          const VecFlt& a_elevs,
                          double a_maxSlope,
                          int a_anchorType,
