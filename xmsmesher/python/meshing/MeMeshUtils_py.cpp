@@ -46,7 +46,7 @@ void initMeMeshUtils(py::module &m) {
 	// ---------------------------------------------------------------------------
 	// function: size_function_from_edge_lengths
 	// ---------------------------------------------------------------------------
-	  modMeshUtils.def("SizeFunctionFromEdgeLengths", [](std::shared_ptr<xms::XmUGrid> ugrid) -> py::iterable {
+	  modMeshUtils.def("SizeFunctionFromEdgeLengths", [](boost::shared_ptr<xms::XmUGrid> ugrid) -> py::iterable {
       xms::VecDbl vec_size;
 		  xms::meSizeFunctionFromEdgeLengths(ugrid, vec_size);
 		  return xms::PyIterFromVecDbl(vec_size);
@@ -69,7 +69,7 @@ void initMeMeshUtils(py::module &m) {
   // ---------------------------------------------------------------------------
   // function: smooth_size_function_ugrid
   // ---------------------------------------------------------------------------
-    modMeshUtils.def("SmoothSizeFunctionUGrid", [](std::shared_ptr<xms::XmUGrid> ugrid, py::iterable sizes,
+    modMeshUtils.def("SmoothSizeFunctionUGrid", [](boost::shared_ptr<xms::XmUGrid> ugrid, py::iterable sizes,
                                     double size_ratio, double min_size, int anchor_type,
                                     py::iterable pts_flag) -> py::iterable {
       xms::VecFlt vec_sizes = *xms::VecFltFromPyIter(sizes);
@@ -97,7 +97,7 @@ void initMeMeshUtils(py::module &m) {
     // ---------------------------------------------------------------------------
     // function: smooth_elev_by_slope_ugrid
     // ---------------------------------------------------------------------------
-    modMeshUtils.def("SmoothElevBySlopeUGrid", [](std::shared_ptr<xms::XmUGrid> ugrid, py::iterable elevations,
+    modMeshUtils.def("SmoothElevBySlopeUGrid", [](boost::shared_ptr<xms::XmUGrid> ugrid, py::iterable elevations,
       double max_slope, int anchor_to_max,
       py::iterable pts_flag) -> py::iterable {
       xms::VecFlt vec_elevations = *xms::VecFltFromPyIter(elevations);
