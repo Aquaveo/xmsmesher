@@ -78,7 +78,7 @@ def smooth_size_function_ugrid(ugrid, sizes, size_ratio, min_size, anchor_to, po
     anchor_types = {'min': 0, 'max': 1}
     if anchor_to not in anchor_types.keys():
         raise ValueError("anchor_to must be one of 'min' or 'max', not {}".format(anchor_to))
-    return mesh_utils.SmoothSizeFunctionUgrid(ugrid._instance, sizes, size_ratio, min_size, anchor_types[anchor_to], points_flag)
+    return mesh_utils.SmoothSizeFunctionUGrid(ugrid._instance, sizes, size_ratio, min_size, anchor_types[anchor_to], points_flag)
 
 
 def smooth_elev_by_slope(tin, elevations, max_slope, anchor_to, points_flag):
