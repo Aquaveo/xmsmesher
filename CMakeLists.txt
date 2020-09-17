@@ -108,7 +108,6 @@ set(xmsmesh_sources
   xmsmesher/meshing/detail/MeWeightMatcher.cpp
   xmsmesher/meshing/MePolyMesher.cpp
   xmsmesher/meshing/MePolyRedistributePts.cpp
-  xmsmesher/testing/TestTools.cpp
   xmsmesher/tutorial/TutMeshing.cpp)
 
 set(xmsmesh_headers
@@ -129,8 +128,7 @@ set(xmsmesh_headers
   xmsmesher/meshing/detail/MeQuadBlossom.h
   xmsmesher/meshing/detail/MeRefinePtsToPolys.h
   xmsmesher/meshing/detail/MeRelaxer.h
-  xmsmesher/meshing/detail/MeWeightMatcher.h
-  xmsmesher/testing/TestTools.h)
+  xmsmesher/meshing/detail/MeWeightMatcher.h)
 
 # Pybind11 sources
 set(xmsmesh_py_source
@@ -168,6 +166,8 @@ if (BUILD_TESTING)
     xmsmesher/meshing/detail/MeRefinePtsToPolys.t.h
     xmsmesher/meshing/detail/MeRelaxer.t.h
     xmsmesher/meshing/detail/MeWeightMatcher.t.h
+    xmsmesher/testing/TestTools.cpp
+    xmsmesher/testing/TestTools.h
     xmsmesher/tutorial/TutMeshing.t.h
   )
 
