@@ -20,6 +20,7 @@
 
 // 4. External library headers
 #include <boost/format.hpp>
+#include <boost/predef.h>
 
 // 5. Shared code headers
 #include <xmscore/misc/StringUtil.h>
@@ -31,6 +32,7 @@
 #include <xmsgrid/geometry/geoms.h>
 #include <xmsmesher/meshing/MeMultiPolyMesher.h>
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
+#include <xmsmesher/testing/TestTools.h>
 #include <xmscore/misc/carray.h>
 
 // 6. Non-shared code headers
@@ -322,7 +324,7 @@ static void iTestFromPolyFile(std::string a_fileBase, int a_precision)
 #endif
   std::string outFile;
   std::string baseFile;
-  ttGetTestFilePaths(path, a_fileBase, ".2dm", baseFile, outFile);
+  ttGetTestFilePathsBoostGeom(path, a_fileBase, ".2dm", baseFile, outFile);
   {
     std::fstream os;
     os.open(outFile.c_str(), std::fstream::out);
@@ -535,9 +537,15 @@ void MeMultiPolyTo2dmUnitTests::testCase4()
     "ND    24            10.0            10.0             0.0\n"
     "ND    25            20.0            10.0             0.0\n"
     "ND    26            20.0            20.0             0.0\n"
+#if BOOST_VERSION > 107300
+    "ND    27 8.5108203218325  31.75795805983             0.0\n"
+    "ND    28 19.918901982442 32.426918471238             0.0\n"
+    "ND    29 14.906323238425 26.659241998487             0.0\n"
+#else
     "ND    27 8.5108202542291 31.757958032906             0.0\n"
     "ND    28 19.918901892813 32.426918311488             0.0\n"
     "ND    29 14.906323131347 26.659241919112             0.0\n"
+#endif
     "ND    30            40.0            20.0             0.0\n"
     "ND    31            40.0            30.0             0.0\n"
     "ND    32            40.0            40.0             0.0\n"
@@ -564,9 +572,15 @@ void MeMultiPolyTo2dmUnitTests::testCase4()
     "ND    53            50.0            10.0             0.0\n"
     "ND    54            60.0            10.0             0.0\n"
     "ND    55            60.0            20.0             0.0\n"
+#if BOOST_VERSION > 107300
+    "ND    56 48.371139900776  31.77081551667             0.0\n"
+    "ND    57 59.828479414571 32.416248539809             0.0\n"
+    "ND    58 54.803686044972 26.664267374685             0.0\n";
+#else
     "ND    56 48.371140004857 31.770815509095             0.0\n"
     "ND    57 59.828479553661 32.416248616621             0.0\n"
     "ND    58 54.803686217591 26.664267399073             0.0\n";
+#endif
   TS_ASSERT_EQUALS(base, ss.str());
 } // MeMultiPolyTo2dmUnitTests::testCase4
 ////////////////////////////////////////////////////////////////////////////////

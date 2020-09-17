@@ -52,6 +52,7 @@
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
 #include <xmsmesher/meshing/MeMultiPolyTo2dm.h>
 #include <xmsmesher/meshing/MePolyRedistributePts.h>
+#include <xmsmesher/testing/TestTools.h>
 
 namespace xms
 {
@@ -250,7 +251,7 @@ void tutGenerateAndCompare2dm(MeMultiPolyMesherIo& a_io, const std::string& a_fi
   const std::string path(std::string(XMS_TEST_PATH) + "Tutorial_Meshing/");
   std::string outFile;
   std::string baseFile;
-  ttGetTestFilePaths(path, a_fileBase, ".2dm", baseFile, outFile);
+  ttGetTestFilePathsBoostGeom(path, a_fileBase, ".2dm", baseFile, outFile);
   {
     std::fstream os(outFile.c_str(), std::fstream::out);
     TS_ASSERT(!os.bad());
