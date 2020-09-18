@@ -295,7 +295,7 @@ void meSizeFunctionFromDepth(const VecDbl& a_depths,
 //------------------------------------------------------------------------------
 /// \brief Creates a size at each point based on the average length of the
 /// connected edges
-/// \param[in] a_ugrid The unstructured grid
+/// \param[in] a_grid The unstructured grid
 /// \param[out] a_size A size value at each grid point based on the connected
 /// edge lengths
 //------------------------------------------------------------------------------
