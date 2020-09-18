@@ -32,7 +32,6 @@
 #include <xmsgrid/geometry/geoms.h>
 #include <xmsmesher/meshing/MeMultiPolyMesher.h>
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
-#include <xmsmesher/testing/TestTools.h>
 #include <xmscore/misc/carray.h>
 
 // 6. Non-shared code headers
@@ -274,6 +273,7 @@ void MeMultiPolyTo2dmImpl::Write2dm(MeMultiPolyMesherIo& a_io, std::ostream& a_o
 #include <xmsmesher/meshing/MeMultiPolyTo2dm.t.h>
 
 #include <xmscore/testing/TestTools.h>
+#include <xmsmesher/testing/TestTools.h>
 #include <xmsmesher/tutorial/TutMeshing.t.h>
 
 //----- Namespace declaration --------------------------------------------------
