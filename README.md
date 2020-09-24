@@ -7,9 +7,9 @@ Meshing library for XMS products
 Master Branch Status
 --------------------
 
-[![Build Status](https://travis-ci.org/Aquaveo/xmsmesher.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsmesher)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/9rt489nowh8rt7ib?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsmesher)
+![Linux-CI](https://github.com/Aquaveo/xmsmesher/workflows/Linux-CI/badge.svg)
+![Mac-CI](https://github.com/Aquaveo/xmsmesher/workflows/Mac-CI/badge.svg)
+![Windows-CI](https://github.com/Aquaveo/xmsmesher/workflows/Windows-CI/badge.svg)
 
 Prerequisites
 --------------
