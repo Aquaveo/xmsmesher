@@ -28,39 +28,34 @@ if __name__ == "__main__":
             'AQUAPI_URL': aquapi_url,
         })
 
-        # Require c++11 compatibility
         if settings['compiler'] == 'gcc':
             settings.update({
                 'compiler.libcxx': 'libstdc++11'
             })
+            compiler_version = int(settings['compiler.version'])
+            if compiler_version in [5, 6]:
+                settings.update({'cppstd': '14'})
+            elif compiler_version == 7:
+                settings.update({'cppstd': '17'})
         elif settings['compiler'] == 'apple-clang':
             settings.update({'cppstd': 'gnu17'})
-
+        elif settings['compiler'] == 'Visual Studio':
+            compiler_version = int(settings['compiler.version'])
+            if compiler_version == 14:
+                settings.update({'cppstd': '14'})
+            elif compiler_version == 16:
+                settings.update({'cppstd': '17'})
 
     pybind_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # pybind option
-        if (not settings['compiler'] == "Visual Studio" \
-                     or int(settings['compiler.version']) > 12) \
-                and settings['arch'] == "x86_64" and settings['build_type'] != 'Debug':
+        if settings['arch'] == "x86_64" and settings['build_type'] != 'Debug':
             pybind_options = dict(options)
             pybind_options.update({'xmsmesher:pybind': True})
             pybind_updated_builds.append([settings, pybind_options, env_vars, build_requires])
 
         pybind_updated_builds.append([settings, options, env_vars, build_requires])
     builder.builds = pybind_updated_builds
-
-    xms_updated_builds = []
-    for settings, options, env_vars, build_requires, reference in builder.items:
-        # xms option
-        if settings['compiler'] == 'Visual Studio' \
-                and 'MD' in settings['compiler.runtime'] \
-                and int(settings['compiler.version']) < 13:
-            xms_options = dict(options)
-            xms_options.update({'xmsmesher:xms': True})
-            xms_updated_builds.append([settings, xms_options, env_vars, build_requires])
-        xms_updated_builds.append([settings, options, env_vars, build_requires])
-    builder.builds = xms_updated_builds
 
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
