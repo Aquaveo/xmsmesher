@@ -1,36 +1,67 @@
 """Test MultiPolyMesherIo_py.cpp."""
 import unittest
+
 import numpy as np
+
+from xms.interp.interpolate import InterpIdw
+from xms.interp.interpolate import InterpLinear
+
 from xms.mesher.meshing import MultiPolyMesherIo
 from xms.mesher.meshing import PolyInput
 from xms.mesher.meshing import RefinePoint
-from xms.interp.interpolate import InterpLinear
-from xms.interp.interpolate import InterpIdw
 
 
 class TestMultiPolyMesherIo(unittest.TestCase):
     """Test MultiPolyMesherIo functions."""
 
     def setUp(self):
+        """Runs before each test."""
         pass
 
-    def assertInsidePolysEqual(self, base, out):
+    def assert_inside_polys_equal(self, base, out):
+        """Ensure two inside poly lists are identical.
+
+        Args:
+            base (list): The baseline list
+            out (list): The output list
+
+        Returns:
+            bool: True if both lists are identical
+        """
         self.assertEqual(len(base), len(out), "Base InsidePolys and Out InsidePolys lengths do not match.")
         for i in range(len(base)):
             np.testing.assert_array_equal(base[i], out[i],
                                           "inside_poly[{}] is not the same, -- {} != {}".format(i, base[i], out[i]))
 
     @staticmethod
-    def assertArraysEqual(base, out):
+    def assert_arrays_equal(base, out):
+        """Ensure two lists are identical.
+
+        Args:
+            base (list): The baseline list
+            out (list): The output list
+
+        Returns:
+            bool: True if both lists are identical
+        """
         np.testing.assert_array_equal(np.array(base), out)
 
-    def assertTupleStringsEqual(self, base, out):
+    def assert_tuple_strings_equal(self, base, out):
+        """Ensure all elements in two lists have the same string values.
+
+        Args:
+            base (list): The baseline list
+            out (list): The output list
+
+        Returns:
+            bool: True if both lists are identical
+        """
         self.assertEqual(len(base), len(out), "Base PolyInputs and Out PolyInputs lengths do not match.")
         for i in range(0, len(base)):
             self.assertEqual(str(base[i]), str(out[i]))
 
-
-    def test_creating_MultiPolyMesherIo(self):
+    def test_constructor(self):
+        """Test the MultiPolyMesherIo constructor."""
         io = MultiPolyMesherIo(())
         self.assertIsInstance(io, MultiPolyMesherIo)
         self.assertEqual(False, io.check_topology)
@@ -41,7 +72,8 @@ class TestMultiPolyMesherIo(unittest.TestCase):
         self.assertEqual(0, len(io.polygons))
         self.assertEqual(0, len(io.refine_points))
 
-    def test_properties_MultiPolyMesherIo(self):
+    def test_properties(self):
+        """Test the MultiPolyMesherIo properties."""
         io = MultiPolyMesherIo(())
         self.assertIsInstance(io, MultiPolyMesherIo)
 
@@ -57,7 +89,7 @@ class TestMultiPolyMesherIo(unittest.TestCase):
         pi2 = PolyInput(out_poly)
         pi2.bias = 0.618
         io.polygon_inputs = (pi1, pi2)
-        self.assertTupleStringsEqual((pi1, pi2), io.polygon_inputs)
+        self.assert_tuple_strings_equal((pi1, pi2), io.polygon_inputs)
 
         rp1 = RefinePoint((5, 0, -3), 3.1, False)
         rp2 = RefinePoint((-2, -2, 1), -0.4, True)
@@ -67,23 +99,44 @@ class TestMultiPolyMesherIo(unittest.TestCase):
         for i in range(len(io_refine_points)):
             self.assertTrue(ref_points[i] == io_refine_points[i])
 
+
 class TestPolyInput(unittest.TestCase):
     """Test PolyInput functions."""
 
     def setUp(self):
+        """Runs before each test."""
         pass
 
-    def assertInsidePolysEqual(self, base, out):
+    def assert_inside_polys_equal(self, base, out):
+        """Ensure two inside poly lists are identical.
+
+        Args:
+            base (list): The baseline list
+            out (list): The output list
+
+        Returns:
+            bool: True if both lists are identical
+        """
         self.assertEqual(len(base), len(out), "Base InsidePolys and Out InsidePolys lengths do not match.")
         for i in range(len(base)):
             np.testing.assert_array_equal(base[i], out[i],
                                           "inside_poly[{}] is not the same, -- {} != {}".format(i, base[i], out[i]))
 
     @staticmethod
-    def assertArraysEqual(base, out):
+    def assert_arrays_equal(base, out):
+        """Ensure two lists are identical.
+
+        Args:
+            base (list): The baseline list
+            out (list): The output list
+
+        Returns:
+            bool: True if both lists are identical
+        """
         np.testing.assert_array_equal(np.array(base), out)
 
-    def test_creating_default_PolyInput(self):
+    def test_constructor_simple(self):
+        """Test the PolyInput constructor."""
         out_poly = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0))
         pi = PolyInput(out_poly)
         self.assertIsInstance(pi, PolyInput)
@@ -96,7 +149,8 @@ class TestPolyInput(unittest.TestCase):
         self.assertEqual(-1, pi.constant_size_function)
         self.assertEqual(False, pi.remove_internal_four_triangle_points)
 
-    def test_creating_PolyInput(self):
+    def test_constructor(self):
+        """Test the PolyInput constructor."""
         outside_poly = ((1, 2, 0), (5, 2, 0), (5, 9, 0), (1, 9, 0))
         inside_polys = (((3, 3, 0), (2.5, 4, 0), (2, 3, 0)),
                         ((4, 8, 0), (3, 7, 0), (2, 8, 0)))
@@ -110,8 +164,8 @@ class TestPolyInput(unittest.TestCase):
                        bias=bias, size_function=size_func, polygon_corners=poly_corners,
                        elevation_function=elev_func)
         self.assertIsInstance(pi, PolyInput)
-        self.assertArraysEqual(outside_poly, pi.outside_polygon)
-        self.assertInsidePolysEqual(inside_polys, pi.inside_polygons)
+        self.assert_arrays_equal(outside_poly, pi.outside_polygon)
+        self.assert_inside_polys_equal(inside_polys, pi.inside_polygons)
         self.assertEqual(bias, pi.bias)
         # self.assertEqual(size_func.to_string(), pi.size_function.to_string())
         # self.assertEqual(elev_func.to_string(), pi.elevation_function.to_string())
@@ -119,7 +173,8 @@ class TestPolyInput(unittest.TestCase):
         self.assertEqual(-1, pi.constant_size_function)
         self.assertEqual(False, pi.remove_internal_four_triangle_points)
 
-    def test_properties_PolyInput(self):
+    def test_properties(self):
+        """Test the PolyInput properties."""
         out_poly = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0))
         pi = PolyInput(out_poly)
         outside_poly = ((1, 2, 0), (5, 2, 0), (5, 9, 0), (1, 9, 0))
@@ -134,15 +189,15 @@ class TestPolyInput(unittest.TestCase):
 
         self.assertEqual(4, len(pi.outside_polygon))
         pi.outside_polygon = outside_poly
-        self.assertArraysEqual(outside_poly, pi.outside_polygon)
+        self.assert_arrays_equal(outside_poly, pi.outside_polygon)
 
         self.assertEqual(0, len(pi.inside_polygons))
         pi.inside_polygons = inside_polys
-        self.assertInsidePolysEqual(inside_polys, pi.inside_polygons)
+        self.assert_inside_polys_equal(inside_polys, pi.inside_polygons)
 
         self.assertEqual(0, len(pi.polygon_corners))
         pi.polygon_corners = poly_corners
-        self.assertArraysEqual(poly_corners, pi.polygon_corners)
+        self.assert_arrays_equal(poly_corners, pi.polygon_corners)
 
         self.assertEqual(1.0, pi.bias)
         pi.bias = 0.3
@@ -150,11 +205,11 @@ class TestPolyInput(unittest.TestCase):
 
         self.assertEqual(None, pi.size_function)
         pi.size_function = size_func
-        #self.assertEqual(str(size_func), str(pi.size_function))
+        # self.assertEqual(str(size_func), str(pi.size_function))
 
         self.assertEqual(None, pi.elevation_function)
         pi.elevation_function = elev_func
-        #self.assertEqual(elev_func.to_string(), pi.elevation_function.to_string())
+        # self.assertEqual(elev_func.to_string(), pi.elevation_function.to_string())
 
         self.assertEqual(-1, pi.constant_size_bias)
         pi.constant_size_bias = 4.0
@@ -170,19 +225,22 @@ class TestPolyInput(unittest.TestCase):
 
         self.assertEqual(0, len(pi.seed_points))
         pi.seed_points = seed_points
-        self.assertArraysEqual(seed_points, pi.seed_points)
+        self.assert_arrays_equal(seed_points, pi.seed_points)
 
         self.assertEqual("", pi.relaxation_method)
         pi.relaxation_method = relaxation_method
         self.assertEqual(relaxation_method, pi.relaxation_method)
 
+
 class TestRefinePoint(unittest.TestCase):
     """Test RefinePoint functions."""
 
     def setUp(self):
+        """Runs before each test."""
         pass
 
-    def test_creating_RefinePoint(self):
+    def test_constructor(self):
+        """Test the RefinePoint constructor."""
         rp = RefinePoint((1, 2, 3), -2.0, True)
         self.assertIsInstance(rp, RefinePoint)
         self.assertEqual((1, 2, 3), rp.point)
@@ -195,7 +253,8 @@ class TestRefinePoint(unittest.TestCase):
         self.assertEqual(2.0, rp2.size)
         self.assertEqual(False, rp2.create_mesh_point)
 
-    def test_properties_RefinePoint(self):
+    def test_properties(self):
+        """Test the RefinePoint properties."""
         rp = RefinePoint((4, 5, 3), 2.0, False)
 
         self.assertEqual(2.0, rp.size)
@@ -209,4 +268,3 @@ class TestRefinePoint(unittest.TestCase):
         self.assertEqual((4, 5, 3), rp.point)
         rp.point = (-2.0, 4.15, -900.001)
         self.assertEqual((-2.0, 4.15, -900.001), rp.point)
-

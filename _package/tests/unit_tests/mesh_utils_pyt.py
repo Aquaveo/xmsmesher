@@ -1,8 +1,9 @@
 """Test InterpLinear_py.cpp."""
-import numpy as np
+import filecmp
 import os
 import unittest
-import filecmp
+
+import numpy as np
 
 from xms.grid.triangulate import Tin
 
@@ -15,12 +16,25 @@ class TestMeshUtils(unittest.TestCase):
     """Test MeshUtils functions."""
     @staticmethod
     def array_to_vec_pt3d(a_array):
-        return [(a_array[i], a_array[i+1], 0) for i in range(0, len(a_array), 2)]
+        """Convert flat point list to list of x,y,z tuples.
 
-    def assertFileLinesEqual(self, base_file, out_file):
-        base_lines = []
-        out_lines = []
+        Args:
+            a_array (list of float): The 1-D point list
+        Returns:
+            list: 2-D point list
+        """
+        return [(a_array[i], a_array[i + 1], 0) for i in range(0, len(a_array), 2)]
 
+    def assert_file_lines_equal(self, base_file, out_file):
+        """Ensure two text files are identical.
+
+        Args:
+            base_file (str): Path to the baseline file
+            out_file (str): Path to the output file
+
+        Returns:
+            bool: True if the files are identical
+        """
         with open(base_file, "r") as bf:
             base_lines = bf.readlines()
 
@@ -45,9 +59,11 @@ class TestMeshUtils(unittest.TestCase):
             ))
 
     def setUp(self):
+        """Runs before each test."""
         pass
 
     def test_size_function_from_depth(self):
+        """Test creating a size function from depth."""
         depths = (0, 5, 10, 20, 25, 5, 0)
         min_elem = 2
         max_elem = 102
@@ -56,6 +72,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertTupleEqual(base_elem_sizes, sizes)
 
     def test_size_function_from_depth_numpy(self):
+        """Test creating a size function from depth using numpy arrays."""
         depths = np.array([0, 5, 10, 20, 25, 5, 0])
         min_elem = 2
         max_elem = 102
@@ -64,6 +81,7 @@ class TestMeshUtils(unittest.TestCase):
         np.testing.assert_array_equal(base_elem_sizes, sizes)
 
     def test_smooth_size_func_01(self):
+        """Test smoothing a size function."""
         pts = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (0, 10, 0), (10, 10, 0),
                (20, 10, 0), (30, 10, 0), (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0))
 
@@ -82,12 +100,13 @@ class TestMeshUtils(unittest.TestCase):
         anchor_type = 'min'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_size_function(tin, sizes, size_ratio, min_size,
-                                                      anchor_type, pt_flags)
-        base = (4.46, 5.90,  9.36, 12.83, 1.0,   4.46,
-                7.93, 11.39, 4.46, 7.93,  11.39, 14.86)
+                                                       anchor_type, pt_flags)
+        base = (4.46, 5.90, 9.36, 12.83, 1.0, 4.46,
+                7.93, 11.39, 4.46, 7.93, 11.39, 14.86)
         np.testing.assert_almost_equal(base, smooth_sizes, 2)
 
     def test_smooth_size_func_02(self):
+        """Test smoothing a size function."""
         pts = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (0, 10, 0), (10, 10, 0),
                (20, 10, 0), (30, 10, 0), (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0))
 
@@ -106,12 +125,13 @@ class TestMeshUtils(unittest.TestCase):
         anchor_type = 'max'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_size_function(tin, sizes, size_ratio, min_size,
-                                                      anchor_type, pt_flags)
+                                                       anchor_type, pt_flags)
         base = (96.53, 95.10, 91.63, 88.17, 100.0, 96.53,
                 93.07, 89.60, 96.53, 93.07, 89.60, 86.14)
         np.testing.assert_almost_equal(base, smooth_sizes, 2)
 
     def test_smooth_elev_by_slope_01(self):
+        """Test smoothing elevation by slope."""
         pts = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (0, 10, 0), (10, 10, 0),
                (20, 10, 0), (30, 10, 0), (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0))
 
@@ -129,12 +149,13 @@ class TestMeshUtils(unittest.TestCase):
         anchor_type = 'min'
         pt_flags = ()
         smooth_sizes = mesh_utils.smooth_elev_by_slope(tin, elevations, min_size,
-                                                      anchor_type, pt_flags)
-        base = (6.00,  8.07,  13.07, 18.07, 1.0,   6.00,
-                11.00, 16.00, 6.00,  11.00, 16.00, 21.00)
+                                                       anchor_type, pt_flags)
+        base = (6.00, 8.07, 13.07, 18.07, 1.0, 6.00,
+                11.00, 16.00, 6.00, 11.00, 16.00, 21.00)
         np.testing.assert_almost_equal(base, smooth_sizes, 2)
 
     def test_smooth_elev_by_slope_02(self):
+        """Test smoothing elevation by slope."""
         pts = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (0, 10, 0), (10, 10, 0),
                (20, 10, 0), (30, 10, 0), (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0))
 
@@ -152,12 +173,13 @@ class TestMeshUtils(unittest.TestCase):
         anchor_type = 'max'
         pt_flags = []
         smooth_sizes = mesh_utils.smooth_elev_by_slope(tin, elevations, min_size,
-                                                      anchor_type, pt_flags)
+                                                       anchor_type, pt_flags)
         base = (95.00, 92.92, 87.92, 82.92, 100.0, 95.00,
                 90.00, 85.00, 95.00, 90.00, 85.00, 80.00)
         np.testing.assert_almost_equal(base, smooth_sizes, 2)
 
     def test_check_for_intersections(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         poly_input = PolyInput(outside_polygon=((0, 0, 0), (100, 0, 0), (100, 10, 0), (0, -10, 0)))
         io.polygons = (poly_input,)
@@ -171,6 +193,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_check_for_intersections_1(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         io.check_topology = True
 
@@ -187,6 +210,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_check_for_intersections_2(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         io.check_topology = True
 
@@ -206,6 +230,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_check_for_intersections_3(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         io.check_topology = True
 
@@ -227,6 +252,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_check_for_intersections_4(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         io.check_topology = True
 
@@ -248,12 +274,13 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_check_for_intersections_5(self):
+        """Test intersection checks."""
         io = MultiPolyMesherIo(())
         io.check_topology = True
 
         outside_poly = ((0, 0, 0), (100, 0, 0), (100, 100, 0), (0, 100, 0))
         inside_polys = (((10, 10, 0), (60, 10, 0), (60, 60, 0), (10, 60, 0)),
-                             ((40, 40, 0), (90, 40, 0), (90, 90, 0), (40, 90, 0)))
+                        ((40, 40, 0), (90, 40, 0), (90, 90, 0), (40, 90, 0)))
         poly_input = PolyInput(outside_poly, inside_polys)
         io.polygons = (poly_input,)
 
@@ -271,6 +298,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertEqual(expected, errors)
 
     def test_simple_polygon(self):
+        """Test generating a mesh from a simple polygon."""
         outside_poly = [
             (0, 10, 0), (0, 20, 0), (0, 30, 0), (0, 40, 0), (0, 50, 0), (0, 60, 0), (0, 70, 0), (0, 80, 0),
             (0, 90, 0), (0, 100, 0), (10, 100, 0), (20, 100, 0), (30, 100, 0), (40, 100, 0), (50, 100, 0), (60, 100, 0),
@@ -284,14 +312,15 @@ class TestMeshUtils(unittest.TestCase):
              (60, 60, 0), (50, 60, 0), (40, 60, 0), (40, 50, 0)]
         ]
         input_poly = PolyInput(outside_polygon=outside_poly, inside_polygons=inside_polys)
-        input = MultiPolyMesherIo(polygons=[input_poly])
-        status, error = mesh_utils.generate_mesh(input)
-        self.assertEqual(139, len(input.points))
-        self.assertEqual(1150, len(input.cells))
+        meshing_input = MultiPolyMesherIo(polygons=[input_poly])
+        status, error = mesh_utils.generate_mesh(meshing_input)
+        self.assertEqual(139, len(meshing_input.points))
+        self.assertEqual(1150, len(meshing_input.cells))
         self.assertTrue(status)
         self.assertEqual(error, '')
 
     def test_simple_polygon_reverse(self):
+        """Test generating a mesh from a simple polygon."""
         outside_poly = [
             (0, 10, 0), (0, 20, 0), (0, 30, 0), (0, 40, 0), (0, 50, 0), (0, 60, 0), (0, 70, 0), (0, 80, 0),
             (0, 90, 0), (0, 100, 0), (10, 100, 0), (20, 100, 0), (30, 100, 0), (40, 100, 0), (50, 100, 0), (60, 100, 0),
@@ -307,14 +336,15 @@ class TestMeshUtils(unittest.TestCase):
         outside_poly.reverse()
         inside_polys[0].reverse()
         input_poly = PolyInput(outside_polygon=outside_poly, inside_polygons=inside_polys)
-        input = MultiPolyMesherIo(polygons=[input_poly])
-        status, error = mesh_utils.generate_mesh(input)
-        self.assertEqual(139, len(input.points))
-        self.assertEqual(1150, len(input.cells))
+        meshing_input = MultiPolyMesherIo(polygons=[input_poly])
+        status, error = mesh_utils.generate_mesh(meshing_input)
+        self.assertEqual(139, len(meshing_input.points))
+        self.assertEqual(1150, len(meshing_input.cells))
         self.assertTrue(status)
         self.assertEqual(error, '')
 
     def test_generate_2dm(self):
+        """Test generating a 2dm file."""
         io = MultiPolyMesherIo(())
         _ = mesh_utils.generate_2dm(io, "fname.2dm")
         self.assertTrue(os.path.isfile("fname.2dm"))
@@ -322,6 +352,7 @@ class TestMeshUtils(unittest.TestCase):
         self.assertTrue(filecmp.cmp(base_file, "fname.2dm"), "Files not equal")
 
     def test_case_4(self):
+        """Test generating a mesh from a simple polygon."""
         # build test case 4 polys
         out_a = (0, 60, 10, 60, 20, 60, 30, 60, 30, 50, 30, 40, 30, 30, 30, 20, 30, 10,
                  30, 0, 20, 0, 10, 0, 0, 0, 0, 10, 0, 20, 0, 30, 0, 40, 0, 50)
@@ -356,9 +387,10 @@ class TestMeshUtils(unittest.TestCase):
         self.assertTrue(success)
         self.assertTrue(os.path.isfile("out_file.2dm"))
         base_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "files", "out_file.2dm")
-        self.assertFileLinesEqual(base_file, "out_file.2dm")
+        self.assert_file_lines_equal(base_file, "out_file.2dm")
 
     def test_repeated_first_and_last(self):
+        """Test generating a mesh from a simple polygon."""
         # build test case 4 polys
         out_a = (0, 60, 10, 60, 20, 60, 30, 60, 30, 50, 30, 40, 30, 30, 30, 20, 30, 10,
                  30, 0, 20, 0, 10, 0, 0, 0, 0, 10, 0, 20, 0, 30, 0, 40, 0, 50, 0, 60)
@@ -387,10 +419,10 @@ class TestMeshUtils(unittest.TestCase):
         self.assertTrue(success)
         self.assertTrue(os.path.isfile("out_file_02_repeated.2dm"))
         base_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "files", "out_file.2dm")
-        self.assertFileLinesEqual(base_file, "out_file_02_repeated.2dm")
-
+        self.assert_file_lines_equal(base_file, "out_file_02_repeated.2dm")
 
     def test_redistribute_polyline(self):
+        """Test redistributing a polyline."""
         polygon_corners = [(0, 0, 0), (0, 100, 0), (100, 100, 0),
                            (100, 0, 0), (0, 0, 0)]
 
@@ -400,4 +432,3 @@ class TestMeshUtils(unittest.TestCase):
                               (100, 75, 0), (100, 50, 0), (100, 25, 0), (100, 0, 0),
                               (75, 0, 0), (50, 0, 0), (25, 0, 0), (0, 0, 0)]
         np.testing.assert_array_equal(base_poly_boundary, polygon_boundary)
-

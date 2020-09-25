@@ -1,14 +1,8 @@
-"""
-********************************************************************************
-* Name: setup.py
-* Author: Gage Larsen
-* Created On: May 6th, 2019
-* Copyright: (c)
-* License: BSD 2-Clause
-********************************************************************************
-"""
+"""Install the xmsmesher package."""
 import os
+
 from setuptools import setup
+
 from xms.mesher import __version__
 
 
@@ -36,4 +30,3 @@ setup(
     install_requires=requires,
     package_data={'': ['*.pyd', '*.so']},
 )
-

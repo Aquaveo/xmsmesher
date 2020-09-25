@@ -1,20 +1,21 @@
-from .._xmsmesher.meshing import MultiPolyMesherIo as MesherIo
-from .refine_point import RefinePoint
+"""Multi-Polygon Mesher IO."""
 from .poly_input import PolyInput
+from .refine_point import RefinePoint
+from .._xmsmesher.meshing import MultiPolyMesherIo as MesherIo
 
 
 class MultiPolyMesherIo(object):
-    """
-    Multi-Polygon Mesher IO.
-
-    Args:
-        polygons: *see below*
-        refine_points: *see below*
-        check_topology: *see below*
-        return_cell_polygons: *see below*
-    """
-
+    """Multi-Polygon Mesher IO."""
     def __init__(self, polygons=None, refine_points=None, check_topology=None, return_cell_polygons=None, **kwargs):
+        """Constructor.
+
+        Args:
+            polygons: *see below*
+            refine_points: *see below*
+            check_topology: *see below*
+            return_cell_polygons: *see below*
+            **kwargs (dict): Generic keyword arguments
+        """
         if 'instance' in kwargs:
             self._instance = kwargs['instance']
         else:
@@ -69,12 +70,12 @@ class MultiPolyMesherIo(object):
     # Read only outputs
     @property
     def points(self):
-        """A list of (x, y, z) coordinates of the resulting mesh. (Populated by meshing functions)"""
+        """A list of (x, y, z) coordinates of the resulting mesh. (Populated by meshing functions)."""
         return self._instance.points
 
     @property
     def cells(self):
-        """A cell stream representing the mesh. (Populated by meshing functions)"""
+        """A cell stream representing the mesh. (Populated by meshing functions)."""
         return self._instance.cells
 
     @property
