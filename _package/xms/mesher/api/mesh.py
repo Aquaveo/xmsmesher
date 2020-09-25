@@ -1,10 +1,12 @@
+"""API for xmsmesher."""
 from xms import grid
-from xms.mesher.meshing import MultiPolyMesherIo
+
 from xms.mesher.meshing import mesh_utils
+from xms.mesher.meshing import MultiPolyMesherIo
 
 
 def generate_mesh(polygon_inputs, refine_points=None, **kwargs):
-    """
+    """Generate a mesh from input polygons.
 
     Args:
         polygon_inputs (PolyInput): The polygon inputs for meshing
