@@ -11,9 +11,9 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 requires = [
     'numpy',
-    'xmscore>=3.0.5',
-    'xmsgrid>=4.1.0',
-    'xmsinterp>=3.1.1',
+    'xmscore>=4.0.0',
+    'xmsgrid>=5.0.2',
+    'xmsinterp>=4.0.0',
 ]
 
 version = __version__
