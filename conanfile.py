@@ -52,14 +52,23 @@ class XmsinterpConan(ConanFile):
 
     def requirements(self):
         """Requirements."""
-        self.requires("boost/1.74.0@aquaveo/stable")
+        if self.settings.compiler == 'Visual Studio' and 'MD' in str(self.settings.compiler.runtime):
+            self.requires("boost/1.74.0@aquaveo/testing")  # Use legacy wchar_t setting for XMS.
+        else:
+            self.requires("boost/1.74.0@aquaveo/stable")
+
         # Pybind if not clang
         if not self.settings.compiler == "clang" and self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
 
-        self.requires("xmscore/4.0.0@aquaveo/stable")
-        self.requires("xmsgrid/5.0.2@aquaveo/stable")
-        self.requires("xmsinterp/4.0.0@aquaveo/stable")
+        self.requires("xmscore/4.0.2@aquaveo/stable")
+        self.requires("xmsgrid/5.0.5@aquaveo/stable")
+        self.requires("xmsinterp/4.0.1@aquaveo/stable")
+
+        if self.settings.os == 'Macos':
+            # Use conan-center-index syntax for Mac
+            # TODO: Use bzip2 package from Aquaveo server when available.
+            self.requires('bzip2/1.0.8')
 
     def build(self):
         cmake = CMake(self)
