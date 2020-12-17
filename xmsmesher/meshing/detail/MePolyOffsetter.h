@@ -27,6 +27,7 @@ public:
   std::vector<Pt3d> m_pts;                  ///< locations used by polygons
   std::vector<std::vector<size_t>> m_loops; ///< indexes of points that define loops
   std::vector<int> m_loopTypes;             ///< type of loop
+  std::vector<Pt3d> m_redistAnchorPts;      ///< pts to preserve during redistribution
 };
 
 /// \brief Does an internal offset from a polygon outer boundary (shrink) and
