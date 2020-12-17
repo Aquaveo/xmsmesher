@@ -199,6 +199,10 @@ void initMePolyInput(py::module &m) {
     // -------------------------------------------------------------------------
     polyInput.def_readwrite("removeInternalFourTrianglePts", &xms::MePolyInput::m_removeInternalFourTrianglePts);
     // -------------------------------------------------------------------------
+    // function: fixPointConnections
+    // -------------------------------------------------------------------------
+    polyInput.def_readwrite("fixPointConnections", &xms::MePolyInput::m_fixPointConnections);
+    // -------------------------------------------------------------------------
     // function: poly_id
     // -------------------------------------------------------------------------
     polyInput.def_readwrite("polyId", &xms::MePolyInput::m_polyId);

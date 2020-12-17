@@ -9,7 +9,8 @@ class PolyInput(object):
     def __init__(self, outside_polygon=None, inside_polygons=None, bias=1.0, size_function=None,
                  polygon_corners=None, elev_function=None, boundary_points_to_remove=None,
                  constant_size_function=None, constant_size_bias=None, polygon_id=None, seed_points=None,
-                 relaxation_method=None, remove_internal_four_triangle_points=None, **kwargs):
+                 relaxation_method=None, remove_internal_four_triangle_points=None,
+				 fix_point_connections=None, **kwargs):
         """Constructor.
 
         Args:
@@ -26,6 +27,7 @@ class PolyInput(object):
             seed_points: *see below*
             relaxation_method: *see below*
             remove_internal_four_triangle_points: *see below*
+            fix_point_connections: *see below*
             **kwargs (dict): Generic keyword arguments
         """
         if 'instance' in kwargs:
@@ -58,6 +60,8 @@ class PolyInput(object):
                 self.relaxation_method = relaxation_method
             if remove_internal_four_triangle_points is not None:
                 self.remove_internal_four_triangle_points = remove_internal_four_triangle_points
+			if fix_point_connections is not None:
+				self.fix_point_connections = fix_point_connections
 
     @property
     def outside_polygon(self):
@@ -211,6 +215,16 @@ class PolyInput(object):
     def remove_internal_four_triangle_points(self, value):
         """Set whether to remove internal points that are only connected to 4 cells."""
         self._instance.removeInternalFourTrianglePts = value
+
+    @property
+    def fix_point_connections(self):
+        """Fix points that are connected to more than 7 cells."""
+        return self._instance.fix_point_connections
+
+    @fix_point_connections.setter
+    def fix_point_connections(self, value):
+        """Set whether to fix points that are connected to more than 7 cells."""
+        self._instance.fixPointConnections = value
 
     @property
     def relaxation_method(self):

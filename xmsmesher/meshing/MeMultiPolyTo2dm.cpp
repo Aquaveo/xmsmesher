@@ -785,6 +785,13 @@ void MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase2()
   iTestFromPolyFile("internalFeatures/case2", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase2
 //------------------------------------------------------------------------------
+/// \brief Test providing seed points to the mesher for a polygon with a hole
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase3()
+{
+  //iTestFromPolyFile("internalFeatures/case3", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase3
+//------------------------------------------------------------------------------
 /// \brief Test for a linear size function that has holes in the triangulation
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testbug11646()
