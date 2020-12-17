@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1.2)
 cmake_policy(SET CMP0015 NEW) # Link Directory Pathing
 set(CMAKE_DEBUG_POSTFIX _d)
 
-if (APPLE OR WIN32)
+if (APPLE)
     set(CMAKE_CXX_STANDARD 17)
 else()
     set(CMAKE_CXX_STANDARD 11)
@@ -30,6 +30,15 @@ if(IS_PYTHON_BUILD AND BUILD_TESTING)
   message(FATAL_ERROR "Cannot build python module when testing is enabled")
 endif()
 
+if(WIN32)
+    if(XMS_BUILD)
+        add_definitions(/D _WIN32_WINNT=0x0501)  # Windows XP and higher
+        add_definitions(/Zc:wchar_t-)  # Treat wchar_t as built-in type
+    else(NOT XMS_BUILD)
+        add_definitions(/D BOOST_ALL_NO_LIB)
+    endif()
+endif()
+
 if(IS_CONDA_BUILD)
   include(${CMAKE_CURRENT_LIST_DIR}/condabuildinfo.cmake)
 else() # If we are not using conda, we are using conan
@@ -40,27 +49,6 @@ else() # If we are not using conda, we are using conan
   set(EXT_LIB_DIRS ${CONAN_LIB_DIRS})
   set(EXT_LIBS ${CONAN_LIBS})
 endif(IS_CONDA_BUILD)
-
-if(WIN32)
-    string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MT" USES_MT)
-    if(NOT USES_MT)
-        string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MTd" USES_MT)
-    endif()
-
-    if(USES_MT)
-        message("Treating wchar_t as a built-in type.")
-        add_definitions(/Zc:wchar_t)  # Treat wchar_t as built-in type
-    else()
-        message("Treating wchar_t as a typedef.")
-        add_definitions(/Zc:wchar_t-)  # Treat wchar_t as typedef
-    endif()
-
-    if(XMS_BUILD)
-        add_definitions(/D _WIN32_WINNT=0x0501)  # Windows XP and higher
-    else(NOT XMS_BUILD)
-        add_definitions(/D BOOST_ALL_NO_LIB)
-    endif()
-endif()
 
 if(IS_PYTHON_BUILD)
     # Pybind11 module
@@ -108,6 +96,7 @@ set(xmsmesh_sources
   xmsmesher/meshing/MeMultiPolyMesher.cpp
   xmsmesher/meshing/detail/MeBadQuadRemover.cpp
   xmsmesher/meshing/detail/MeIntersectPolys.cpp
+  xmsmesher/meshing/detail/MePointConnectionFixer.cpp
   xmsmesher/meshing/detail/MePolyPatcher.cpp
   xmsmesher/meshing/detail/MePolyOffsetter.cpp
   xmsmesher/meshing/detail/MePolyPaverToMeshPts.cpp
@@ -135,6 +124,7 @@ set(xmsmesh_headers
   xmsmesher/meshing/detail/MePolyPts.h
   xmsmesher/meshing/detail/MePolyPatcher.h
   xmsmesher/meshing/detail/MeIntersectPolys.h
+  xmsmesher/meshing/detail/MePointConnectionFixer.h
   xmsmesher/meshing/detail/MePolyPaverToMeshPts.h
   xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.h
   xmsmesher/meshing/detail/MeQuadBlossom.h
@@ -170,6 +160,7 @@ if (BUILD_TESTING)
     xmsmesher/meshing/detail/MeBadQuadRemover.t.h
     xmsmesher/meshing/detail/MePolyPaverToMeshPts.t.h
     xmsmesher/meshing/detail/MeIntersectPolys.t.h
+    xmsmesher/meshing/detail/MePointConnectionFixer.t.h
     xmsmesher/meshing/detail/MePolyPatcher.t.h
     xmsmesher/meshing/detail/MePolyOffsetter.t.h
     xmsmesher/meshing/detail/MePolyCleaner.t.h

@@ -38,6 +38,7 @@
 #include <xmsgrid/triangulate/TrTriangulatorPoints.h>
 #include <xmsgrid/triangulate/TrBreaklineAdder.h>
 #include <xmsgrid/triangulate/TrTin.h>
+#include <xmsmesher/meshing/detail/MePointConnectionFixer.h>
 #include <xmsmesher/meshing/detail/MePolyPaverToMeshPts.h>
 #include <xmsmesher/meshing/detail/MePolyPatcher.h>
 #include <xmsmesher/meshing/detail/MeRefinePtsToPolys.h>
@@ -108,7 +109,9 @@ private:
   void FindPolyPointIdxs(const VecPt3d& a_poly, VecInt& a_polyPtIdxs);
   void AddBreaklines();
   void DeleteTrianglesOutsidePolys();
+  VecInt GetPointsNoDelete();
   void AutoFixFourTrianglePts();
+  void FixPointsWithTooManyConnections();
   void Relax();
   void ExportTinForDebug();
 
@@ -141,9 +144,11 @@ private:
   BSHP<InterpBase> m_elev;   ///< interpolator to assign elevations to mesh points
   int m_polyId;              ///< id of the polygon
   VecPt3d m_seedPts;         ///< user generated seed points.
+  bool m_relaxSeedPoints;    ///< flag to relax seed points.
   VecPt3d m_boundPtsToRemove; ///< boundary points to remove after the paving process is complete
   bool m_removeInternalFourTrianglePts =
     false; ///< flag to indicate the removal of internal pts connected to 4 triangles will occur
+  bool m_fixPointConnections; ///< fix points connected to more than 7 cells.
 };         // class MePolyMesherImpl
 
 //----- Internal functions -----------------------------------------------------
@@ -200,6 +205,7 @@ MePolyMesherImpl::MePolyMesherImpl()
 , m_testing(false)
 , m_polyId(-1)
 , m_seedPts()
+, m_relaxSeedPoints(false)
 {
 } // MePolyMesherImpl::MePolyMesherImpl
 //------------------------------------------------------------------------------
@@ -242,6 +248,7 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
   m_polyId = polyInput.m_polyId;
   m_outPoly = polyInput.m_outPoly;
   m_seedPts = polyInput.m_seedPoints;
+  m_relaxSeedPoints = polyInput.m_relaxSeedPoints;
   ComputeTolerance();
 
   // holes inside the outer polygons
@@ -280,6 +287,7 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
   m_elev = polyInput.m_elevFunction;
   m_boundPtsToRemove = polyInput.m_boundPtsToRemove;
   m_removeInternalFourTrianglePts = polyInput.m_removeInternalFourTrianglePts;
+  m_fixPointConnections = polyInput.m_fixPointConnections;
   return MeshFromInputs(a_points, a_triangles, a_cells);
 } // MePolyMesherImpl::MeshIt
 //------------------------------------------------------------------------------
@@ -367,6 +375,7 @@ bool MePolyMesherImpl::MeshFromInputs(VecPt3d& a_points, VecInt& a_triangles, Ve
         Triangulate();
         FindAllPolyPointIdxs();
         AutoFixFourTrianglePts();
+        FixPointsWithTooManyConnections();
         AddBreaklines();
         DeleteTrianglesOutsidePolys();
         Relax();
@@ -611,15 +620,11 @@ void MePolyMesherImpl::DeleteTrianglesOutsidePolys()
   deleter->Delete(allPolys, m_tin);
 } // MePolyMesherImpl::DeleteTrianglesOutsidePolys
 //------------------------------------------------------------------------------
-/// \brief Delete internal points that are only connected to 4 triangles and
-/// retriangulates.
+/// \brief Refine points and boundary points can not be deleted.
+/// \returns VecInt of point indexes that can not be removed
 //------------------------------------------------------------------------------
-void MePolyMesherImpl::AutoFixFourTrianglePts()
+VecInt MePolyMesherImpl::GetPointsNoDelete()
 {
-  if (!m_removeInternalFourTrianglePts)
-    return;
-  BSHP<TrAutoFixFourTrianglePts> fixer = TrAutoFixFourTrianglePts::New();
-
   // can't delete boundary pts or refine points
   VecInt noDeletePts(m_outPolyPtIdxs);
   for (size_t i = 0; i < m_inPolys.size(); ++i)
@@ -629,20 +634,59 @@ void MePolyMesherImpl::AutoFixFourTrianglePts()
   }
   for (auto& ix : m_refPtIdxs)
     noDeletePts.push_back(ix);
+  return noDeletePts;
+} // MePolyMesherImpl::GetPointsNoDelete
+//------------------------------------------------------------------------------
+/// \brief Delete internal points that are only connected to 4 triangles and
+/// retriangulates.
+//------------------------------------------------------------------------------
+void MePolyMesherImpl::AutoFixFourTrianglePts()
+{
+  if (!m_removeInternalFourTrianglePts)
+    return;
+  BSHP<TrAutoFixFourTrianglePts> fixer = TrAutoFixFourTrianglePts::New();
+
+  VecInt noDeletePts(GetPointsNoDelete());
   fixer->SetUndeleteablePtIdxs(noDeletePts);
 
   size_t ptsBefore(m_tin->Points().size());
   fixer->Fix(m_tin);
   if (ptsBefore != m_tin->Points().size())
+  {
     FindAllPolyPointIdxs();
+  }
 } // MePolyMesherImpl::AutoFixFourTrianglePts
+//------------------------------------------------------------------------------
+/// \brief Finds points that are connected to more than 7 cells.
+//------------------------------------------------------------------------------
+void MePolyMesherImpl::FixPointsWithTooManyConnections()
+{
+  if (!m_fixPointConnections)
+    return;
+  VecInt noDeletePts(GetPointsNoDelete());
+  bool done = false;
+  while (!done)
+  {
+    int nPts = m_tin->NumPoints();
+    BSHP<MePointConnectionFixer> fixer = MePointConnectionFixer::New(m_tin);
+    m_tin = fixer->Fix(noDeletePts);
+    if (m_tin->NumPoints() != nPts)
+    {
+      FindAllPolyPointIdxs();
+    }
+    else
+    {
+      done = true;
+    }
+  }
+} // MePolyMesherImpl::FixPointsWithTooManyConnections
 //------------------------------------------------------------------------------
 /// \brief Relaxes the mesh points for better element quality
 //------------------------------------------------------------------------------
 void MePolyMesherImpl::Relax()
 {
   // if the user specified the seed points then do not relax
-  if (!m_seedPts.empty())
+  if (!m_seedPts.empty() && !m_relaxSeedPoints)
     return;
 
   // Put polygons into one vector
@@ -654,6 +698,9 @@ void MePolyMesherImpl::Relax()
   // add refine points to the fixed
   fixedPoints.insert(fixedPoints.end(), m_refPtIdxs.begin(), m_refPtIdxs.end());
   m_relaxer->Relax(fixedPoints, m_tin);
+  // Re-add breaklines and delete outer polys because relaxing can swap edges
+  AddBreaklines();
+  DeleteTrianglesOutsidePolys();
 } // MePolyMesherImpl::Relax
 //------------------------------------------------------------------------------
 /// \brief Find the indices of the poly points among m_points. They will most
