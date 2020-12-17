@@ -46,6 +46,7 @@ public:
   void testInternalFeaturesCase0();
   void testInternalFeaturesCase1();
   void testInternalFeaturesCase2();
+  void testInternalFeaturesCase3();
   void testbug11646();
 };
 
