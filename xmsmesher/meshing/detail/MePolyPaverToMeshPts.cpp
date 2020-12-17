@@ -357,6 +357,11 @@ void MePolyPaverToMeshPtsImpl::CleanPave(const Poly& a_poly)
 
   // intersect the new inner polys with the outer polys
   m_cleaner->IntersectCleanInOutPolys(out, out2, m_xyTol);
+  VecPt3d& pts(out2.m_redistAnchorPts);
+  for (auto& r : m_offsetOutputs)
+  {
+    pts.insert(pts.end(), r.m_redistAnchorPts.begin(), r.m_redistAnchorPts.end());
+  }
   m_offsetOutputs.clear();
   m_offsetOutputs.push_back(out2);
 } // MePolyPaverToMeshPtsImpl::CleanPave
