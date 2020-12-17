@@ -212,6 +212,10 @@ void initMePolyInput(py::module &m) {
             [](xms::MePolyInput &self, py::iterable seed_points) {
                  self.m_seedPoints = *xms::VecPt3dFromPyIter(seed_points);
             });
+    // -------------------------------------------------------------------------
+    // function: poly_id
+    // -------------------------------------------------------------------------
+    polyInput.def_readwrite("relaxSeedPoints", &xms::MePolyInput::m_relaxSeedPoints);
     // ---------------------------------------------------------------------------
     // property: relaxationMethod
     // ---------------------------------------------------------------------------

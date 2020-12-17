@@ -9,6 +9,7 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard library headers
+#include <string>
 
 // 4. External library headers
 

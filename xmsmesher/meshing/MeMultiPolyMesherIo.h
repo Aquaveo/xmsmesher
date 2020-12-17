@@ -57,8 +57,10 @@ public:
   , m_polyCorners(a_polyCorners)
   , m_elevFunction(a_elevFunction)
   , m_removeInternalFourTrianglePts(false)
+  , m_fixPointConnections(false)
   , m_polyId(-1)
   , m_relaxationMethod()
+  , m_relaxSeedPoints(false)
   {
   }
 
@@ -95,6 +97,9 @@ public:
   /// Used by the ugAutoCorrectCells class
   bool m_removeInternalFourTrianglePts;
 
+  /// Optional. Remove fix points that are connected to more than 7 cells.
+  bool m_fixPointConnections;
+
   /// Optional. Polygon id. Useful for reporting errors if calling software stores
   /// ids for polygons and would like to report those back to the user.
   int m_polyId;
@@ -104,6 +109,9 @@ public:
   /// points are specified then the paving is not performed. These points will
   /// not be used if the meshing option is patch.
   VecPt3d m_seedPoints;
+
+  /// Optional. Relax seed points. default is false
+  bool m_relaxSeedPoints;
 
   /// Optional. Relaxation method. The default relaxation method is an area
   /// relax. Set the value to "spring_relaxation". See MeRelaxer.cpp for

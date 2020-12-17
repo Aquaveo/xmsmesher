@@ -112,7 +112,7 @@ public:
   virtual double SizeFromLocation(const Pt3d& a_location) override;
   virtual std::string ToPyRepr() const override;
 
-  VecPt3d LoopToVecPt3d(const VecSizet& a_idx, const VecPt3d& a_pts);
+  VecPt3d2d LoopToVecPt3d(const VecSizet& a_idx, const VecPt3d& a_pts);
   void IntersectWithTris(VecPt3d& a_pts);
   void InterpEdgeLengths(const VecPt3d& a_pts, VecDbl& lengths);
   void InterpToPoint(size_t a_idx,
@@ -142,6 +142,7 @@ public:
                           double& a_segT0,
                           double& a_segT1);
   void CreatePolyIntersector();
+  void CalcAnchors(const MePolyOffsetterOutput& a_input);
 
   double m_constSize,        ///< constant size function
     m_minLength,             ///< min segment length in polygon
@@ -174,6 +175,8 @@ public:
   bool m_smoothCurvature;
   /// Point redistributor that uses curvature
   BSHP<MePolyRedistributePtsCurvature> m_curvatureRedist;
+  /// Set of point indexes for anchor points
+  std::set<int> m_anchorIdxs;
 };
 
 //------------------------------------------------------------------------------
@@ -322,26 +325,49 @@ void MePolyRedistributePtsImpl::Redistribute(const MePolyOffsetterOutput& a_inpu
   a_out.m_loops.resize(0);
   a_out.m_pts.resize(0);
   a_out.m_loopTypes.resize(0);
+  CalcAnchors(a_input);
   for (size_t i = 0; i < a_input.m_loops.size(); ++i)
   {
     const VecSizet& loop(a_input.m_loops[i]);
     const int& lType(a_input.m_loopTypes[i]);
-    VecPt3d pts = LoopToVecPt3d(loop, a_input.m_pts);
-    if (m_intersectWithTris)
+    VecPt3d2d pts2d = LoopToVecPt3d(loop, a_input.m_pts);
+    VecPt3d redistPts;
+    for (size_t j = 0; j < pts2d.size(); ++j)
     {
-      IntersectWithTris(pts);
+      VecPt3d& pts(pts2d[j]);
+      if (m_intersectWithTris)
+      {
+        IntersectWithTris(pts);
+      }
+      if (pts2d.size() < 2)
+        pts.push_back(pts.front());
+      // interpolate edge lengths
+      InterpEdgeLengths(pts, lengths);
+      // redistribute the points
+      VecPt3d rePts = RedistPts(pts, lengths);
+      if (!rePts.empty())
+        rePts.pop_back();
+      redistPts.insert(redistPts.end(), rePts.begin(), rePts.end());
     }
-    pts.push_back(pts.front());
-    // interpolate edge lengths
-    InterpEdgeLengths(pts, lengths);
-    // redistribute the points
-    VecPt3d redistPts = RedistPts(pts, lengths);
-    if (!redistPts.empty())
-      redistPts.pop_back();
     RedistPtsToOutput(redistPts, lType, a_out);
   }
   m_polyOffsetIter = 0;
-} // MePolyPaverToMeshPtsImpl::Redistribute
+} // MePolyRedistributePtsImpl::Redistribute
+//------------------------------------------------------------------------------
+/// \brief find the indexes of anchor points.
+/// \param a_input Input closed loop polylines
+//------------------------------------------------------------------------------
+void MePolyRedistributePtsImpl::CalcAnchors(const MePolyOffsetterOutput& a_input)
+{
+  m_anchorIdxs.clear();
+  const VecPt3d &vp(a_input.m_redistAnchorPts), pts(a_input.m_pts);
+  std::set<Pt3d> setPts(vp.begin(), vp.end());
+  for (size_t i = 0; i < a_input.m_pts.size(); ++i)
+  {
+    if (setPts.find(pts[i]) != setPts.end())
+      m_anchorIdxs.insert((int)i);
+  }
+} // MePolyRedistributePtsImpl::CalcAnchors
 //------------------------------------------------------------------------------
 /// \brief Redistributes points on a polyline.
 /// \param[in] a_polyLine Input polyline
@@ -417,14 +443,32 @@ std::string MePolyRedistributePtsImpl::ToPyRepr() const
 /// \param a_idx Vector of indices into the a_pts vector. Defines the closed
 /// loop polyline.
 /// \param a_pts Vector of locations.
-/// \return Vector of locations defining the loop.
+/// \return 2d Vector of locations defining the loop or loop may be split if it
+/// contains anchor points
 //------------------------------------------------------------------------------
-VecPt3d MePolyRedistributePtsImpl::LoopToVecPt3d(const VecSizet& a_idx, const VecPt3d& a_pts)
+VecPt3d2d MePolyRedistributePtsImpl::LoopToVecPt3d(const VecSizet& a_idx, const VecPt3d& a_pts)
 {
-  VecPt3d ret;
-  ret.reserve(a_idx.size());
-  for (size_t i = 0; i < a_idx.size(); ++i)
-    ret.push_back(a_pts[a_idx[i]]);
+  VecPt3d2d ret(1, VecPt3d());
+  if (m_anchorIdxs.empty())
+  {
+    ret[0].reserve(a_idx.size());
+    for (size_t i = 0; i < a_idx.size(); ++i)
+      ret[0].push_back(a_pts[a_idx[i]]);
+  }
+  else
+  {
+    int idx(0);
+    for (size_t i = 0; i < a_idx.size(); ++i)
+    {
+      ret[idx].push_back(a_pts[a_idx[i]]);
+      if (m_anchorIdxs.find((int)a_idx[i]) != m_anchorIdxs.end())
+      {
+        ret.push_back(VecPt3d());
+        idx++;
+        ret[idx].push_back(a_pts[a_idx[i]]);
+      }
+    }
+  }
   return ret;
 } // MePolyRedistributePtsImpl::LoopToVecPt3d
 //------------------------------------------------------------------------------
