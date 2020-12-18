@@ -357,8 +357,7 @@ void MePolyOffsetterImpl::ProcessAngleSegmentEnd(int npt_end,
     newpt.y = ptx * stheta + pty * ctheta + (1.0 - ctheta) * pts[in2].y - stheta * pts[in2].x;
     newpt.z = (pts[in2].z + pts[in1].z) / 2.0;
     CheckToAddPoint(a_result, newpt);
-    // TODO m_redistAnchorPts
-    //m_output.m_redistAnchorPts.push_back(newpt);
+    m_output.m_redistAnchorPts.push_back(newpt);
     // place third point
     offset = SIN60 * (l1 + dl * ((3 * alpha - PIOVER6) / (4 * alpha - PIOVER3))) / l1;
     ptx = pts[in2].x + offset * dx1;
