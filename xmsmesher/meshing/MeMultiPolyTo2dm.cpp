@@ -789,7 +789,7 @@ void MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase2()
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase3()
 {
-  //iTestFromPolyFile("internalFeatures/case3", 10);
+  iTestFromPolyFile("internalFeatures/case3", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testInternalFeaturesCase3
 //------------------------------------------------------------------------------
 /// \brief Test for a linear size function that has holes in the triangulation
