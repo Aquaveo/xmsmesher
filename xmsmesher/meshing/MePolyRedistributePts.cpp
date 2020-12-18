@@ -457,17 +457,44 @@ VecPt3d2d MePolyRedistributePtsImpl::LoopToVecPt3d(const VecSizet& a_idx, const 
   }
   else
   {
-    int idx(0);
-    for (size_t i = 0; i < a_idx.size(); ++i)
+    // first see if any anchor points exist.
+    // If so then make the first point one of the anchor points
+    int idx(-1);
+    for (size_t i = 0; i < a_idx.size() && idx == -1; ++i)
     {
-      ret[idx].push_back(a_pts[a_idx[i]]);
       if (m_anchorIdxs.find((int)a_idx[i]) != m_anchorIdxs.end())
+        idx = (int)i;
+    }
+    VecSizet idxs;
+    if (idx != -1)
+    {
+      for (size_t i = (size_t)idx; i < a_idx.size(); ++i)
+      {
+        idxs.push_back(a_idx[i]);
+      }
+      for (size_t i = 0; i < (size_t)idx; ++i)
+      {
+        idxs.push_back(a_idx[i]);
+      }
+    }
+    else
+    {
+      idxs = a_idx;
+    }
+
+    idx = 0;
+    for (size_t i = 0; i < idxs.size(); ++i)
+    {
+      ret[idx].push_back(a_pts[idxs[i]]);
+      if (i != 0 && m_anchorIdxs.find((int)idxs[i]) != m_anchorIdxs.end())
       {
         ret.push_back(VecPt3d());
         idx++;
-        ret[idx].push_back(a_pts[a_idx[i]]);
+        ret[idx].push_back(a_pts[idxs[i]]);
       }
     }
+    if (!ret.empty())
+      ret.back().push_back(a_pts[idxs[0]]);
   }
   return ret;
 } // MePolyRedistributePtsImpl::LoopToVecPt3d

@@ -10,7 +10,7 @@ class PolyInput(object):
                  polygon_corners=None, elev_function=None, boundary_points_to_remove=None,
                  constant_size_function=None, constant_size_bias=None, polygon_id=None, seed_points=None,
                  relaxation_method=None, remove_internal_four_triangle_points=None,
-				 fix_point_connections=None, **kwargs):
+                 fix_point_connections=None, **kwargs):
         """Constructor.
 
         Args:
@@ -60,8 +60,8 @@ class PolyInput(object):
                 self.relaxation_method = relaxation_method
             if remove_internal_four_triangle_points is not None:
                 self.remove_internal_four_triangle_points = remove_internal_four_triangle_points
-			if fix_point_connections is not None:
-				self.fix_point_connections = fix_point_connections
+            if fix_point_connections is not None:
+                self.fix_point_connections = fix_point_connections
 
     @property
     def outside_polygon(self):
