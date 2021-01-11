@@ -382,8 +382,6 @@ void MePolyPaverToMeshPtsImpl::RedistributePts()
 /// \brief Create new polygons to put onto the processing stack. These are the
 /// polygons that are left after paving, cleaning, redistributing points, and
 /// cleaning again.
-/// \param [in] a_iter Tells what iteration this is from the boundary of the
-/// polygon.
 //------------------------------------------------------------------------------
 void MePolyPaverToMeshPtsImpl::ClassifyPolys()
 {

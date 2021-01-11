@@ -327,6 +327,11 @@ void MeRelaxerImpl::AreaRelax(int a_point, Pt3d& a_newLocation)
     sumy += area * m_centroids[adjTris[i]].y;
     sumarea += area;
   }
+  if (sumarea == 0)
+  {
+    a_newLocation = m_tin->Points()[a_point];
+    return;
+  }
 
   a_newLocation.x = sumx / sumarea;
   a_newLocation.y = sumy / sumarea;

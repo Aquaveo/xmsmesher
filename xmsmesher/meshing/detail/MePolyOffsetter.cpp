@@ -251,6 +251,10 @@ bool MePolyOffsetterImpl::DoOffset(const std::vector<Pt3d>& a_input)
   SpecialRejection(a_input, result);
   if (result.size() < 3)
     return false;
+  if (m_pType == MePolyOffsetter::OUTSIDE_POLY)
+  {
+    m_intersector->SetOriginalOutsidePolygon(a_input);
+  }
   SelfIntersection(result);
   FindDuplicatesAndOrderLoops(result);
   return rval;
