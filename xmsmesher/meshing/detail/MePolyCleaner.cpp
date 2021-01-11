@@ -19,6 +19,7 @@
 #include <xmscore/misc/XmError.h>
 
 // 5. Shared code headers
+#include <xmsgrid/geometry/GmPolygon.h>
 #include <xmsmesher/meshing/detail/MePolyOffsetter.h>
 #include <xmsmesher/meshing/detail/MeIntersectPolys.h>
 #include <xmsmesher/meshing/detail/MePolyPts.h>
@@ -147,6 +148,41 @@ void MePolyCleanerImpl::CleanPolyOffset(const std::vector<Pt3d>& a_input,
     // we delete any polygons with an area that has
     // the opposite sign from what we are expecting
     polyPts.RemoveBackwardLoopsForCleanPolyOffset(loops, a_pType);
+    // make sure that points in a loop are inside of the original outside polygon
+    if (MePolyOffsetter::OUTSIDE_POLY == a_pType && !m_origOutsidePoly.empty())
+    {
+      BSHP<GmPolygon> gmPoly = GmPolygon::New();
+      VecPt3d2d insidePolys;
+      gmPoly->Setup(m_origOutsidePoly, insidePolys);
+      auto it = loops.begin();
+      while (it != loops.end())
+      {
+        VecSizet& loop(*it);
+        for (size_t j = loop.size(); j > 0; --j)
+        {
+          Pt3d pt = polyPts.Pts()[loop[j - 1]];
+          if (!gmPoly->Within(pt))
+          {
+            loop.erase(loop.begin() + j - 1);
+          }
+        }
+        //bool out = false;
+        //for (auto& idx : loop)
+        //{
+        //  Pt3d pt = polyPts.Pts()[idx];
+        //  if (!gmPoly->Within(pt))
+        //  {
+        //    out = true;
+        //  }
+        //}
+        auto itToDelete = it;
+        it++;
+        if (loop.empty())
+        {
+          loops.erase(itToDelete);
+        }
+      }
+    }
   }
   else
   { // There are more rules when dealing with paving outward from polygons.
