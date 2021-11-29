@@ -805,4 +805,11 @@ void MeMultiPolyTo2dmIntermediateTests::testbug12780()
 {
   iTestFromPolyFile("bug12780", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testbug12780
+//------------------------------------------------------------------------------
+/// \brief Test for a bug where points are created with NAN coordinates
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testbug13411()
+{
+  iTestFromPolyFile("bug13411", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testbug13411
 #endif // CXX_TEST
