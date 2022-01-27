@@ -1,4 +1,4 @@
-name: XmsMesher-3.0
+name: XmsMesher-4.0
 
 on: [push, pull_request]
 
@@ -54,9 +54,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsmesher
-      XMS_VERSION: 3.0.0
+      XMS_VERSION: 4.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsmesher/3.0.0
+      CONAN_REFERENCE: xmsmesher/4.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -173,9 +173,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsmesher
-      XMS_VERSION: 3.0.0
+      XMS_VERSION: 4.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsmesher/3.0.0
+      CONAN_REFERENCE: xmsmesher/4.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -301,9 +301,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsmesher
-      XMS_VERSION: 3.0.0
+      XMS_VERSION: 4.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsmesher/3.0.0
+      CONAN_REFERENCE: xmsmesher/4.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
