@@ -54,7 +54,7 @@ class XmsinterpConan(ConanFile):
         self.options['xmsgrid'].pybind = self.options.pybind
         self.options['xmsgrid'].testing = self.options.testing
         
-        if s_compiler == 'Visual studio':
+        if s_compiler == 'Visual Studio':
             self.options['xmscore'].wchar_t = self.options.wchar_t
             self.options['xmsinterp'].wchar_t = self.options.wchar_t
             self.options['xmsgrid'].wchar_t = self.options.wchar_t
