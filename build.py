@@ -70,13 +70,13 @@ if __name__ == "__main__":
     wchar_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # wchar_t option
-        if settings['compiler'] == 'Visual Studio' and not options.get('xmsinterp:pybind', False):
+        if settings['compiler'] == 'Visual Studio' and not options.get('xmsmesher:pybind', False):
             wchar_options = dict(options)
-            wchar_options.update({'xmsinterp:wchar_t': 'typedef'})
+            wchar_options.update({'xmsmesher:wchar_t': 'typedef'})
             wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
         elif settings['compiler'] == 'Visual Studio':
             wchar_options = dict(options)
-            wchar_options.update({'xmsinterp:wchar_t': 'builtin'})
+            wchar_options.update({'xmsmesher:wchar_t': 'builtin'})
             wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
         else:
             wchar_updated_builds.append([settings, options, env_vars, build_requires])
