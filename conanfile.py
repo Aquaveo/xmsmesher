@@ -1,16 +1,16 @@
 """
-conanfile.py for the xmsstamper project.
+conanfile.py for the xmsmesher project.
 """
 from xmsconan.xms_conan_file import XmsConanFile
 
 
-class XmsstamperConan(XmsConanFile):
+class XmsmesherConan(XmsConanFile):
     """
     XmsstamperConan class used for defining the conan info.
     """
-    name = 'xmsstamper'
-    url = 'https://github.com/Aquaveo/xmsstamper'
-    description = 'Stamper library for XMS products'
+    name = 'xmsmesher'
+    url = 'https://github.com/Aquaveo/xmsmesher'
+    description = 'Mesher library for XMS products'
     xms_dependencies = [
         'xmscore/[>=6.0.1 <7.0.0]@aquaveo/stable',
         'xmsgrid/[>=7.0.1 <8.0.0]@aquaveo/stable',
@@ -21,4 +21,4 @@ class XmsstamperConan(XmsConanFile):
     ]
 
 
-LIBRARY_NAME = XmsstamperConan.name
+LIBRARY_NAME = XmsmesherConan.name
