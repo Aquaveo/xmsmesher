@@ -10,7 +10,7 @@ class XmsstamperConan(XmsConanFile):
     """
     name = 'xmsstamper'
     url = 'https://github.com/Aquaveo/xmsstamper'
-    description = 'Stamer library for XMS products'
+    description = 'Stamper library for XMS products'
     xms_dependencies = [
         'xmscore/[>=6.0.1 <7.0.0]@aquaveo/stable',
         'xmsgrid/[>=7.0.1 <8.0.0]@aquaveo/stable',
