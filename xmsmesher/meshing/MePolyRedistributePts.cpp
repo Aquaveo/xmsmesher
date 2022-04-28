@@ -345,9 +345,19 @@ void MePolyRedistributePtsImpl::Redistribute(const MePolyOffsetterOutput& a_inpu
       InterpEdgeLengths(pts, lengths);
       // redistribute the points
       VecPt3d rePts = RedistPts(pts, lengths);
-      if (!rePts.empty())
+      if (!rePts.empty() && j == pts2d.size() - 1)
         rePts.pop_back();
-      redistPts.insert(redistPts.end(), rePts.begin(), rePts.end());
+      if (!rePts.empty())
+      {
+        if (redistPts.empty())
+          redistPts = rePts;
+        else
+          redistPts.insert(redistPts.end(), rePts.begin() + 1, rePts.end());
+      }
+      else if (j > 0 && rePts.empty())
+      {
+        redistPts.push_back(pts.back());
+      }
     }
     RedistPtsToOutput(redistPts, lType, a_out);
   }
