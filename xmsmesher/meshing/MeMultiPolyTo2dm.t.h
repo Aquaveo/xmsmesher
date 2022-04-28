@@ -49,6 +49,7 @@ public:
   void testInternalFeaturesCase3();
   void testbug11646();
   void testbug12780();
+  void testbug13701();
 };
 
 //} // namespace xms
