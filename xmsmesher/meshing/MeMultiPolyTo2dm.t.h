@@ -50,6 +50,7 @@ public:
   void testbug11646();
   void testbug12780();
   void testbug13701();
+  void testbug13701_a();
 };
 
 //} // namespace xms
