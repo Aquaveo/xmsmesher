@@ -126,9 +126,9 @@ void iWriteInterpDataToDebugFile(std::fstream& a_os, BSHP<InterpBase> a_interp)
     a_os << "LINEAR";
 
   VecPt3d& pts(*ptsPtr);
-  a_os << pts.size() << "\n";
+  a_os << " " << pts.size() << "0\n";
   for (const auto& p : pts)
-    a_os << STRstd(p.x) << " " << STRstd(p.y) << "\n";
+    a_os << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z) << "\n";
 } // iWriteInterpDataToDebugFile
 //------------------------------------------------------------------------------
 /// \brief Writes the MeMultiPolyMesherIo to a file if a debug file is present
