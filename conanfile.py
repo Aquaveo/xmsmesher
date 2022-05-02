@@ -66,8 +66,8 @@ class XmsinterpConan(ConanFile):
         self.requires("xmsinterp/4.1.0@aquaveo/stable")
         # zlib and bzip2 are required by boost. They used to get pulled automatically from conan-center, but something
         # changed and we now need to explicitly list them as requirements using the new style notation.
-        # self.requires('zlib/1.2.11')
-        # self.requires('bzip2/1.0.8')
+        self.requires('zlib/1.2.11@conan/stable')
+        self.requires('bzip2/1.0.8@conan/stable')
 
     def build(self):
         cmake = CMake(self)
