@@ -113,7 +113,7 @@ public:
   virtual std::string ToPyRepr() const override;
 
   VecPt3d2d LoopToVecPt3d(const VecSizet& a_idx, const VecPt3d& a_pts);
-  void IntersectWithTris(VecPt3d& a_pts);
+  void IntersectWithTris(VecPt3d& a_pts, bool a_isLoop);
   void InterpEdgeLengths(const VecPt3d& a_pts, VecDbl& lengths);
   void InterpToPoint(size_t a_idx,
                      const VecPt3d& a_pts,
@@ -332,12 +332,13 @@ void MePolyRedistributePtsImpl::Redistribute(const MePolyOffsetterOutput& a_inpu
     const int& lType(a_input.m_loopTypes[i]);
     VecPt3d2d pts2d = LoopToVecPt3d(loop, a_input.m_pts);
     VecPt3d redistPts;
+    bool isLoop(pts2d.size() == 1);
     for (size_t j = 0; j < pts2d.size(); ++j)
     {
       VecPt3d& pts(pts2d[j]);
       if (m_intersectWithTris)
       {
-        IntersectWithTris(pts);
+        IntersectWithTris(pts, isLoop);
       }
       if (pts2d.size() < 2)
         pts.push_back(pts.front());
@@ -393,9 +394,10 @@ VecPt3d MePolyRedistributePtsImpl::Redistribute(const VecPt3d& a_polyLine)
   }
   VecPt3d pts(a_polyLine), ret;
   VecDbl lengths;
+  bool isLoop(true);
   if (m_intersectWithTris)
   {
-    IntersectWithTris(pts);
+    IntersectWithTris(pts, isLoop);
   }
   // interpolate edge lengths
   InterpEdgeLengths(pts, lengths);
@@ -511,8 +513,9 @@ VecPt3d2d MePolyRedistributePtsImpl::LoopToVecPt3d(const VecSizet& a_idx, const 
 //------------------------------------------------------------------------------
 /// \brief Creates a vector of pts from indices into another vector of points
 /// \param a_pts Vector of locations.
+/// \param a_isLoop Tells if a_pts is actually a loop (last point should connect to the first)
 //------------------------------------------------------------------------------
-void MePolyRedistributePtsImpl::IntersectWithTris(VecPt3d& a_pts)
+void MePolyRedistributePtsImpl::IntersectWithTris(VecPt3d& a_pts, bool a_isLoop)
 {
   VecPt3d newPts, pts;
   VecInt polys;
@@ -521,6 +524,8 @@ void MePolyRedistributePtsImpl::IntersectWithTris(VecPt3d& a_pts)
     Pt3d p0(a_pts[i]), p1(a_pts[0]);
     if (i < a_pts.size() - 1)
       p1 = a_pts[i + 1];
+    else if (!a_isLoop)
+      continue;
     m_polyIntersector->TraverseLineSegment(p0.x, p0.y, p1.x, p1.y, polys, pts);
     if (!pts.empty())
     {
@@ -1404,7 +1409,7 @@ void MePolyRedistributePtsUnitTests::testIntersectWithTris()
   r.m_sizePts = triPts;
   r.m_sizeTris = triTris;
   r.CreatePolyIntersector();
-  r.IntersectWithTris(loop);
+  r.IntersectWithTris(loop, true);
   VecPt3d baseLoop = {{0, 0, 0},   {0, 5, 0},  {0, 10, 0}, {5, 10, 0},
                       {10, 10, 0}, {10, 5, 0}, {10, 0, 0}, {5, 0, 0}};
   TS_ASSERT_DELTA_VECPT3D(baseLoop, loop, FLT_EPSILON);

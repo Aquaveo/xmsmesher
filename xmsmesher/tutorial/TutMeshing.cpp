@@ -141,7 +141,7 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
         interp = InterpIdw::New();
       }
 
-      int numtri;
+      int numtri(0);
       os >> numpts >> numtri;
       BSHP<VecPt3d> vpts(new VecPt3d());
       VecPt3d& pts(*vpts);
