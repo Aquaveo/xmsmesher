@@ -133,6 +133,8 @@ class PolyInput(object):
             return interp.interpolate.InterpIdw(instance=size_func)
         elif self._size_function_type == interp._xmsinterp.interpolate.InterpAnisotropic:
             return interp.interpolate.InterpAnisotropic(instance=size_func)
+        elif self._size_function_type == interp._xmsinterp.interpolate.InterpLinearExtrapIdw:
+            return interp.interpolate.InterpLinearExtrapIdw(instance=size_func)
         else:
             raise RuntimeError("Unknown interp type: {}".format(type(size_func)))
 
