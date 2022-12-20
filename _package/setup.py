@@ -29,4 +29,5 @@ setup(
     author='Aquaveo',
     install_requires=requires,
     package_data={'': ['*.pyd', '*.so']},
+    has_ext_modules=lambda: True,
 )
