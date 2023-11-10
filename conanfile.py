@@ -13,7 +13,7 @@ class XmsmesherConan(XmsConanFile):
     description = 'Mesher library for XMS products'
     xms_dependencies = [
         'xmscore/[>=6.0.1 <7.0.0]@aquaveo/stable',
-        'xmsgrid/[>=7.0.1 <8.0.0]@aquaveo/stable',
+        'xmsgrid/[>=7.7.5 <8.0.0]@aquaveo/stable',
         'xmsinterp/[>=6.0.1 <7.0.0]@aquaveo/stable',
     ]
     extra_export_sources = [
