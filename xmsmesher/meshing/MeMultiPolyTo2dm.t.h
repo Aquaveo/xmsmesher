@@ -51,6 +51,7 @@ public:
   void testbug12780();
   void testbug13701();
   void testbug13701_a();
+  void test_srp_seed_pts();
 };
 
 //} // namespace xms
