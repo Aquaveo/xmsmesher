@@ -819,4 +819,11 @@ void MeMultiPolyTo2dmIntermediateTests::testbug13701_a()
 {
   iTestFromPolyFile("bug13701_a", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testbug13701_a
+//------------------------------------------------------------------------------
+/// \brief Test for a bug where points are created with NAN coordinates
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::test_srp_seed_pts()
+{
+  iTestFromPolyFile("srp_seed_pts", 10);
+} // MeMultiPolyTo2dmIntermediateTests::test_srp_seed_pts
 #endif // CXX_TEST

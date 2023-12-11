@@ -500,11 +500,48 @@ void MePolyMesherImpl::GenerateMeshPts()
     // if the user provided the seed points then we don't need to pave
     if (!m_seedPts.empty())
     {
-      // add the outer poly and the inner poly points
-      *m_points = m_seedPts;
-      m_points->insert(m_points->end(), m_outPoly.begin(), m_outPoly.end());
+      // add the outside polygon to the points
+      *m_points = m_outPoly;
+      std::pair<double, double> pxy;
+      std::set<std::pair<double, double>> set_pt_xy;
+      for (auto& pt : m_outPoly)
+      {
+        pxy.first = pt.x;
+        pxy.second = pt.y;
+        set_pt_xy.insert(pxy);
+      }
+      // make sure we do not add duplicate points to the list so hash the x, y for 
+      // internal polygons and seed points
       for (auto& in : inPolys)
-        m_points->insert(m_points->end(), in.begin(), in.end());
+      {
+        for (auto& pt : in)
+        {
+          pxy.first = pt.x;
+          pxy.second = pt.y;
+          if (set_pt_xy.find(pxy) == set_pt_xy.end())
+          {
+            m_points->push_back(pt);
+            set_pt_xy.insert(pxy);
+          }
+        }
+      }
+      for (auto& pt : m_seedPts)
+      {
+        pxy.first = pt.x;
+        pxy.second = pt.y;
+        if (set_pt_xy.find(pxy) == set_pt_xy.end())
+        {
+          m_points->push_back(pt);
+          set_pt_xy.insert(pxy);
+        }
+      }
+      // can't do it this way because we might add duplicate x,y locations
+
+      //// add the outer poly and the inner poly points
+      //*m_points = m_seedPts;
+      //m_points->insert(m_points->end(), m_outPoly.begin(), m_outPoly.end());
+      //for (auto& in : inPolys)
+      //  m_points->insert(m_points->end(), in.begin(), in.end());
     }
     else
     {
@@ -588,9 +625,9 @@ void MePolyMesherImpl::AddBreaklines()
   VecInt outPolyPtIdxs = m_outPolyPtIdxs;
   outPolyPtIdxs.push_back(m_outPolyPtIdxs.front());
   VecInt2d inPolyPtIdxs = m_inPolyPtIdxs;
-  for (size_t i = 0; i < m_inPolyPtIdxs.size(); ++i)
+  for (size_t i = 0; i < inPolyPtIdxs.size(); ++i)
   {
-    inPolyPtIdxs[i].push_back(m_inPolyPtIdxs[i].front());
+    inPolyPtIdxs[i].push_back(inPolyPtIdxs[i].front());
   }
 
   adder->AddBreakline(outPolyPtIdxs);
