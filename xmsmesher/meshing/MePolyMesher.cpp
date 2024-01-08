@@ -282,7 +282,10 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
   if (!polyInput.m_polyCorners.empty())
     m_polyCorners = polyInput.m_polyCorners;
   else
+  {
     SortPoly(m_outPoly);
+    m_polyCorners = VecInt();
+  }
 
   m_elev = polyInput.m_elevFunction;
   m_boundPtsToRemove = polyInput.m_boundPtsToRemove;
