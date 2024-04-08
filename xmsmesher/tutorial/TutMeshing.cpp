@@ -214,6 +214,14 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       os >> method;
       p->m_relaxationMethod = method;
     }
+    else if ("FIX_POINT_CONNECTIONS" == card)
+    {
+      p->m_fixPointConnections = true;
+    }
+    else if ("REMOVE_INTERNAL_FOUR_TRIANGLE_PTS" == card)
+    {
+      p->m_removeInternalFourTrianglePts = true;
+    }
     card = "";
   }
   return true;

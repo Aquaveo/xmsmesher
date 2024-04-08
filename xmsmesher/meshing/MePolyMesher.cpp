@@ -713,6 +713,7 @@ void MePolyMesherImpl::FixPointsWithTooManyConnections()
     if (m_tin->NumPoints() != nPts)
     {
       FindAllPolyPointIdxs();
+      m_points = m_tin->PointsPtr();
     }
     else
     {
