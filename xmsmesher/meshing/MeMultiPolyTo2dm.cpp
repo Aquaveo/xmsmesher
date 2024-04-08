@@ -827,6 +827,13 @@ void MeMultiPolyTo2dmIntermediateTests::test_srp_seed_pts()
   iTestFromPolyFile("srp_seed_pts", 10);
 } // MeMultiPolyTo2dmIntermediateTests::test_srp_seed_pts
 //------------------------------------------------------------------------------
+/// \brief Test for a bug with poor triangles around internal arcs
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testbug14016()
+{
+  iTestFromPolyFile("bug_14016", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testbug14016
+//------------------------------------------------------------------------------
 /// \brief Test for a bug where points are created with NAN coordinates
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testbug14901()

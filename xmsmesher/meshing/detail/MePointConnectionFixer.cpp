@@ -121,8 +121,8 @@ BSHP<TrTin> MePointConnectionFixerImpl::Fix(const VecInt& a_noDeletePts)
       m_removePts.insert(i);
       CalcPolygonFromPointIndex();
       CreateNewPoints();
-   }
- }
+    }
+  }
   CreateNewTin();
   return m_outTin;
 } // MePointConnectionFixerImpl::Fix
@@ -197,7 +197,7 @@ void MePointConnectionFixerImpl::CreateNewPoints()
       lengths.push_back(Mdist(p0.x, p0.y, p1.x, p1.y));
       if (lengths.back() > maxDist)
         maxDist = lengths.back();
-   }
+    }
     int numNewPts(0);
     VecPt3d newPoly;
     double factor(0.75);
@@ -215,21 +215,21 @@ void MePointConnectionFixerImpl::CreateNewPoints()
           const Pt3d& p1(input.m_outPoly[i]);
           Pt3d p = (p0 + p1) / 2;
           newPoly.push_back(p);
-       }
-     }
+        }
+      }
       factor -= 0.1;
-   } 
+    } 
     newPoly.pop_back(); // remove first point from the end
     input.m_outPoly = newPoly;
     mpInput.m_polys[0] = input;
     pm->MeshIt(mpInput, 0, mpPts, mpTris, mpCells);
- }
+  }
   // the new points should be the points in mpPts that are after the
   // input polygon
   for (size_t i = input.m_outPoly.size(); i < mpPts.size(); ++i)
   {
     m_newPts.push_back(mpPts[i]);
- }
+  }
 } // MePointConnectionFixerImpl::CreateNewPoints
 //------------------------------------------------------------------------------
 /// \brief Creates a new TIN incorporating the new points

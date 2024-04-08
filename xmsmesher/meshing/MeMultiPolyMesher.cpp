@@ -168,7 +168,8 @@ void iWriteInputsToDebugFile(MeMultiPolyMesherIo& a_io)
     }
     if (poly.m_constSizeFunction != -1)
     {
-      os << "CONST_SIZE_FUNCTION " << STRstd(poly.m_constSizeFunction) << "\n";
+      os << "CONST_SIZE_FUNCTION " << STRstd(poly.m_constSizeFunction) 
+         << " " << STRstd(poly.m_constSizeBias) <<"\n";
     }
     if (!poly.m_polyCorners.empty())
     {
@@ -180,6 +181,14 @@ void iWriteInputsToDebugFile(MeMultiPolyMesherIo& a_io)
     if (poly.m_relaxationMethod != "")
     {
       os << "RELAXATION_METHOD " << poly.m_relaxationMethod << "\n";
+    }
+    if (poly.m_fixPointConnections)
+    {
+      os << "FIX_POINT_CONNECTIONS\n";
+    }
+    if (poly.m_removeInternalFourTrianglePts)
+    {
+      os << "REMOVE_INTERNAL_FOUR_TRIANGLE_PTS\n";
     }
     os << "END_POLYGON\n";
   }
