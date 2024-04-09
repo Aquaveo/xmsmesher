@@ -499,7 +499,6 @@ VecPt3d MePolyRedistributePtsImpl::Redistribute(const VecPt3d& a_polyLine)
   }
   VecPt3d pts(a_polyLine), ret;
   VecDbl lengths;
-  pts.push_back(pts.front());
   if (m_intersectWithTris)
   {
     IntersectWithTris(pts);
