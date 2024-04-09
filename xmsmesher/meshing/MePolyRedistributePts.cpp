@@ -412,7 +412,7 @@ VecPt3d2d MePolyRedistributePtsImpl::AnchorLoopToLines(const VecSizet& a_loop, c
     idx = (int)loop[i];
     if (m_anchorIdxs.find(idx) != m_anchorIdxs.end())
     {
-      if (!pts.empty())
+      if (!pts.empty() && !prevIsAnchor)
       {
         pts.back().push_back(a_pts[idx]);
       }
