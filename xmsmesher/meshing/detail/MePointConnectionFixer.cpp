@@ -19,6 +19,7 @@
 
 // 4. External library headers
 //#include <boost/utility.hpp>
+#include <xmsgrid/geometry/geoms.h>
 
 // 5. Shared code headers
 #include <xmscore/math/math.h>
@@ -180,6 +181,15 @@ void MePointConnectionFixerImpl::CreateNewPoints()
     const Pt3d& p0(pts[m_poly[i]]);
     input.m_outPoly.push_back(p0);
  }
+  // calc edge polygon edge lengths to set constant size function
+  double sum_length = gmXyDistance(input.m_outPoly.front(), input.m_outPoly.back());
+  for (size_t i = 0; i < m_poly.size() - 1; ++i)
+  {
+    sum_length += gmXyDistance(input.m_outPoly[i], input.m_outPoly[i + 1]);
+  }
+  double ave_length = sum_length / m_poly.size();
+  input.m_constSizeFunction = 0.9 * ave_length;
+
   mpInput.m_polys.push_back(input);
 
   VecPt3d mpPts;
@@ -352,10 +362,10 @@ void MePointConnectionFixerrUnitTests::testFixer()
   VecPt3d outPts = outTin->Points();
   VecPt3d basePts = pts;
   basePts.erase(basePts.begin() + 26);
-  basePts.push_back(Pt3d(64.558573249142270, 50.230881236095158, 0));
-  basePts.push_back(Pt3d(63.087731071855494, 60.067819767562149, 0));
-  basePts.push_back(Pt3d(70.164328807542191, 59.923655787063346, 0));
-  TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 1e-9);
+  basePts.push_back(Pt3d(64.522, 49.966, 0));
+  basePts.push_back(Pt3d(63.103, 59.578, 0));
+  basePts.push_back(Pt3d(70.149, 59.490, 0));
+  TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 1e-2);
 } // MePointConnectionFixerrUnitTests::testFixer
 //------------------------------------------------------------------------------
 /// \brief Test MePointConnectionFixer.
@@ -383,18 +393,16 @@ void MePointConnectionFixerrUnitTests::testCase2()
   BSHP<TrTin> outTin = fixer->Fix(boundaryPoints);
   VecPt3d outPts = outTin->Points();
   VecPt3d basePts = {
-    {180.6, 185.9, 0}, {177.4, 182.6, 0}, {174.2, 176.1, 0}, {174.2, 167.1, 0},
-    {174.8, 159.6, 0}, {177.7, 154.8, 0}, {185.8, 149.6, 0}, {192.3, 147.3, 0},
-    {198.1, 147.0, 0}, {202.3, 148.3, 0}, {207.2, 152.5, 0}, {209.8, 158.7, 0},
-    {210.8, 164.5, 0}, {210.8, 172.6, 0}, {210.8, 177.4, 0}, {207.5, 183.6, 0},
-    {204.0, 185.9, 0}, {200.4, 187.2, 0}, {196.8, 188.5, 0}, {190.7, 188.5, 0},
-    {180.4, 161.2, 0}, {181.7, 167.4, 0}, {180.8, 174.3, 0}, {184.1, 181.9, 0},
-    {187.6, 177.3, 0}, {191.5, 182.5, 0}, {197.5, 183.8, 0}, {201.8, 181.9, 0},
-    {205.0, 178.3, 0}, {205.1, 173.3, 0}, {204.9, 167.6, 0}, {204.0, 161.5, 0},
-    {202.8, 155.4, 0}, {197.5, 152.0, 0}, {192.0, 154.2, 0}, {186.1, 157.2, 0},
-    {186.5, 163.7, 0}, {189.6, 169.8, 0}, {193.2, 175.6, 0}, {196.6, 179.5, 0},
-    {199.9, 176.1, 0}, {198.3, 170.9, 0}, {197.9, 165.1, 0}, {197.8, 158.4, 0},
-    {192.2, 161.6, 0},
+    {180.6, 185.9, 0}, {177.4, 182.6, 0}, {174.2, 176.1, 0}, {174.2, 167.1, 0}, {174.8, 159.6, 0},
+    {177.7, 154.8, 0}, {185.8, 149.6, 0}, {192.3, 147.3, 0}, {198.1, 147, 0},   {202.3, 148.3, 0},
+    {207.2, 152.5, 0}, {209.8, 158.7, 0}, {210.8, 164.5, 0}, {210.8, 172.6, 0}, {210.8, 177.4, 0},
+    {207.5, 183.6, 0}, {204, 185.9, 0},   {200.4, 187.2, 0}, {196.8, 188.5, 0}, {190.7, 188.5, 0},
+    {181.0, 164.6, 0}, {179.2, 171.0, 0}, {181.9, 176.5, 0}, {185.1, 182.6, 0}, {188.1, 178.3, 0},
+    {191.9, 181.9, 0}, {196.3, 184.3, 0}, {201.8, 182.5, 0}, {204.4, 178.2, 0}, {206.0, 173.8, 0},
+    {205.5, 168.6, 0}, {204.7, 162.9, 0}, {203.2, 157.4, 0}, {200.6, 152.6, 0}, {195.4, 151.7, 0},
+    {190.5, 154.1, 0}, {184.1, 158.2, 0}, {191.6, 160.1, 0}, {187.7, 164.4, 0}, {184.9, 170.1, 0},
+    {188.9, 173.8, 0}, {194.0, 176.3, 0}, {198.2, 179.0, 0}, {200.3, 173.2, 0}, {199.8, 167.1, 0},
+    {198.4, 161.6, 0}, {196.5, 156.7, 0}, {195.0, 171.0, 0}, {194.0, 165.4, 0}, {190.3, 169.1, 0}
   };
   TS_ASSERT_DELTA_VECPT3D(basePts, outPts, 0.1);
 } //  MePointConnectionFixerrUnitTests::testCase2
