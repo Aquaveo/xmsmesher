@@ -149,6 +149,7 @@ private:
   bool m_removeInternalFourTrianglePts =
     false; ///< flag to indicate the removal of internal pts connected to 4 triangles will occur
   bool m_fixPointConnections; ///< fix points connected to more than 7 cells.
+  bool m_relaxAgain = true;  ///< relax after fixing too many connections and 4 point connections
 };         // class MePolyMesherImpl
 
 //----- Internal functions -----------------------------------------------------
@@ -229,6 +230,7 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
                               VecInt& a_triangles,
                               VecInt& a_cells)
 {
+  m_relaxAgain = true;
   // reinitialize some internal classes
   m_tin = TrTin::New();
   m_redist = MePolyRedistributePts::New();
@@ -377,11 +379,16 @@ bool MePolyMesherImpl::MeshFromInputs(VecPt3d& a_points, VecInt& a_triangles, Ve
         ProcessBoundaryPtsFlaggedToRemove();
         Triangulate();
         FindAllPolyPointIdxs();
-        AutoFixFourTrianglePts();
-        FixPointsWithTooManyConnections();
         AddBreaklines();
         DeleteTrianglesOutsidePolys();
-        Relax();
+        while (m_relaxAgain)
+        {
+          Relax();
+          m_relaxAgain = false;
+          m_relaxer->SetNumberIterations(1);
+          AutoFixFourTrianglePts();
+          FixPointsWithTooManyConnections();
+        }
       }
       // Re-add breaklines and delete outer polys because relaxing can swap edges
       AddBreaklines();
@@ -694,6 +701,8 @@ void MePolyMesherImpl::AutoFixFourTrianglePts()
   if (ptsBefore != m_tin->Points().size())
   {
     FindAllPolyPointIdxs();
+    m_points = m_tin->PointsPtr();
+    m_relaxAgain = true;
   }
 } // MePolyMesherImpl::AutoFixFourTrianglePts
 //------------------------------------------------------------------------------
@@ -714,6 +723,7 @@ void MePolyMesherImpl::FixPointsWithTooManyConnections()
     {
       FindAllPolyPointIdxs();
       m_points = m_tin->PointsPtr();
+      m_relaxAgain = true;
     }
     else
     {
