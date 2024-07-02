@@ -19,10 +19,10 @@
 
 // 5. Shared code headers
 #include <xmscore/math/math.h>
+#include <xmscore/misc/carray.h>
 #include <xmscore/misc/StringUtil.h>
 #include <xmscore/misc/XmConst.h>
 #include <xmscore/misc/XmError.h>
-#include <xmscore/misc/carray.h>
 #include <xmscore/misc/xmstype.h> // for XM_PI
 #include <xmscore/points/pt.h>
 #include <xmscore/stl/vector.h>
@@ -67,6 +67,7 @@ public:
                      const VecInt& a_fixedPoints,
                      BSHP<TrTin> a_tin) override;
   virtual bool SetRelaxationMethod(const std::string& a_relaxMethod) override;
+  virtual void SetNumberIterations(int a_nIter) override { m_nIter = a_nIter; }
   //------------------------------------------------------------------------------
   /// \brief Sets size function used by the spring relaxation method
   /// \param a_sizer: The size function class
@@ -93,6 +94,7 @@ public:
   VecDbl m_pointSizes;                 ///< sizer size at each mesh point
   VecInt2d m_pointNeighbors;           ///< neighbor points for spring relaxation
   VecInt m_pointsToDelete;             ///< indexes of points that must be removed
+  int m_nIter = 3;                     ///< number of relax iterations
 };                                     // class MeRelaxerImpl
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +160,7 @@ void MeRelaxerImpl::Relax(/*MeshPolyEnum a_meshPolyEnum,*/
 #ifdef _DEBUG
   VecPt3d& pts(m_tin->Points());
 #endif
-  int numiterations(3); // default to 3 for area relaxation
+  int numiterations(m_nIter); // default to 3 for area relaxation
   RelaxTypeEnum relaxtype(m_relaxType);
   if (relaxtype == RELAXTYPE_SPRING)
   {
