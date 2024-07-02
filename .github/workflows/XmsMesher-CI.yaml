@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest]
+        platform: [macos-13]
         python-version: ['3.10']
         build_type: [Release, Debug]
 
