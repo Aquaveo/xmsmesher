@@ -19,10 +19,10 @@
 
 // 5. Shared code headers
 #include <xmscore/math/math.h>
+#include <xmscore/misc/carray.h>
 #include <xmscore/misc/StringUtil.h>
 #include <xmscore/misc/XmConst.h>
 #include <xmscore/misc/XmError.h>
-#include <xmscore/misc/carray.h>
 #include <xmscore/misc/xmstype.h> // for XM_PI
 #include <xmscore/points/pt.h>
 #include <xmscore/stl/vector.h>
