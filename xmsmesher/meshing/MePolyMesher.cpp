@@ -391,8 +391,9 @@ bool MePolyMesherImpl::MeshFromInputs(VecPt3d& a_points, VecInt& a_triangles, Ve
         }
       }
       // Re-add breaklines and delete outer polys because relaxing can swap edges
-      AddBreaklines();
-      DeleteTrianglesOutsidePolys();
+      // This is done at the end of this->Relax()
+      //AddBreaklines();
+      //DeleteTrianglesOutsidePolys();
       a_triangles.swap(m_tin->Triangles());
       a_cells.resize(0);
     }
