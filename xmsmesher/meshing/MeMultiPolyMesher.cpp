@@ -114,12 +114,12 @@ namespace
 /// \param a_os[in]: the file
 /// \param a_interp[in]: the interpolation class
 //------------------------------------------------------------------------------
-void iWriteInterpDataToDebugFile(std::fstream& a_os, BSHP<InterpBase> a_interp)
+void iWriteInterpDataToDebugFile(std::ostream& a_os, BSHP<InterpBase> a_interp)
 {
   BSHP<VecPt3d> ptsPtr = a_interp->GetPts();
   BSHP<InterpIdw> idw = BDPC<InterpIdw>(a_interp);
   BSHP<InterpLinear> linear = BDPC<InterpLinear>(a_interp);
-  XM_ENSURE_TRUE(ptsPtr && (idw || linear));
+  XM_ENSURE_TRUE_NO_ASSERT(ptsPtr && (idw || linear));
   if (idw)
     a_os << "IDW";
   else
@@ -146,14 +146,14 @@ void iWriteInputsToDebugFile(MeMultiPolyMesherIo& a_io)
   for (size_t i = 0; i < a_io.m_polys.size(); ++i)
   {
     MePolyInput& poly(a_io.m_polys[i]);
-    os << "BEGIN_POLYGON\nOUTSIDE " << poly.m_outPoly.size() << "\n";
+    os << "BEGIN_POLYGON\nOUTSIDE_3D " << poly.m_outPoly.size() << "\n";
     for (auto& p : poly.m_outPoly)
-      os << STRstd(p.x) << " " << STRstd(p.y) << "\n";
+      os << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z) << "\n";
     for (auto& v : poly.m_insidePolys)
     {
-      os << "INSIDE " << v.size() << "\n";
+      os << "INSIDE_3D " << v.size() << "\n";
       for (auto& p : v)
-        os << STRstd(p.x) << " " << STRstd(p.y) << "\n";
+        os << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z) << "\n";
     }
     os << "BIAS " << STRstd(poly.m_bias) << "\n";
     if (poly.m_sizeFunction)
@@ -163,8 +163,12 @@ void iWriteInputsToDebugFile(MeMultiPolyMesherIo& a_io)
     }
     if (poly.m_elevFunction)
     {
-      os << "ELEVATION_FUNCTION\n";
-      iWriteInterpDataToDebugFile(os, poly.m_elevFunction);
+      std::stringstream ss;
+      iWriteInterpDataToDebugFile(ss, poly.m_elevFunction);
+      if (!ss.str().empty()) {
+        os << "ELEVATION_FUNCTION\n";
+        os << ss.str();
+      }
     }
     if (poly.m_constSizeFunction != -1)
     {

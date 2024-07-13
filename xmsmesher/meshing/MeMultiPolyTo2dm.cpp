@@ -854,5 +854,20 @@ void MeMultiPolyTo2dmIntermediateTests::testbug15186()
 {
   iTestFromPolyFile("bug15186", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testbug15186
+//------------------------------------------------------------------------------
+/// \brief Test for a bug where z values on the polygon cause problems
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testbug15246()
+{
+  iTestFromPolyFile("bug15246", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testbug15246
+//------------------------------------------------------------------------------
+/// \brief Test for a patch with Z elevations on the outside polygon
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testPatch7()
+{
+  iTestFromPolyFile("CasePatch7", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testPatch7
+
 
 #endif // CXX_TEST
