@@ -153,6 +153,36 @@ private:
 };         // class MePolyMesherImpl
 
 //----- Internal functions -----------------------------------------------------
+namespace
+{
+
+//------------------------------------------------------------------------------
+/// \brief Sets the Z to 0.0 in a vector of Pt3d
+//------------------------------------------------------------------------------
+static void iSetPt3dZtoZero(VecPt3d& a_vec, bool a_is_patch)
+{
+  if (a_is_patch)
+    return;
+
+  for (auto& pt : a_vec)
+    pt.z = 0.0;
+} // i_Set_Pt3d_Z_to_Zero
+static void iSetPt3dZtoZero(VecPt3d2d& a_vec, bool a_is_patch)
+{
+  if (a_is_patch)
+    return;
+  for (auto& pts : a_vec)
+    iSetPt3dZtoZero(pts, a_is_patch);
+} // iSetPt3dZtoZero
+static void iSetPt3dZtoZero(std::vector<MeRefinePoint>& a_vec, bool a_is_patch)
+{
+  if (a_is_patch)
+    return;
+  for (auto& rpt : a_vec)
+    rpt.m_pt.z = 0.0;
+} // iSetPt3dZtoZero
+
+} // un-named namespace
 
 //----- Class / Function definitions -------------------------------------------
 
@@ -240,6 +270,7 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
 
   // outer polygons
   const MePolyInput& polyInput = a_input.m_polys[a_polyIdx];
+  bool is_patch(!polyInput.m_polyCorners.empty());
 
   if (!polyInput.m_relaxationMethod.empty())
   {
@@ -249,16 +280,20 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
 
   m_polyId = polyInput.m_polyId;
   m_outPoly = polyInput.m_outPoly;
+  iSetPt3dZtoZero(m_outPoly, is_patch);
   m_seedPts = polyInput.m_seedPoints;
   m_relaxSeedPoints = polyInput.m_relaxSeedPoints;
   ComputeTolerance();
 
   // holes inside the outer polygons
   m_inPolys = polyInput.m_insidePolys;
+  iSetPt3dZtoZero(m_inPolys, is_patch);
   // bias term
   m_bias = polyInput.m_bias;
   // refine pts
-  m_refineToPolys->SetRefinePoints(a_input.m_refPts, m_xyTol);
+  std::vector<MeRefinePoint> refPts = a_input.m_refPts;
+  iSetPt3dZtoZero(refPts, is_patch);
+  m_refineToPolys->SetRefinePoints(refPts, m_xyTol);
   m_refineToPolys->RefPtsAsPolys(polyInput.m_polyId, m_outPoly, m_inPolys, m_refPtPolys,
                                  m_refMeshPts, m_refPtsTooClose);
   // size function
@@ -311,10 +346,13 @@ bool MePolyMesherImpl::MeshIt(const VecPt3d& a_outPoly,
                               VecPt3d& a_points,
                               VecInt& a_triangles)
 {
+  bool is_patch(false);
   m_outPoly = a_outPoly;
+  iSetPt3dZtoZero(m_outPoly, is_patch);
   ComputeTolerance();
   SortPoly(m_outPoly);
   m_inPolys = a_inPolys;
+  iSetPt3dZtoZero(m_inPolys, is_patch);
   m_bias = a_bias;
   VecInt cells;
   return MeshFromInputs(a_points, a_triangles, cells);

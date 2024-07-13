@@ -85,13 +85,16 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       a_io.m_polys.push_back(MePolyInput());
       p = &a_io.m_polys.back();
     }
-    else if ("OUTSIDE" == card && p)
+    else if (("OUTSIDE" == card || "OUTSIDE_3D" == card) && p)
     {
+      bool is_3d("OUTSIDE_3D" == card);
       os >> numpts;
       p->m_outPoly.reserve(numpts);
       for (size_t i = 0; i < numpts; ++i)
       {
         os >> pt.x >> pt.y;
+        if (is_3d)
+          os >> pt.z;
         p->m_outPoly.push_back(pt);
       }
 
@@ -103,8 +106,9 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
         area = gmPolygonArea(&vPoly[0], vPoly.size());
       }
     }
-    else if ("INSIDE" == card && p)
+    else if (("INSIDE" == card || "INSIDE_3D" == card) && p)
     {
+      bool is_3d("INSIDE_3D" == card);
       p->m_insidePolys.push_back(VecPt3d());
       std::vector<Pt3d>& in(p->m_insidePolys.back());
       os >> numpts;
@@ -112,6 +116,8 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       for (size_t i = 0; i < numpts; ++i)
       {
         os >> pt.x >> pt.y;
+        if (is_3d)
+          os >> pt.z;
         in.push_back(pt);
       }
 
