@@ -843,12 +843,17 @@ void MeMultiPolyMesherImpl::AppendNewCells(const VecInt& a_cells)
 void MeMultiPolyMesherImpl::ReportUnusedRefinePts(const MeMultiPolyMesherIo& a_io,
                                                   const VecPt3d& a_usedPts)
 {
-  SetPt3d setPts(a_usedPts.begin(), a_usedPts.end());
+  VecPt3d pts(a_usedPts);
+  for (auto& p : pts)
+    p.z = 0;
+  SetPt3d setPts(pts.begin(), pts.end());
   SetPt3d::iterator itEnd = setPts.end();
   VecStr strLoc;
   for (size_t i = 0; i < a_io.m_refPts.size(); ++i)
   {
-    if (setPts.find(a_io.m_refPts[i].m_pt) == itEnd)
+    Pt3d pp = a_io.m_refPts[i].m_pt;
+    pp.z = 0.0;
+    if (setPts.find(pp) == itEnd)
     {
       std::stringstream ss;
       ss << "(" << a_io.m_refPts[i].m_pt.x << ", " << a_io.m_refPts[i].m_pt.y << ")";
