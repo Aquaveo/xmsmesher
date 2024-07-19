@@ -58,6 +58,7 @@ public:
   void testbug15186();
   void testbug15246();
   void testPatch7();
+  void testRefine();
 };
 
 //} // namespace xms
