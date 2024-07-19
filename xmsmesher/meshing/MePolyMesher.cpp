@@ -762,6 +762,7 @@ void MePolyMesherImpl::FixPointsWithTooManyConnections()
     {
       FindAllPolyPointIdxs();
       m_points = m_tin->PointsPtr();
+      FindAllPolyPointIdxs();
       m_relaxAgain = true;
     }
     else
