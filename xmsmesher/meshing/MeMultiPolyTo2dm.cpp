@@ -868,6 +868,12 @@ void MeMultiPolyTo2dmIntermediateTests::testPatch7()
 {
   iTestFromPolyFile("CasePatch7", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testPatch7
-
+//------------------------------------------------------------------------------
+/// \brief Test for a patch with Z elevations on the outside polygon
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testRefine()
+{
+  iTestFromPolyFile("CaseRefine01", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testRefine
 
 #endif // CXX_TEST
