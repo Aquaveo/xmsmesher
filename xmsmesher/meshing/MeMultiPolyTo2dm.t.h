@@ -56,6 +56,7 @@ public:
   void testbug14901();
   void testbug15183();
   void testbug15186();
+  void testbug15186_a();
   void testbug15246();
   void testPatch7();
   void testRefine();
