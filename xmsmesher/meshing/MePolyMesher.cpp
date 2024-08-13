@@ -149,7 +149,6 @@ private:
   bool m_removeInternalFourTrianglePts =
     false; ///< flag to indicate the removal of internal pts connected to 4 triangles will occur
   bool m_fixPointConnections; ///< fix points connected to more than 7 cells.
-  bool m_relaxAgain = true;  ///< relax after fixing too many connections and 4 point connections
 };         // class MePolyMesherImpl
 
 //----- Internal functions -----------------------------------------------------
@@ -260,7 +259,6 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
                               VecInt& a_triangles,
                               VecInt& a_cells)
 {
-  m_relaxAgain = true;
   // reinitialize some internal classes
   m_tin = TrTin::New();
   m_redist = MePolyRedistributePts::New();
@@ -419,14 +417,11 @@ bool MePolyMesherImpl::MeshFromInputs(VecPt3d& a_points, VecInt& a_triangles, Ve
         FindAllPolyPointIdxs();
         AddBreaklines();
         DeleteTrianglesOutsidePolys();
-        while (m_relaxAgain)
-        {
-          Relax();
-          m_relaxAgain = false;
-          m_relaxer->SetNumberIterations(1);
-          AutoFixFourTrianglePts();
+        Relax();
+        if (m_fixPointConnections)
           FixPointsWithTooManyConnections();
-        }
+        if (m_removeInternalFourTrianglePts)
+          AutoFixFourTrianglePts();
       }
       // Re-add breaklines and delete outer polys because relaxing can swap edges
       // This is done at the end of this->Relax()
@@ -728,20 +723,27 @@ VecInt MePolyMesherImpl::GetPointsNoDelete()
 //------------------------------------------------------------------------------
 void MePolyMesherImpl::AutoFixFourTrianglePts()
 {
-  if (!m_removeInternalFourTrianglePts)
-    return;
-  BSHP<TrAutoFixFourTrianglePts> fixer = TrAutoFixFourTrianglePts::New();
-
-  VecInt noDeletePts(GetPointsNoDelete());
-  fixer->SetUndeleteablePtIdxs(noDeletePts);
-
-  size_t ptsBefore(m_tin->Points().size());
-  fixer->Fix(m_tin);
-  if (ptsBefore != m_tin->Points().size())
+  int cnt(0);
+  bool done(false);
+  while (!done)
   {
-    FindAllPolyPointIdxs();
-    m_points = m_tin->PointsPtr();
-    m_relaxAgain = true;
+    cnt++;
+    BSHP<TrAutoFixFourTrianglePts> fixer = TrAutoFixFourTrianglePts::New();
+
+    VecInt noDeletePts(GetPointsNoDelete());
+    fixer->SetUndeleteablePtIdxs(noDeletePts);
+
+    size_t ptsBefore(m_tin->Points().size());
+    fixer->Fix(m_tin);
+    if (ptsBefore != m_tin->Points().size())
+    {
+      m_points = m_tin->PointsPtr();
+      FindAllPolyPointIdxs();
+    }
+    else
+    {
+      done = true;
+    }
   }
 } // MePolyMesherImpl::AutoFixFourTrianglePts
 //------------------------------------------------------------------------------
@@ -749,21 +751,19 @@ void MePolyMesherImpl::AutoFixFourTrianglePts()
 //------------------------------------------------------------------------------
 void MePolyMesherImpl::FixPointsWithTooManyConnections()
 {
-  if (!m_fixPointConnections)
-    return;
-  VecInt noDeletePts(GetPointsNoDelete());
   bool done = false;
   while (!done)
   {
+    VecInt noDeletePts(GetPointsNoDelete());
     int nPts = m_tin->NumPoints();
     BSHP<MePointConnectionFixer> fixer = MePointConnectionFixer::New(m_tin);
     m_tin = fixer->Fix(noDeletePts);
     if (m_tin->NumPoints() != nPts)
     {
-      FindAllPolyPointIdxs();
       m_points = m_tin->PointsPtr();
       FindAllPolyPointIdxs();
-      m_relaxAgain = true;
+      AddBreaklines();
+      DeleteTrianglesOutsidePolys();
     }
     else
     {
