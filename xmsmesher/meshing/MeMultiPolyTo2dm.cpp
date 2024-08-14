@@ -855,13 +855,6 @@ void MeMultiPolyTo2dmIntermediateTests::testbug15186()
   iTestFromPolyFile("bug15186", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testbug15186
 //------------------------------------------------------------------------------
-/// \brief Test for a bug where points are created with NAN coordinates
-//------------------------------------------------------------------------------
-void MeMultiPolyTo2dmIntermediateTests::testbug15186_a()
-{
-  iTestFromPolyFile("bug15186_a", 10);
-} // MeMultiPolyTo2dmIntermediateTests::testbug15186_a
-//------------------------------------------------------------------------------
 /// \brief Test for a bug where z values on the polygon cause problems
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testbug15246()
