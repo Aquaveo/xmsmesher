@@ -53,12 +53,14 @@ public:
   void testbug13701_a();
   void test_srp_seed_pts();
   void testbug14016();
+  void testbug14016_no_interior();
   void testbug14901();
   void testbug15183();
   void testbug15186();
   void testbug15246();
   void testPatch7();
   void testRefine();
+  void testRefine_no_interior();
 };
 
 //} // namespace xms

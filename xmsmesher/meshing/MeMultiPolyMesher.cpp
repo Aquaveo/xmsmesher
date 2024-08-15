@@ -182,6 +182,10 @@ void iWriteInputsToDebugFile(MeMultiPolyMesherIo& a_io)
         os << poly.m_polyCorners[j] << " ";
       os << "\n";
     }
+    if (!poly.m_generateInteriorPoints)
+    {
+      os << "GENERATE_INTERIOR_POINTS 0\n";
+    }
     if (poly.m_relaxationMethod != "")
     {
       os << "RELAXATION_METHOD " << poly.m_relaxationMethod << "\n";
