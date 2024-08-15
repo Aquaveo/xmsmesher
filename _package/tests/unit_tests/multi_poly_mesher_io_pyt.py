@@ -187,6 +187,10 @@ class TestPolyInput(unittest.TestCase):
         seed_points = ((3, 3, 0), (4, 3, 0), (4, 8, 0), (3, 8, 0))
         relaxation_method = "spring_relaxation"
 
+        self.assertTrue(pi.generate_interior_points)
+        pi.generate_interior_points = False
+        self.assertFalse(pi.generate_interior_points)
+
         self.assertEqual(4, len(pi.outside_polygon))
         pi.outside_polygon = outside_poly
         self.assert_arrays_equal(outside_poly, pi.outside_polygon)

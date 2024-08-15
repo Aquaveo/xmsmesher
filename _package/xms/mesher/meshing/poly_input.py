@@ -102,6 +102,16 @@ class PolyInput(object):
         self._instance.polyCorners = value
 
     @property
+    def generate_interior_points(self):
+        """Generate interior points for the polygon."""
+        return self._instance.generateInteriorPoints
+
+    @generate_interior_points.setter
+    def generate_interior_points(self, value):
+        """Set whether to generate interior points for the polygon."""
+        self._instance.generateInteriorPoints = value
+
+    @property
     def boundary_points_to_remove(self):
         """Outer boundary locations to remove after the paving process."""
         return self._instance.boundPtsToRemove

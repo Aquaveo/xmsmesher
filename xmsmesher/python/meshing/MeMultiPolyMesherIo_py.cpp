@@ -165,6 +165,11 @@ void initMePolyInput(py::module &m) {
                  self.m_polyCorners = *xms::VecIntFromPyIter(patch_polygon_corners);
             });
     // -------------------------------------------------------------------------
+    // function: generateInternalPoints
+    // -------------------------------------------------------------------------
+    polyInput.def_readwrite("generateInternalPoints",
+                            &xms::MePolyInput::m_generateInteriorPoints);
+    // -------------------------------------------------------------------------
     // function: boundPtsToRemove
     // -------------------------------------------------------------------------
     polyInput.def_property("boundPtsToRemove",
