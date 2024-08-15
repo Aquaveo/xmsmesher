@@ -185,6 +185,13 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       p->m_polyCorners.assign(3, -1);
       os >> p->m_polyCorners[0] >> p->m_polyCorners[1] >> p->m_polyCorners[2];
     }
+    else if ("GENERATE_INTERIOR_POINTS" == card && p)
+    {
+      int flag(1);
+      os >> flag;
+      if (!flag)
+        p->m_generateInteriorPoints = false;
+    }
     else if ("CHECK_TOPOLOGY" == card)
     {
       a_io.m_checkTopology = true;

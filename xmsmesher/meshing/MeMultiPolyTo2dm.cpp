@@ -834,6 +834,13 @@ void MeMultiPolyTo2dmIntermediateTests::testbug14016()
   iTestFromPolyFile("bug_14016", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testbug14016
 //------------------------------------------------------------------------------
+/// \brief Test for a bug with poor triangles around internal arcs
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testbug14016_no_interior()
+{
+  iTestFromPolyFile("bug_14016_no_interior", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testbug14016_no_interior
+//------------------------------------------------------------------------------
 /// \brief Test for a bug where points are created with NAN coordinates
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testbug14901()
@@ -869,11 +876,18 @@ void MeMultiPolyTo2dmIntermediateTests::testPatch7()
   iTestFromPolyFile("CasePatch7", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testPatch7
 //------------------------------------------------------------------------------
-/// \brief Test for a patch with Z elevations on the outside polygon
+/// \brief Test refine points
 //------------------------------------------------------------------------------
 void MeMultiPolyTo2dmIntermediateTests::testRefine()
 {
   iTestFromPolyFile("CaseRefine01", 10);
 } // MeMultiPolyTo2dmIntermediateTests::testRefine
+//------------------------------------------------------------------------------
+/// \brief Test refine points
+//------------------------------------------------------------------------------
+void MeMultiPolyTo2dmIntermediateTests::testRefine_no_interior()
+{
+  iTestFromPolyFile("CaseRefine01_no_interior", 10);
+} // MeMultiPolyTo2dmIntermediateTests::testRefine_no_interior
 
 #endif // CXX_TEST
