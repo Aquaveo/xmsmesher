@@ -145,6 +145,7 @@ private:
   int m_polyId;              ///< id of the polygon
   VecPt3d m_seedPts;         ///< user generated seed points.
   bool m_relaxSeedPoints;    ///< flag to relax seed points.
+  bool m_generateInteriorPoints; ///< flag to generate interior points when paving.
   VecPt3d m_boundPtsToRemove; ///< boundary points to remove after the paving process is complete
   bool m_removeInternalFourTrianglePts =
     false; ///< flag to indicate the removal of internal pts connected to 4 triangles will occur
@@ -236,6 +237,7 @@ MePolyMesherImpl::MePolyMesherImpl()
 , m_polyId(-1)
 , m_seedPts()
 , m_relaxSeedPoints(false)
+, m_generateInteriorPoints(true)
 {
 } // MePolyMesherImpl::MePolyMesherImpl
 //------------------------------------------------------------------------------
@@ -321,6 +323,7 @@ bool MePolyMesherImpl::MeshIt(const MeMultiPolyMesherIo& a_input,
     SortPoly(m_outPoly);
     m_polyCorners = VecInt();
   }
+  m_generateInteriorPoints = polyInput.m_generateInteriorPoints;
 
   m_elev = polyInput.m_elevFunction;
   m_boundPtsToRemove = polyInput.m_boundPtsToRemove;
@@ -542,7 +545,7 @@ void MePolyMesherImpl::GenerateMeshPts()
     inPolys.insert(inPolys.end(), m_refPtPolys.begin(), m_refPtPolys.end());
 
     // if the user provided the seed points then we don't need to pave
-    if (!m_seedPts.empty())
+    if (!m_seedPts.empty() || !m_generateInteriorPoints)
     {
       // add the outside polygon to the points
       *m_points = m_outPoly;

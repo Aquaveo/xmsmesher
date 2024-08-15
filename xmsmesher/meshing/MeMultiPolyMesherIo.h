@@ -61,6 +61,7 @@ public:
   , m_polyId(-1)
   , m_relaxationMethod()
   , m_relaxSeedPoints(false)
+  , m_generateInteriorPoints(true)
   {
   }
 
@@ -85,6 +86,10 @@ public:
   /// 3 per outer poly (not 4 - outer poly index point [0] is assumed to be
   /// a corner).
   VecInt m_polyCorners;
+
+  /// Optional. Generate interior points when paving (NOT using patch algorithm).
+  /// Default is true.
+  bool m_generateInteriorPoints;
 
   /// Optional. Elevation function for interpolating z coordinate of mesh points.
   BSHP<InterpBase> m_elevFunction;
