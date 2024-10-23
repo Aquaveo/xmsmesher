@@ -188,7 +188,7 @@ jobs:
       CONAN_GCC_VERSIONS: ${{ matrix.compiler-version }}
       CONAN_DOCKER_IMAGE: docker.aquaveo.com/aquaveo/conan-docker/conan-gcc${{ matrix.compiler-version }}-py${{ matrix.python-version }}:latest
       CONAN_PIP_INSTALL: 'conan-package-tools==0.35.1'
-      CONAN_PIP_PACKAGE: 'conan==1.41.0'
+      CONAN_PIP_PACKAGE: 'conan==1.60.0'
       # Aquapi Variables
       AQUAPI_USERNAME: ${{ secrets.AQUAPI_USERNAME_SECRET }}
       AQUAPI_PASSWORD: ${{ secrets.AQUAPI_PASSWORD_SECRET }}
@@ -210,7 +210,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyYAML==5.3.1 conan==1.41.0 conan-package-tools==0.35.1 devpi-client wheel MarkupSafe==2.0.0
+          pip install pyYAML==5.3.1 conan==1.60.0 conan-package-tools==0.35.1 devpi-client wheel MarkupSafe==2.0.0
           python -m pip install -i https://public.aquapi.aquaveo.com/aquaveo/stable/+simple/ "xmsconan>=1.0.4,<2"
       # Login to Aquaveo Docker
       - name: Login to Aquaveo Docker
@@ -336,7 +336,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyYAML==5.3.1 conan==1.41.0 conan-package-tools==0.35.1 devpi-client wheel MarkupSafe==2.0.0
+          pip install pyYAML==5.3.1 conan==1.60.0 conan-package-tools==0.35.1 devpi-client wheel MarkupSafe==2.0.0
           python -m pip install -i https://public.aquapi.aquaveo.com/aquaveo/stable/+simple/ "xmsconan>=1.0.4,<2"
       # Setup Visual Studio
       - name: Setup Visual Studio
