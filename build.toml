@@ -1,0 +1,90 @@
+library_name = "xmsmesher"
+description = "Meshing library for XMS products"
+has_test_files = true
+
+xms_dependencies = [
+    { name = "xmscore", version = "6.2.5-6-g72e83110" },
+    { name = "xmsgrid", version = "5.5.3-53-g35e7e2f" },
+    { name = "xmsinterp", version = "6.1.1-12-g1d45191a"}
+]
+
+python_namespaced_dir = "mesher"
+
+library_sources = [
+  "xmsmesher/meshing/MeMeshUtils.cpp",
+  "xmsmesher/meshing/MeMultiPolyTo2dm.cpp",
+  "xmsmesher/meshing/MeMultiPolyMesher.cpp",
+  "xmsmesher/meshing/detail/MeBadQuadRemover.cpp",
+  "xmsmesher/meshing/detail/MeIntersectPolys.cpp",
+  "xmsmesher/meshing/detail/MePointConnectionFixer.cpp",
+  "xmsmesher/meshing/detail/MePolyPatcher.cpp",
+  "xmsmesher/meshing/detail/MePolyOffsetter.cpp",
+  "xmsmesher/meshing/detail/MePolyPaverToMeshPts.cpp",
+  "xmsmesher/meshing/detail/MePolyCleaner.cpp",
+  "xmsmesher/meshing/detail/MePolyPts.cpp",
+  "xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.cpp",
+  "xmsmesher/meshing/detail/MeQuadBlossom.cpp",
+  "xmsmesher/meshing/detail/MeRefinePtsToPolys.cpp",
+  "xmsmesher/meshing/detail/MeRelaxer.cpp",
+  "xmsmesher/meshing/detail/MeWeightMatcher.cpp",
+  "xmsmesher/meshing/MePolyMesher.cpp",
+  "xmsmesher/meshing/MePolyRedistributePts.cpp",
+  "xmsmesher/tutorial/TutMeshing.cpp"
+]
+
+library_headers = [
+  "xmsmesher/meshing/MeMeshUtils.h",
+  "xmsmesher/meshing/MePolyMesher.h",
+  "xmsmesher/meshing/MeMultiPolyMesher.h",
+  "xmsmesher/meshing/MeMultiPolyMesherIo.h",
+  "xmsmesher/meshing/MeMultiPolyTo2dm.h",
+  "xmsmesher/meshing/MePolyRedistributePts.h",
+  "xmsmesher/meshing/detail/MeBadQuadRemover.h",
+  "xmsmesher/meshing/detail/MePolyCleaner.h",
+  "xmsmesher/meshing/detail/MePolyOffsetter.h",
+  "xmsmesher/meshing/detail/MePolyPts.h",
+  "xmsmesher/meshing/detail/MePolyPatcher.h",
+  "xmsmesher/meshing/detail/MeIntersectPolys.h",
+  "xmsmesher/meshing/detail/MePointConnectionFixer.h",
+  "xmsmesher/meshing/detail/MePolyPaverToMeshPts.h",
+  "xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.h",
+  "xmsmesher/meshing/detail/MeQuadBlossom.h",
+  "xmsmesher/meshing/detail/MeRefinePtsToPolys.h",
+  "xmsmesher/meshing/detail/MeRelaxer.h",
+  "xmsmesher/meshing/detail/MeWeightMatcher.h"
+]
+
+testing_headers = [
+  "xmsmesher/meshing/MeMeshUtils.t.h",
+  "xmsmesher/meshing/MeMultiPolyTo2dm.t.h",
+  "xmsmesher/meshing/MePolyMesher.t.h",
+  "xmsmesher/meshing/MeMultiPolyMesher.t.h",
+  "xmsmesher/meshing/MePolyRedistributePts.t.h",
+  "xmsmesher/meshing/detail/MeBadQuadRemover.t.h",
+  "xmsmesher/meshing/detail/MePolyPaverToMeshPts.t.h",
+  "xmsmesher/meshing/detail/MeIntersectPolys.t.h",
+  "xmsmesher/meshing/detail/MePointConnectionFixer.t.h",
+  "xmsmesher/meshing/detail/MePolyPatcher.t.h",
+  "xmsmesher/meshing/detail/MePolyOffsetter.t.h",
+  "xmsmesher/meshing/detail/MePolyCleaner.t.h",
+  "xmsmesher/meshing/detail/MePolyRedistributePtsCurvature.t.h",
+  "xmsmesher/meshing/detail/MeQuadBlossom.t.h",
+  "xmsmesher/meshing/detail/MeRefinePtsToPolys.t.h",
+  "xmsmesher/meshing/detail/MeRelaxer.t.h",
+  "xmsmesher/meshing/detail/MeWeightMatcher.t.h",
+  "xmsmesher/testing/TestTools.cpp",
+  "xmsmesher/testing/TestTools.h",
+  "xmsmesher/tutorial/TutMeshing.t.h"
+]
+
+pybind_sources = [
+  "xmsmesher/python/xmsmesher_py.cpp",
+  "xmsmesher/python/meshing/meshing_py.cpp",
+  "xmsmesher/python/meshing/MeMeshUtils_py.cpp",
+  "xmsmesher/python/meshing/MeMultiPolyMesherIo_py.cpp",
+  "xmsmesher/python/meshing/MePolyRedistributePts_py.cpp"
+]
+
+pybind_headers = [
+  "xmsmesher/python/meshing/meshing_py.h"
+]
