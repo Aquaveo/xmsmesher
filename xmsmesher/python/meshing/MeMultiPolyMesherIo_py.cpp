@@ -208,6 +208,10 @@ void initMePolyInput(py::module &m) {
     // -------------------------------------------------------------------------
     polyInput.def_readwrite("fixPointConnections", &xms::MePolyInput::m_fixPointConnections);
     // -------------------------------------------------------------------------
+    // function: generateInteriorPoints
+    // -------------------------------------------------------------------------
+    polyInput.def_readwrite("generateInteriorPoints", &xms::MePolyInput::m_generateInteriorPoints);
+    // -------------------------------------------------------------------------
     // function: poly_id
     // -------------------------------------------------------------------------
     polyInput.def_readwrite("polyId", &xms::MePolyInput::m_polyId);
