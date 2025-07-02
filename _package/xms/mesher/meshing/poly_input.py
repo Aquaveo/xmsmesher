@@ -106,12 +106,12 @@ class PolyInput(object):
 
     @property
     def generate_interior_points(self):
-        """Generate interior points for the polygon."""
+        """Generate interior points for the polygon when paving."""
         return self._instance.generateInteriorPoints
 
     @generate_interior_points.setter
     def generate_interior_points(self, value):
-        """Set whether to generate interior points for the polygon."""
+        """Set whether to generate interior points for the polygon when paving."""
         self._instance.generateInteriorPoints = value
 
     @property
