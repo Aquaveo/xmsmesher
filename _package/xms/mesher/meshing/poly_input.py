@@ -10,7 +10,7 @@ class PolyInput(object):
                  polygon_corners=None, elev_function=None, boundary_points_to_remove=None,
                  constant_size_function=None, constant_size_bias=None, polygon_id=None, seed_points=None,
                  relaxation_method=None, remove_internal_four_triangle_points=None,
-                 fix_point_connections=None, **kwargs):
+                 fix_point_connections=None, generate_interior_points=None, **kwargs):
         """Constructor.
 
         Args:
@@ -28,6 +28,7 @@ class PolyInput(object):
             relaxation_method: *see below*
             remove_internal_four_triangle_points: *see below*
             fix_point_connections: *see below*
+            generate_interior_points: *see below*
             **kwargs (dict): Generic keyword arguments
         """
         if 'instance' in kwargs:
@@ -62,6 +63,8 @@ class PolyInput(object):
                 self.remove_internal_four_triangle_points = remove_internal_four_triangle_points
             if fix_point_connections is not None:
                 self.fix_point_connections = fix_point_connections
+            if generate_interior_points is not None:
+                self.generate_interior_points = generate_interior_points
 
     @property
     def outside_polygon(self):
@@ -233,12 +236,22 @@ class PolyInput(object):
     @property
     def fix_point_connections(self):
         """Fix points that are connected to more than 7 cells."""
-        return self._instance.fix_point_connections
+        return self._instance.fixPointConnections
 
     @fix_point_connections.setter
     def fix_point_connections(self, value):
         """Set whether to fix points that are connected to more than 7 cells."""
         self._instance.fixPointConnections = value
+
+    @property
+    def generate_interior_points(self):
+        """Generate interior points for the mesh."""
+        return self._instance.generateInteriorPoints
+
+    @generate_interior_points.setter
+    def generate_interior_points(self, value):
+        """Set whether to generate interior points for the mesh."""
+        self._instance.generateInteriorPoints = value
 
     @property
     def relaxation_method(self):
