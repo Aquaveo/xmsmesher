@@ -1,3 +1,9 @@
+# Conan Files
+build.py
+CMakeLists.txt
+conanfile.py
+_package/pyproject.toml
+
 # Misc
 *.DS_STORE
 *~
