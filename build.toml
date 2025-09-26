@@ -3,9 +3,9 @@ description = "Meshing library for XMS products"
 has_test_files = true
 
 xms_dependencies = [
-    { name = "xmscore", version = "6.2.5-6-g72e83110" },
-    { name = "xmsgrid", version = "5.5.3-53-g35e7e2f" },
-    { name = "xmsinterp", version = "6.1.1-12-g1d45191a"}
+    { name = "xmscore", version = "7.0.0" },
+    { name = "xmsgrid", version = "9.0.0" },
+    { name = "xmsinterp", version = "7.0.0"}
 ]
 
 python_namespaced_dir = "mesher"
