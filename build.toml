@@ -8,6 +8,10 @@ xms_dependencies = [
     { name = "xmsinterp", version = "7.0.0"}
 ]
 
+extra_export_sources = [
+  "test_files"
+]
+
 python_namespaced_dir = "mesher"
 
 library_sources = [
