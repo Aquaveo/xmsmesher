@@ -73,23 +73,7 @@ void ttGetTestFilePathsBoostGeom(const std::string& a_path,
                                  std::string& a_baseFilePath,
                                  std::string& a_outFilePath)
 {
-  bool foundBase = false;
-#if BOOST_VERSION > 107300
-  // see if there is a different base file for mac os x
-  if (!foundBase)
-  {
-    a_baseFilePath = a_path + a_fileBase + "_baseBoostGeom174" + a_extension;
-    foundBase = iFindTestFile(a_baseFilePath);
-  }
-#endif
-
-  if (!foundBase)
-  {
-    ttGetTestFilePaths(a_path, a_fileBase, a_extension, a_baseFilePath, a_outFilePath);
-  }
-  else
-  {
-    a_outFilePath = a_path + a_fileBase + "_out" + a_extension;
-  }
+  // No longer using version-specific baseline files - requires Boost 1.86.0+
+  ttGetTestFilePaths(a_path, a_fileBase, a_extension, a_baseFilePath, a_outFilePath);
 } // ttGetTestFilePaths
 } // namespace xms
