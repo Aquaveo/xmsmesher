@@ -10,6 +10,7 @@ _package/pyproject.toml
 *.pyc
 build/
 build_py/
+build_test/
 test_package/build/
 
 # Generated Files
