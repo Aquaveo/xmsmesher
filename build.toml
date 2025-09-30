@@ -4,8 +4,8 @@ has_test_files = true
 
 xms_dependencies = [
     { name = "xmscore", version = "7.0.0" },
-    { name = "xmsgrid", version = "9.0.1" },
-    { name = "xmsinterp", version = "7.0.0"}
+    { name = "xmsgrid", version = "9.0.2" },
+    { name = "xmsinterp", version = "7.0.1"}
 ]
 
 extra_export_sources = [
