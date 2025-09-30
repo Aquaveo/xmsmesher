@@ -725,8 +725,7 @@ void MeMultiPolyTo2dmIntermediateTests::testCasePaveConstSizeTransition()
 
   BSHP<MeMultiPolyTo2dm> p2g = MeMultiPolyTo2dm::New();
   std::string outFile, baseFile;
-  outFile = path + "CaseTransitionToConstSize_out.2dm";
-  baseFile = path + "CaseTransitionToConstSize_base.2dm";
+  ttGetTestFilePathsBoostGeom(path, "CaseTransitionToConstSize", ".2dm", baseFile, outFile);
   p2g->Generate2dm(ip, outFile);
   TS_ASSERT_TXT_FILES_EQUAL(baseFile, outFile);
 } // MeMultiPolyTo2dmIntermediateTests::testCasePaveConstSizeTransition
