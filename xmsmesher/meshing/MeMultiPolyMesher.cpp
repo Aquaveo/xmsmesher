@@ -32,6 +32,7 @@
 #include <xmsinterp/interpolate/InterpLinear.h>
 
 // 5. Shared code headers
+#include <xmsmesher/meshing/MeMeshUtils.h>
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
 #include <xmsmesher/meshing/MePolyMesher.h>
 
@@ -252,17 +253,22 @@ bool MeMultiPolyMesherImpl::MeshIt(MeMultiPolyMesherIo& a_io)
   {
     return false;
   }
+  meSetCallbackMessageFunc(a_io.m_callback);
 
   // Mesh each polygon and merge the triangles together into one mesh
   BSHP<MePolyMesher> pm = MePolyMesher::New();
   std::stringstream ss;
-  ss << "Meshing polygon 1 of " << a_io.m_polys.size();
   Progress prog(ss.str());
 
   VecPt3d pts, refinePts, tmpPts;
   VecInt tris, cells, cellPolygons;
   for (size_t i = 0; i < a_io.m_polys.size(); ++i)
   {
+    ss.str("");
+    ss << "Meshing polygon " << i + 1 << " of " << a_io.m_polys.size();
+    prog.UpdateMessage(ss.str());
+    meCallbackMessage(ss.str());
+
     pts.resize(0);
     tris.resize(0);
     if (pm->MeshIt(a_io, i, pts, tris, cells))
@@ -279,9 +285,6 @@ bool MeMultiPolyMesherImpl::MeshIt(MeMultiPolyMesherIo& a_io)
     }
 
     // Update progress
-    ss.str("");
-    ss << "Meshing polygon " << i + 2 << " of " << a_io.m_polys.size();
-    prog.UpdateMessage(ss.str());
     prog.ProgressStatus((double)i / a_io.m_polys.size());
   }
 

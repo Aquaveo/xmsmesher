@@ -471,6 +471,31 @@ void meModifyMessageWithPolygonId(int a_polyId, std::string& a_msg)
     a_msg = ss.str() + a_msg;
   }
 } // meModifyMessageWithPolygonId
+//------------------------------------------------------------------------------
+/// \brief Static function callback
+//------------------------------------------------------------------------------
+auto& iCallbackFunc()
+{
+  static std::function<void(const std::string&)> m_func;
+  return m_func;
+} // iCallbackFunc
+//------------------------------------------------------------------------------
+/// \brief Static function callback
+//------------------------------------------------------------------------------
+void meSetCallbackMessageFunc(const std::function<void(const std::string&)>& a_func)
+{
+  iCallbackFunc() = a_func;
+} // meSetCallbackMessageFunc
+//------------------------------------------------------------------------------
+/// \brief Sends a message to a callback
+/// \param[in] a_msg The message
+//------------------------------------------------------------------------------
+void meCallbackMessage(const std::string& a_msg)
+{
+  auto func = iCallbackFunc();
+  if (func)
+    func(a_msg);
+} // meCallbackMessage
 
 } // namespace xms
 
