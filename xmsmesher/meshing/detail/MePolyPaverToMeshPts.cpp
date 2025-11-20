@@ -13,8 +13,9 @@
 #include <xmsmesher/meshing/detail/MePolyPaverToMeshPts.h>
 
 // 3. Standard library headers
-#include <cfloat>
+#include <chrono>
 #include <list>
+#include <sstream>
 
 // 4. External library headers
 #include <boost/unordered_set.hpp>
@@ -26,6 +27,7 @@
 #include <xmsmesher/meshing/detail/MeIntersectPolys.h>
 #include <xmsmesher/meshing/detail/MePolyCleaner.h>
 #include <xmsmesher/meshing/detail/MePolyOffsetter.h>
+#include <xmsmesher/meshing/MeMeshUtils.h>
 #include <xmsmesher/meshing/MePolyRedistributePts.h>
 #include <xmscore/misc/Progress.h>
 #include <xmscore/misc/XmError.h>
@@ -115,6 +117,32 @@ public:
 
   std::vector<MePolyOffsetterOutput> m_offsetOutputs;
 };
+
+//------------------------------------------------------------------------------
+/// \brief Log a message to the Python callback but never more than 1 per sec.
+/// \param[in] a_msg: Log message
+/// \param[in] a_count: Paving iteration
+/// \param[in] a_percent: Estimated percent complete
+/// \param[in/out] a_last_time: Last time we logged a message
+//------------------------------------------------------------------------------
+static void iCallbackMessage(const std::string& a_msg,
+                             int a_count,
+                             double a_percent,
+                             std::chrono::steady_clock::time_point& a_last_time)
+{
+  auto now = std::chrono::steady_clock::now();
+  auto elapsed = now - a_last_time;
+  auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(elapsed).count();
+  if (seconds > 1.0)
+  { // do progress every few seconds
+    a_last_time = now;
+    std::stringstream ss;
+    ss << "Paving iteration " << a_count << ". " << a_msg;
+    int iCurrPer = static_cast<int>(a_percent * 100);
+    ss << " " << iCurrPer <<  "% complete paving polygon";
+    meCallbackMessage(ss.str());
+  }
+} // iCallbackMessage
 
 } // unnamed namespace
 
@@ -230,33 +258,43 @@ void MePolyPaverToMeshPtsImpl::ProcessStack()
   double area;
   std::list<Poly>::iterator it(m_polyStack.begin());
   bool first(true);
+  int count = 0;
+  double percent = 0.0;
+  auto start_time = std::chrono::steady_clock::now();
   while (it != m_polyStack.end())
   {
+    count++;
     Poly& p(*it);
 
     m_polyOffsetIter = p.m_iter;
     // Pave the polygon
     DoPave(p);
+    iCallbackMessage("Step 1 - Finished pave.", count, percent, start_time);
     // clean the results from the pave
     CleanPave(p);
+    iCallbackMessage("Step 2 - Cleaned pave.", count, percent, start_time);
     // redistribute points on the polygons
     RedistributePts();
+    iCallbackMessage("Step 3 - Redistributed points.", count, percent, start_time);
     // clean again after redistributing the points
     CleanPave(p);
+    iCallbackMessage("Step 4 - Cleaned pave second time.", count, percent, start_time);
     // classify the newly created polys into polygons defined by the "Poly"
     // class and put them on the stack
     ClassifyPolys();
+    iCallbackMessage("Step 5 - Classified polygons.", count, percent, start_time);
     // add the points from this polygon to the mesh points
     AddPolygonToMeshPoints(p, first);
+    iCallbackMessage("Step 6 - Added new polygons.", count, percent, start_time);
     first = false;
 
     // remove this poly from the stack and process the next one
     m_polyStack.erase(it);
     it = m_polyStack.begin();
 
-    // do progress
     area = AreaFromPolyStack();
-    prog.ProgressStatus(1.0 - (area / m_polyEnvelopeArea));
+    percent = 1.0 - (area / m_polyEnvelopeArea);
+    prog.ProgressStatus(percent);
   }
 } // MePolyPaverToMeshPtsImpl::ProcessStack
 //------------------------------------------------------------------------------

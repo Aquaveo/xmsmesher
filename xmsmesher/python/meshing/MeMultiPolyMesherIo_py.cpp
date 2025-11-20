@@ -107,6 +107,13 @@ void initMeMultiPolyMesherIo(py::module &m) {
                     vecRefinePoints.push_back(item.cast<xms::MeRefinePoint>());
                  }
             });
+    // ---------------------------------------------------------------------------
+    // PROPERTY: progressCallback
+    // ---------------------------------------------------------------------------
+    polyMesherIo.def_property("progressCallback", nullptr,
+            [](xms::MeMultiPolyMesherIo &self, py::object a_callable) {
+                self.m_callback = [a_callable](const std::string& a_message) { a_callable(a_message); };
+            });
 }
 
 void initMePolyInput(py::module &m) {
