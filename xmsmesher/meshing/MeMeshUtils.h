@@ -65,4 +65,6 @@ void meSmoothElevBySlope(std::shared_ptr<XmUGrid> a_grid,
                          const DynBitset& a_ptFlags,
                          VecFlt& a_smoothSize);
 void meModifyMessageWithPolygonId(int a_polyId, std::string& a_msg);
+void meCallbackMessage(const std::string& a_msg);
+void meSetCallbackMessageFunc(const std::function<void(const std::string&)>& a_func);
 } // namespace xms

@@ -28,6 +28,8 @@ class MultiPolyMesherIo(object):
                 self.check_topology = check_topology
             if return_cell_polygons is not None:
                 self.return_cell_polygons = return_cell_polygons
+            if 'progress_callback' in kwargs:
+                self._instance.progressCallback = kwargs['progress_callback']
 
     @property
     def polygons(self):
