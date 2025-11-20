@@ -9,6 +9,7 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard library headers
+#include <functional>
 
 // 4. External library headers
 #include <xmscore/stl/vector.h>
@@ -187,6 +188,8 @@ public:
   VecInt m_cells;        ///< The cells of the resulting mesh, as a stream.
   VecInt m_cellPolygons; ///< Polygon index of each cell.
 
+  /// Optional callable to report info messages.
+  std::function<void(const std::string&)> m_callback;
 }; // MeMultiPolyMesherIo
 
 } // namespace xms
