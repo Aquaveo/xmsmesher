@@ -474,7 +474,7 @@ void meModifyMessageWithPolygonId(int a_polyId, std::string& a_msg)
 //------------------------------------------------------------------------------
 /// \brief Static function callback
 //------------------------------------------------------------------------------
-auto& iCallbackFunc()
+std::function<void(const std::string&)>& iCallbackFunc()
 {
   static std::function<void(const std::string&)> m_func;
   return m_func;
