@@ -2,10 +2,19 @@ library_name = "xmsmesher"
 description = "Meshing library for XMS products"
 has_test_files = true
 
+extra_cmake_text = """
+# Disable FP contraction (FMA fusion) for consistent floating-point results across
+# architectures. GCC on ARM emits fmadd at -O2+ which breaks exact arithmetic
+# predicates and produces non-deterministic geometry results.
+if (NOT MSVC)
+    add_compile_options(-ffp-contract=off)
+endif()
+"""
+
 xms_dependencies = [
     { name = "xmscore", version = "7.0.1" },
-    { name = "xmsgrid", version = "9.0.3" },
-    { name = "xmsinterp", version = "7.0.2"}
+    { name = "xmsgrid", version = "9.0.4" },
+    { name = "xmsinterp", version = "7.0.3"}
 ]
 
 extra_export_sources = [
