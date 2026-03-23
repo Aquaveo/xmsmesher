@@ -1,5 +1,6 @@
 library_name = "xmsmesher"
 description = "Meshing library for XMS products"
+ci_type = "github"
 has_test_files = true
 
 extra_cmake_text = """
@@ -12,9 +13,9 @@ endif()
 """
 
 xms_dependencies = [
-    { name = "xmscore", version = "7.0.1" },
-    { name = "xmsgrid", version = "9.0.4" },
-    { name = "xmsinterp", version = "7.0.3"}
+    { name = "xmscore", version = "7.0.4" },
+    { name = "xmsgrid", version = "9.0.5" },
+    { name = "xmsinterp", version = "7.0.4" }
 ]
 
 extra_export_sources = [
