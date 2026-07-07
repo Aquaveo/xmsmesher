@@ -6,6 +6,7 @@ import numpy as np
 from xms.interp.interpolate import InterpIdw
 from xms.interp.interpolate import InterpLinear
 
+from xms.mesher.meshing import InterpRasterSizeFunction
 from xms.mesher.meshing import MultiPolyMesherIo
 from xms.mesher.meshing import PolyInput
 from xms.mesher.meshing import RefinePoint
@@ -172,6 +173,23 @@ class TestPolyInput(unittest.TestCase):
         self.assertEqual(-1, pi.constant_size_bias)
         self.assertEqual(-1, pi.constant_size_function)
         self.assertEqual(False, pi.remove_internal_four_triangle_points)
+
+    def test_size_and_elevation_function_raster(self):
+        """Test setting and reading back a raster-based size/elevation function."""
+        out_poly = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0))
+        pi = PolyInput(out_poly)
+        size_func = InterpRasterSizeFunction(0.0, 10.0, 5.0, -5.0, 2, 2, (1.0, 2.0, 3.0, 4.0))
+        elev_func = InterpRasterSizeFunction(0.0, 10.0, 5.0, -5.0, 2, 2, (5.0, 6.0, 7.0, 8.0))
+
+        self.assertEqual(None, pi.size_function)
+        pi.size_function = size_func
+        self.assertIsInstance(pi.size_function, InterpRasterSizeFunction)
+        self.assertEqual(str(size_func), str(pi.size_function))
+
+        self.assertEqual(None, pi.elevation_function)
+        pi.elevation_function = elev_func
+        self.assertIsInstance(pi.elevation_function, InterpRasterSizeFunction)
+        self.assertEqual(str(elev_func), str(pi.elevation_function))
 
     def test_properties(self):
         """Test the PolyInput properties."""

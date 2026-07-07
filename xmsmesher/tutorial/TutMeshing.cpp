@@ -41,6 +41,7 @@
 #include <xmsmesher/tutorial/TutMeshing.t.h>
 
 #include <fstream>
+#include <stdexcept>
 
 #include <xmscore/testing/TestTools.h>
 #include <xmsgrid/geometry/geoms.h>
@@ -145,6 +146,14 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       else if ("IDW" == interpType)
       {
         interp = InterpIdw::New();
+      }
+      else
+      {
+        // Raster-based size functions (and any other InterpBase subclass) are not
+        // representable in this point/triangle debug format; fail loudly rather
+        // than silently dropping the size/elevation function.
+        throw std::runtime_error("tutReadMeshIoFromFile: unsupported interpolator type '" +
+                                  interpType + "' in debug file.");
       }
 
       int numtri(0);
