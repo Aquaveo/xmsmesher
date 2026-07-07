@@ -95,6 +95,7 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsmesh_sources
+  xmsmesher/InterpRasterSizeFunction.cpp
   xmsmesher/meshing/MeMeshUtils.cpp
   xmsmesher/meshing/MeMultiPolyTo2dm.cpp
   xmsmesher/meshing/MeMultiPolyMesher.cpp
@@ -116,6 +117,7 @@ set(xmsmesh_sources
   xmsmesher/tutorial/TutMeshing.cpp)
 
 set(xmsmesh_headers
+  xmsmesher/InterpRasterSizeFunction.h
   xmsmesher/meshing/MeMeshUtils.h
   xmsmesher/meshing/MePolyMesher.h
   xmsmesher/meshing/MeMultiPolyMesher.h
