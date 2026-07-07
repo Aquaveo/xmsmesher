@@ -143,6 +143,7 @@ set(xmsmesh_py_source
   xmsmesher/python/xmsmesher_py.cpp
   # Meshing
   xmsmesher/python/meshing/meshing_py.cpp
+  xmsmesher/python/meshing/InterpRasterSizeFunction_py.cpp
   xmsmesher/python/meshing/MeMeshUtils_py.cpp
   xmsmesher/python/meshing/MeMultiPolyMesherIo_py.cpp
   xmsmesher/python/meshing/MePolyRedistributePts_py.cpp
@@ -158,6 +159,7 @@ if (BUILD_TESTING)
   add_definitions(-DCXX_TEST)
 
   list(APPEND xmsmesh_sources
+    xmsmesher/meshing/InterpRasterSizeFunction.t.h
     xmsmesher/meshing/MeMeshUtils.t.h
     xmsmesher/meshing/MeMultiPolyTo2dm.t.h
     xmsmesher/meshing/MePolyMesher.t.h
