@@ -372,6 +372,9 @@ void InterpRasterSizeFunctionUnitTests::testInterpToPtOutsideClampsToNearestCell
   TS_ASSERT_EQUALS(4.0f, interp->InterpToPt(Pt3d(1000.0, -1000.0, 0.0)));
   // Outside only in x, inside in y -> clamps column only.
   TS_ASSERT_EQUALS(2.0f, interp->InterpToPt(Pt3d(1000.0, 10.0, 0.0)));
+  // Far outside to the lower-left (west + south) -> column and row clamp to opposite
+  // extremes from the two corner cases above, landing on the bottom-left cell value.
+  TS_ASSERT_EQUALS(3.0f, interp->InterpToPt(Pt3d(-1000.0, -1000.0, 0.0)));
 } // InterpRasterSizeFunctionUnitTests::testInterpToPtOutsideClampsToNearestCell
 //------------------------------------------------------------------------------
 /// \brief tests interpolating to multiple points at once
