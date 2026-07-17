@@ -38,32 +38,51 @@ public:
   virtual ~InterpRasterSizeFunction();
 
   /// \cond
-  virtual void SetPtsTris(BSHP<VecPt3d> a_pts, BSHP<VecInt> a_tris) override = 0;
-  virtual void SetScalars(const float* a_scalar, size_t a_n) override = 0;
-  virtual void SetScalars(BSHP<VecFlt> a_scalar) override = 0;
-  virtual float InterpToPt(const Pt3d& a_pt) override = 0;
-  virtual void InterpToPts(const VecPt3d& a_pts, VecFlt& a_scalars) override = 0;
-  virtual void SetPtActivity(DynBitset& a_activity) override = 0;
-  virtual void SetTriActivity(DynBitset& a_activity) override = 0;
-  virtual void SetTrunc(double a_sMax, double a_sMin) override = 0;
+  virtual void SetPtsTris(BSHP<VecPt3d> a_pts, BSHP<VecInt> a_tris) override;
+  virtual void SetScalars(const float* a_scalar, size_t a_n) override;
+  virtual void SetScalars(BSHP<VecFlt> a_scalar) override;
+  virtual float InterpToPt(const Pt3d& a_pt) override;
+  virtual void InterpToPts(const VecPt3d& a_pts, VecFlt& a_scalars) override;
+  virtual void SetPtActivity(DynBitset& a_activity) override;
+  virtual void SetTriActivity(DynBitset& a_activity) override;
+  virtual void SetTrunc(double a_sMax, double a_sMin) override;
 
-  virtual bool GetTruncateInterpolatedValues() const = 0;
-  virtual double GetTruncMin() const = 0;
-  virtual double GetTruncMax() const = 0;
+  virtual bool GetTruncateInterpolatedValues() const;
+  virtual double GetTruncMin() const;
+  virtual double GetTruncMax() const;
 
-  virtual const BSHP<VecPt3d> GetPts() const override = 0;
-  virtual const BSHP<VecInt> GetTris() const override = 0;
-  virtual const BSHP<VecFlt> GetScalars() const override = 0;
-  virtual DynBitset GetPtActivity() const override = 0;
-  virtual DynBitset GetTriActivity() const override = 0;
+  virtual const BSHP<VecPt3d> GetPts() const override;
+  virtual const BSHP<VecInt> GetTris() const override;
+  virtual const BSHP<VecFlt> GetScalars() const override;
+  virtual DynBitset GetPtActivity() const override;
+  virtual DynBitset GetTriActivity() const override;
 
-  virtual std::string ToString() const override = 0;
+  virtual std::string ToString() const override;
   /// \endcond
 
-protected:
-  InterpRasterSizeFunction();
-
 private:
+  InterpRasterSizeFunction(double a_x0, double a_y0,
+                            double a_dx, double a_dy,
+                            int a_nx, int a_ny,
+                            const VecFlt& a_values,
+                            float a_nodata);
+
+  void BuildCornerGeometry();
+
+  double m_x0;        ///< X coordinate of the upper-left raster corner
+  double m_y0;        ///< Y coordinate of the upper-left raster corner
+  double m_dx;        ///< Pixel width (positive)
+  double m_dy;        ///< Pixel height (negative for north-up rasters)
+  int m_nx;           ///< Number of columns
+  int m_ny;           ///< Number of rows
+  float m_nodata;     ///< Nodata sentinel value (informational; not used by InterpToPt)
+  bool m_truncate;    ///< Whether to clamp interpolated values
+  double m_truncMin;  ///< Truncation lower bound
+  double m_truncMax;  ///< Truncation upper bound
+  BSHP<VecFlt>  m_values; ///< Flat row-major array of size values
+  BSHP<VecPt3d> m_pts;    ///< 4 bounding-corner points
+  BSHP<VecInt>  m_tris;   ///< 2 triangles covering the bounding rectangle
+
   XM_DISALLOW_COPY_AND_ASSIGN(InterpRasterSizeFunction);
 };
 //----- Function prototypes ----------------------------------------------------

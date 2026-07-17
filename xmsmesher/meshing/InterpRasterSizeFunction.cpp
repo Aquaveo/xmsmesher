@@ -34,162 +34,6 @@ namespace xms
 {
 //----- Classes / Structs ------------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-/// \brief Implementation of InterpRasterSizeFunction
-class InterpRasterSizeFunctionImpl : public InterpRasterSizeFunction
-{
-public:
-  InterpRasterSizeFunctionImpl(double a_x0, double a_y0,
-                               double a_dx, double a_dy,
-                               int a_nx, int a_ny,
-                               const VecFlt& a_values,
-                               float a_nodata)
-  : m_x0(a_x0)
-  , m_y0(a_y0)
-  , m_dx(a_dx)
-  , m_dy(a_dy)
-  , m_nx(a_nx)
-  , m_ny(a_ny)
-  , m_nodata(a_nodata)
-  , m_truncate(false)
-  , m_truncMin(0.0)
-  , m_truncMax(0.0)
-  {
-    m_values = BSHP<VecFlt>(new VecFlt(a_values));
-    BuildCornerGeometry();
-  }
-
-  /// Build the 4-corner pts and 2-triangle tris that bound the raster.
-  void BuildCornerGeometry()
-  {
-    double xRight = m_x0 + m_nx * m_dx;
-    double yFar   = m_y0 + m_ny * m_dy; // < m_y0 for north-up (dy < 0)
-
-    m_pts = BSHP<VecPt3d>(new VecPt3d);
-    m_pts->push_back(Pt3d(m_x0,   m_y0,  0.0)); // 0: near-left
-    m_pts->push_back(Pt3d(xRight, m_y0,  0.0)); // 1: near-right
-    m_pts->push_back(Pt3d(xRight, yFar,  0.0)); // 2: far-right
-    m_pts->push_back(Pt3d(m_x0,   yFar,  0.0)); // 3: far-left
-
-    m_tris = BSHP<VecInt>(new VecInt);
-    m_tris->push_back(0); m_tris->push_back(1); m_tris->push_back(2);
-    m_tris->push_back(0); m_tris->push_back(2); m_tris->push_back(3);
-  }
-
-  void SetPtsTris(BSHP<VecPt3d> /*a_pts*/, BSHP<VecInt> /*a_tris*/) override {}
-
-  void SetScalars(const float* a_scalar, size_t a_n) override
-  {
-    m_values = BSHP<VecFlt>(new VecFlt(a_scalar, a_scalar + a_n));
-  }
-
-  void SetScalars(BSHP<VecFlt> a_scalar) override
-  {
-    m_values = a_scalar;
-  }
-
-  float InterpToPt(const Pt3d& a_pt) override
-  {
-    // Fractional column and row indices from the upper-left corner.
-    // For north-up rasters m_dy < 0, so row_f increases downward.
-    double col_f = (a_pt.x - m_x0) / m_dx;
-    double row_f = (a_pt.y - m_y0) / m_dy;
-
-    float result;
-
-    bool inside = col_f >= 0.0 && col_f < static_cast<double>(m_nx)
-               && row_f >= 0.0 && row_f < static_cast<double>(m_ny);
-
-    if (inside)
-    {
-      // Bilinear interpolation between the four surrounding cells.
-      int c0 = static_cast<int>(col_f);
-      int r0 = static_cast<int>(row_f);
-      int c1 = std::min(c0 + 1, m_nx - 1);
-      int r1 = std::min(r0 + 1, m_ny - 1);
-      float fc = static_cast<float>(col_f - c0);
-      float fr = static_cast<float>(row_f - r0);
-
-      float v00 = (*m_values)[r0 * m_nx + c0];
-      float v01 = (*m_values)[r0 * m_nx + c1];
-      float v10 = (*m_values)[r1 * m_nx + c0];
-      float v11 = (*m_values)[r1 * m_nx + c1];
-
-      result = v00 * (1.0f - fc) * (1.0f - fr)
-             + v01 * fc           * (1.0f - fr)
-             + v10 * (1.0f - fc) * fr
-             + v11 * fc           * fr;
-    }
-    else
-    {
-      // Nearest boundary cell — clamp fractional indices into valid range.
-      int col = std::max(0, std::min(m_nx - 1, static_cast<int>(std::floor(col_f))));
-      int row = std::max(0, std::min(m_ny - 1, static_cast<int>(std::floor(row_f))));
-      result = (*m_values)[row * m_nx + col];
-    }
-
-    if (m_truncate)
-    {
-      result = std::max(static_cast<float>(m_truncMin),
-                        std::min(static_cast<float>(m_truncMax), result));
-    }
-
-    return result;
-  }
-
-  void InterpToPts(const VecPt3d& a_pts, VecFlt& a_scalars) override
-  {
-    a_scalars.resize(a_pts.size());
-    for (size_t i = 0; i < a_pts.size(); ++i)
-      a_scalars[i] = InterpToPt(a_pts[i]);
-  }
-
-  void SetPtActivity(DynBitset& /*a_activity*/) override {}
-  void SetTriActivity(DynBitset& /*a_activity*/) override {}
-
-  void SetTrunc(double a_sMax, double a_sMin) override
-  {
-    m_truncate = true;
-    m_truncMax = a_sMax;
-    m_truncMin = a_sMin;
-  }
-
-  bool GetTruncateInterpolatedValues() const override { return m_truncate; }
-  double GetTruncMin() const override { return m_truncMin; }
-  double GetTruncMax() const override { return m_truncMax; }
-
-  const BSHP<VecPt3d> GetPts() const override { return m_pts; }
-  const BSHP<VecInt>  GetTris() const override { return m_tris; }
-  const BSHP<VecFlt>  GetScalars() const override { return m_values; }
-  DynBitset GetPtActivity() const override { return DynBitset(); }
-  DynBitset GetTriActivity() const override { return DynBitset(); }
-
-  std::string ToString() const override
-  {
-    std::ostringstream ss;
-    ss << "InterpRasterSizeFunction"
-       << " origin=(" << m_x0 << "," << m_y0 << ")"
-       << " dx=" << m_dx << " dy=" << m_dy
-       << " nx=" << m_nx << " ny=" << m_ny;
-    return ss.str();
-  }
-
-private:
-  double m_x0;        ///< X coordinate of the upper-left raster corner
-  double m_y0;        ///< Y coordinate of the upper-left raster corner
-  double m_dx;        ///< Pixel width (positive)
-  double m_dy;        ///< Pixel height (negative for north-up rasters)
-  int m_nx;           ///< Number of columns
-  int m_ny;           ///< Number of rows
-  float m_nodata;     ///< Nodata sentinel value (informational; not used by InterpToPt)
-  bool m_truncate;    ///< Whether to clamp interpolated values
-  double m_truncMin;  ///< Truncation lower bound
-  double m_truncMax;  ///< Truncation upper bound
-  BSHP<VecFlt>  m_values; ///< Flat row-major array of size values
-  BSHP<VecPt3d> m_pts;    ///< 4 bounding-corner points
-  BSHP<VecInt>  m_tris;   ///< 2 triangles covering the bounding rectangle
-};
-
 //----- Static factory ---------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,13 +61,146 @@ BSHP<InterpRasterSizeFunction> InterpRasterSizeFunction::New(
   if (a_values.size() != static_cast<size_t>(a_nx) * static_cast<size_t>(a_ny))
     throw std::invalid_argument("InterpRasterSizeFunction: values.size() must equal nx * ny.");
 
-  BSHP<InterpRasterSizeFunctionImpl> impl(
-    new InterpRasterSizeFunctionImpl(a_x0, a_y0, a_dx, a_dy, a_nx, a_ny, a_values, a_nodata));
-  return BDPC<InterpRasterSizeFunction>(impl);
+  return BSHP<InterpRasterSizeFunction>(
+    new InterpRasterSizeFunction(a_x0, a_y0, a_dx, a_dy, a_nx, a_ny, a_values, a_nodata));
 }
 
-InterpRasterSizeFunction::InterpRasterSizeFunction() {}
+InterpRasterSizeFunction::InterpRasterSizeFunction(double a_x0, double a_y0,
+                                                     double a_dx, double a_dy,
+                                                     int a_nx, int a_ny,
+                                                     const VecFlt& a_values,
+                                                     float a_nodata)
+: m_x0(a_x0)
+, m_y0(a_y0)
+, m_dx(a_dx)
+, m_dy(a_dy)
+, m_nx(a_nx)
+, m_ny(a_ny)
+, m_nodata(a_nodata)
+, m_truncate(false)
+, m_truncMin(0.0)
+, m_truncMax(0.0)
+{
+  m_values = BSHP<VecFlt>(new VecFlt(a_values));
+  BuildCornerGeometry();
+}
+
 InterpRasterSizeFunction::~InterpRasterSizeFunction() {}
+
+/// Build the 4-corner pts and 2-triangle tris that bound the raster.
+void InterpRasterSizeFunction::BuildCornerGeometry()
+{
+  double xRight = m_x0 + m_nx * m_dx;
+  double yFar   = m_y0 + m_ny * m_dy; // < m_y0 for north-up (dy < 0)
+
+  m_pts = BSHP<VecPt3d>(new VecPt3d);
+  m_pts->push_back(Pt3d(m_x0,   m_y0,  0.0)); // 0: near-left
+  m_pts->push_back(Pt3d(xRight, m_y0,  0.0)); // 1: near-right
+  m_pts->push_back(Pt3d(xRight, yFar,  0.0)); // 2: far-right
+  m_pts->push_back(Pt3d(m_x0,   yFar,  0.0)); // 3: far-left
+
+  m_tris = BSHP<VecInt>(new VecInt);
+  m_tris->push_back(0); m_tris->push_back(1); m_tris->push_back(2);
+  m_tris->push_back(0); m_tris->push_back(2); m_tris->push_back(3);
+}
+
+void InterpRasterSizeFunction::SetPtsTris(BSHP<VecPt3d> /*a_pts*/, BSHP<VecInt> /*a_tris*/) {}
+
+void InterpRasterSizeFunction::SetScalars(const float* a_scalar, size_t a_n)
+{
+  m_values = BSHP<VecFlt>(new VecFlt(a_scalar, a_scalar + a_n));
+}
+
+void InterpRasterSizeFunction::SetScalars(BSHP<VecFlt> a_scalar)
+{
+  m_values = a_scalar;
+}
+
+float InterpRasterSizeFunction::InterpToPt(const Pt3d& a_pt)
+{
+  // Fractional column and row indices from the upper-left corner.
+  // For north-up rasters m_dy < 0, so row_f increases downward.
+  double col_f = (a_pt.x - m_x0) / m_dx;
+  double row_f = (a_pt.y - m_y0) / m_dy;
+
+  float result;
+
+  bool inside = col_f >= 0.0 && col_f < static_cast<double>(m_nx)
+             && row_f >= 0.0 && row_f < static_cast<double>(m_ny);
+
+  if (inside)
+  {
+    // Bilinear interpolation between the four surrounding cells.
+    int c0 = static_cast<int>(col_f);
+    int r0 = static_cast<int>(row_f);
+    int c1 = std::min(c0 + 1, m_nx - 1);
+    int r1 = std::min(r0 + 1, m_ny - 1);
+    float fc = static_cast<float>(col_f - c0);
+    float fr = static_cast<float>(row_f - r0);
+
+    float v00 = (*m_values)[r0 * m_nx + c0];
+    float v01 = (*m_values)[r0 * m_nx + c1];
+    float v10 = (*m_values)[r1 * m_nx + c0];
+    float v11 = (*m_values)[r1 * m_nx + c1];
+
+    result = v00 * (1.0f - fc) * (1.0f - fr)
+           + v01 * fc           * (1.0f - fr)
+           + v10 * (1.0f - fc) * fr
+           + v11 * fc           * fr;
+  }
+  else
+  {
+    // Nearest boundary cell — clamp fractional indices into valid range.
+    int col = std::max(0, std::min(m_nx - 1, static_cast<int>(std::floor(col_f))));
+    int row = std::max(0, std::min(m_ny - 1, static_cast<int>(std::floor(row_f))));
+    result = (*m_values)[row * m_nx + col];
+  }
+
+  if (m_truncate)
+  {
+    result = std::max(static_cast<float>(m_truncMin),
+                      std::min(static_cast<float>(m_truncMax), result));
+  }
+
+  return result;
+}
+
+void InterpRasterSizeFunction::InterpToPts(const VecPt3d& a_pts, VecFlt& a_scalars)
+{
+  a_scalars.resize(a_pts.size());
+  for (size_t i = 0; i < a_pts.size(); ++i)
+    a_scalars[i] = InterpToPt(a_pts[i]);
+}
+
+void InterpRasterSizeFunction::SetPtActivity(DynBitset& /*a_activity*/) {}
+void InterpRasterSizeFunction::SetTriActivity(DynBitset& /*a_activity*/) {}
+
+void InterpRasterSizeFunction::SetTrunc(double a_sMax, double a_sMin)
+{
+  m_truncate = true;
+  m_truncMax = a_sMax;
+  m_truncMin = a_sMin;
+}
+
+bool InterpRasterSizeFunction::GetTruncateInterpolatedValues() const { return m_truncate; }
+double InterpRasterSizeFunction::GetTruncMin() const { return m_truncMin; }
+double InterpRasterSizeFunction::GetTruncMax() const { return m_truncMax; }
+
+const BSHP<VecPt3d> InterpRasterSizeFunction::GetPts() const { return m_pts; }
+const BSHP<VecInt>  InterpRasterSizeFunction::GetTris() const { return m_tris; }
+const BSHP<VecFlt>  InterpRasterSizeFunction::GetScalars() const { return m_values; }
+DynBitset InterpRasterSizeFunction::GetPtActivity() const { return DynBitset(); }
+DynBitset InterpRasterSizeFunction::GetTriActivity() const { return DynBitset(); }
+
+std::string InterpRasterSizeFunction::ToString() const
+{
+  std::ostringstream ss;
+  ss << "InterpRasterSizeFunction"
+     << " origin=(" << m_x0 << "," << m_y0 << ")"
+     << " dx=" << m_dx << " dy=" << m_dy
+     << " nx=" << m_nx << " ny=" << m_ny;
+  return ss.str();
+}
 
 } // namespace xms
 
