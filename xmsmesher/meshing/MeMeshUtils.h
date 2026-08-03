@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,8 @@ class XmUGrid;
 //----- Constants / Enumerations -----------------------------------------------
 
 //----- Structs / Classes ------------------------------------------------------
+/// Callback function type used to report info messages during meshing.
+using MeCallbackFunc = std::function<void(const std::string&)>;
 
 //----- Function prototypes ----------------------------------------------------
 void meSizeFunctionFromDepth(const VecDbl& a_depths,
@@ -66,5 +69,5 @@ void meSmoothElevBySlope(std::shared_ptr<XmUGrid> a_grid,
                          VecFlt& a_smoothSize);
 void meModifyMessageWithPolygonId(int a_polyId, std::string& a_msg);
 void meCallbackMessage(const std::string& a_msg);
-void meSetCallbackMessageFunc(const std::function<void(const std::string&)>& a_func);
+void meSetCallbackMessageFunc(const MeCallbackFunc& a_func);
 } // namespace xms

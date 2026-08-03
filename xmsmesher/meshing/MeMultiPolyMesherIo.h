@@ -16,6 +16,7 @@
 #include <xmscore/misc/boost_defines.h>
 
 // 5. Shared code headers
+#include <xmsmesher/meshing/MeMeshUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -189,7 +190,7 @@ public:
   VecInt m_cellPolygons; ///< Polygon index of each cell.
 
   /// Optional callable to report info messages.
-  std::function<void(const std::string&)> m_callback;
+  MeCallbackFunc m_callback;
 }; // MeMultiPolyMesherIo
 
 } // namespace xms

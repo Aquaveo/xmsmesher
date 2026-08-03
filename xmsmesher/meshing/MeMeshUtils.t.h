@@ -27,6 +27,7 @@ public:
   void testSmoothSizeFunc1();
   void testSmoothSizeFunc2();
   void testSmoothSizeFunc3();
+  void testCallbackMessage();
 };
 
 #endif

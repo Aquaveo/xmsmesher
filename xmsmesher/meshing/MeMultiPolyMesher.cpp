@@ -302,7 +302,7 @@ bool MeMultiPolyMesherImpl::MeshIt(MeMultiPolyMesherIo& a_io)
   // report unused refine points
   ReportUnusedRefinePts(a_io, refinePts);
   // Set the Python callback logger to a null function.
-  std::function<void(const std::string&)> nullFunc;
+  MeCallbackFunc nullFunc;
   meSetCallbackMessageFunc(nullFunc);
   return true;
 } // MeMultiPolyMesherImpl::MeshIt

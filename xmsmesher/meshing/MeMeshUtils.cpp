@@ -474,15 +474,15 @@ void meModifyMessageWithPolygonId(int a_polyId, std::string& a_msg)
 //------------------------------------------------------------------------------
 /// \brief Static function callback
 //------------------------------------------------------------------------------
-auto& iCallbackFunc()
+MeCallbackFunc& iCallbackFunc()
 {
-  static std::function<void(const std::string&)> m_func;
+  static MeCallbackFunc m_func;
   return m_func;
 } // iCallbackFunc
 //------------------------------------------------------------------------------
 /// \brief Static function callback
 //------------------------------------------------------------------------------
-void meSetCallbackMessageFunc(const std::function<void(const std::string&)>& a_func)
+void meSetCallbackMessageFunc(const MeCallbackFunc& a_func)
 {
   iCallbackFunc() = a_func;
 } // meSetCallbackMessageFunc
@@ -763,5 +763,26 @@ void MeMeshUtilsUnitTests::testSmoothSizeFunc3()
   TS_ASSERT_DELTA_VEC(baseSmooth, vSmooth, .1);
 } // MeMeshUtilsUnitTests::testSmoothSizeFunc3
   //! [snip_MeMeshUtilsTests::testSmoothSizeFunc3]
+//------------------------------------------------------------------------------
+/// \brief Tests that a callback registered with meSetCallbackMessageFunc is
+/// invoked by meCallbackMessage, and that clearing it stops delivery.
+//------------------------------------------------------------------------------
+void MeMeshUtilsUnitTests::testCallbackMessage()
+{
+  std::vector<std::string> messages;
+  xms::meSetCallbackMessageFunc(
+    [&messages](const std::string& a_msg) { messages.push_back(a_msg); });
+
+  xms::meCallbackMessage("first message");
+  xms::meCallbackMessage("second message");
+  TS_ASSERT_EQUALS(size_t(2), messages.size());
+  TS_ASSERT_EQUALS(std::string("first message"), messages[0]);
+  TS_ASSERT_EQUALS(std::string("second message"), messages[1]);
+
+  // Clearing the callback should stop further messages from being recorded.
+  xms::meSetCallbackMessageFunc(xms::MeCallbackFunc());
+  xms::meCallbackMessage("third message");
+  TS_ASSERT_EQUALS(size_t(2), messages.size());
+} // MeMeshUtilsUnitTests::testCallbackMessage
 
 #endif
