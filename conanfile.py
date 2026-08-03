@@ -12,9 +12,9 @@ class XmsmesherConan(XmsConanFile):
     url = 'https://github.com/Aquaveo/xmsmesher'
     description = 'Mesher library for XMS products'
     xms_dependencies = [
-        'xmscore/[>=6.0.1 <7.0.0]@aquaveo/stable',
-        'xmsgrid/[>=7.8.4 <8.0.0]@aquaveo/stable',
-        'xmsinterp/[>=6.0.1 <7.0.0]@aquaveo/stable',
+        'xmscore/[>=6.2.6 <7.0.0]@aquaveo/stable',
+        'xmsgrid/[>=7.9.1 <8.0.0]@aquaveo/stable',
+        'xmsinterp/[>=6.1.9 <7.0.0]@aquaveo/stable',
     ]
     extra_export_sources = [
         'test_files'
