@@ -32,6 +32,7 @@
 #include <xmsinterp/interpolate/InterpLinear.h>
 
 // 5. Shared code headers
+#include <xmsmesher/meshing/InterpRasterSizeFunction.h>
 #include <xmsmesher/meshing/MeMeshUtils.h>
 #include <xmsmesher/meshing/MeMultiPolyMesherIo.h>
 #include <xmsmesher/meshing/MePolyMesher.h>
@@ -120,11 +121,14 @@ void iWriteInterpDataToDebugFile(std::ostream& a_os, BSHP<InterpBase> a_interp)
   BSHP<VecPt3d> ptsPtr = a_interp->GetPts();
   BSHP<InterpIdw> idw = BDPC<InterpIdw>(a_interp);
   BSHP<InterpLinear> linear = BDPC<InterpLinear>(a_interp);
-  XM_ENSURE_TRUE_NO_ASSERT(ptsPtr && (idw || linear));
+  BSHP<InterpRasterSizeFunction> raster = BDPC<InterpRasterSizeFunction>(a_interp);
+  XM_ENSURE_TRUE_NO_ASSERT(ptsPtr && (idw || linear || raster));
   if (idw)
     a_os << "IDW";
-  else
+  else if (linear)
     a_os << "LINEAR";
+  else
+    a_os << "RASTER";
 
   VecPt3d& pts(*ptsPtr);
   a_os << " " << pts.size() << "0\n";
@@ -427,6 +431,7 @@ bool MeMultiPolyMesherImpl::ValidateInput(const MeMultiPolyMesherIo& a_io)
         double sMax = static_cast<double>(*result.second);
         BSHP<InterpIdw> idw = BDPC<InterpIdw>(sf);
         BSHP<InterpLinear> linear = BDPC<InterpLinear>(sf);
+        BSHP<InterpRasterSizeFunction> raster = BDPC<InterpRasterSizeFunction>(sf);
         double minTruncVal(0);
         if (linear)
         {
@@ -439,6 +444,12 @@ bool MeMultiPolyMesherImpl::ValidateInput(const MeMultiPolyMesherIo& a_io)
           if (!idw->GetTruncateInterpolatedValues())
             idw->SetTrunc(sMax, sMin);
           minTruncVal = idw->GetTruncMin();
+        }
+        if (raster)
+        {
+          if (!raster->GetTruncateInterpolatedValues())
+            raster->SetTrunc(sMax, sMin);
+          minTruncVal = raster->GetTruncMin();
         }
 
         // make sure the min truncation is positive

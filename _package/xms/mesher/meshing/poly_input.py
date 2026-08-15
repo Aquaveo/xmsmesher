@@ -1,6 +1,8 @@
 """Class for representing a meshing input polygon."""
 from xms import interp
 
+from .interp_raster_size_function import InterpRasterSizeFunction as _InterpRasterSizeFunctionPy
+from .._xmsmesher.meshing import InterpRasterSizeFunction as _InterpRasterSizeFunctionCpp
 from .._xmsmesher.meshing import PolyInput as PInput
 
 
@@ -140,14 +142,16 @@ class PolyInput(object):
         size_func = self._instance.sizeFunction
         if size_func is None:
             return None
-        elif self._size_function_type == interp._xmsinterp.interpolate.InterpLinear:
+        elif isinstance(size_func, interp._xmsinterp.interpolate.InterpLinear):
             return interp.interpolate.InterpLinear(instance=size_func)
-        elif self._size_function_type == interp._xmsinterp.interpolate.InterpIdw:
+        elif isinstance(size_func, interp._xmsinterp.interpolate.InterpIdw):
             return interp.interpolate.InterpIdw(instance=size_func)
-        elif self._size_function_type == interp._xmsinterp.interpolate.InterpAnisotropic:
+        elif isinstance(size_func, interp._xmsinterp.interpolate.InterpAnisotropic):
             return interp.interpolate.InterpAnisotropic(instance=size_func)
-        elif self._size_function_type == interp._xmsinterp.interpolate.InterpLinearExtrapIdw:
+        elif isinstance(size_func, interp._xmsinterp.interpolate.InterpLinearExtrapIdw):
             return interp.interpolate.InterpLinearExtrapIdw(instance=size_func)
+        elif isinstance(size_func, _InterpRasterSizeFunctionCpp):
+            return _InterpRasterSizeFunctionPy(instance=size_func)
         else:
             raise RuntimeError("Unknown interp type: {}".format(type(size_func)))
 
@@ -162,14 +166,16 @@ class PolyInput(object):
         elev_function = self._instance.elevFunction
         if elev_function is None:
             return None
-        elif self._elev_function_type == interp._xmsinterp.interpolate.InterpLinear:
+        elif isinstance(elev_function, interp._xmsinterp.interpolate.InterpLinear):
             return interp.interpolate.InterpLinear(instance=elev_function)
-        elif self._elev_function_type == interp._xmsinterp.interpolate.InterpIdw:
+        elif isinstance(elev_function, interp._xmsinterp.interpolate.InterpIdw):
             return interp.interpolate.InterpIdw(instance=elev_function)
-        elif self._elev_function_type == interp._xmsinterp.interpolate.InterpAnisotropic:
+        elif isinstance(elev_function, interp._xmsinterp.interpolate.InterpAnisotropic):
             return interp.interpolate.InterpAnisotropic(instance=elev_function)
-        elif self._elev_function_type == interp._xmsinterp.interpolate.InterpLinearExtrapIdw:
+        elif isinstance(elev_function, interp._xmsinterp.interpolate.InterpLinearExtrapIdw):
             return interp.interpolate.InterpLinearExtrapIdw(instance=elev_function)
+        elif isinstance(elev_function, _InterpRasterSizeFunctionCpp):
+            return _InterpRasterSizeFunctionPy(instance=elev_function)
         else:
             raise RuntimeError("Unknown interp type: {}".format(type(elev_function)))
 

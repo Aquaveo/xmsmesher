@@ -6,6 +6,7 @@ import numpy as np
 from xms.interp.interpolate import InterpIdw
 from xms.interp.interpolate import InterpLinear
 
+from xms.mesher.meshing import InterpRasterSizeFunction
 from xms.mesher.meshing import PolyRedistributePoints
 
 
@@ -71,6 +72,13 @@ class TestPolyRedistributePoints(unittest.TestCase):
         r = PolyRedistributePoints()
         pts = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0))
         sf = InterpIdw(pts)
+        r.set_size_func(sf)
+        # TODO: No way to test if there size function was set correctly
+
+    def test_set_size_func_03(self):
+        """Test setting the size function to a raster-based size function."""
+        r = PolyRedistributePoints()
+        sf = InterpRasterSizeFunction(0.0, 10.0, 5.0, -5.0, 2, 2, (1.0, 2.0, 3.0, 4.0))
         r.set_size_func(sf)
         # TODO: No way to test if there size function was set correctly
 
