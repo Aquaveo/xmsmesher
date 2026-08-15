@@ -22,4 +22,5 @@ void initMeshing(py::module &m) {
     initMeRefinePoint(m);
     initMeMultiPolyMesherIo(m);
     initMePolyRedistributePts(m);
+    initInterpRasterSizeFunction(m);
 }

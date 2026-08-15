@@ -6,6 +6,7 @@ import numpy as np
 from xms.interp.interpolate import InterpIdw
 from xms.interp.interpolate import InterpLinear
 
+from xms.mesher.meshing import InterpRasterSizeFunction
 from xms.mesher.meshing import MultiPolyMesherIo
 from xms.mesher.meshing import PolyInput
 from xms.mesher.meshing import RefinePoint
@@ -172,6 +173,43 @@ class TestPolyInput(unittest.TestCase):
         self.assertEqual(-1, pi.constant_size_bias)
         self.assertEqual(-1, pi.constant_size_function)
         self.assertEqual(False, pi.remove_internal_four_triangle_points)
+
+    def test_size_and_elevation_function_raster(self):
+        """Test setting and reading back a raster-based size/elevation function."""
+        out_poly = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0))
+        pi = PolyInput(out_poly)
+        size_func = InterpRasterSizeFunction(0.0, 10.0, 5.0, -5.0, 2, 2, (1.0, 2.0, 3.0, 4.0))
+        elev_func = InterpRasterSizeFunction(0.0, 10.0, 5.0, -5.0, 2, 2, (5.0, 6.0, 7.0, 8.0))
+
+        self.assertEqual(None, pi.size_function)
+        pi.size_function = size_func
+
+        self.assertEqual(None, pi.elevation_function)
+        pi.elevation_function = elev_func
+
+        # Reading the function back cannot recover its derived type, so the
+        # assertions below are disabled. This is NOT specific to the raster
+        # size function -- the same read-back assertions are commented out for
+        # the linear and idw cases in test_properties and
+        # test_size_and_elevation_function, and for the same reason.
+        #
+        # XMS interpolators are abstract interfaces built by a New() factory,
+        # so InterpRasterSizeFunction::New() hands back a pointer whose dynamic
+        # type is InterpRasterSizeFunctionImpl. That Impl type is never
+        # registered with pybind11, so when a BSHP<InterpBase> is cast back to
+        # Python, typeid(*src) finds nothing in the registry and pybind falls
+        # back to the static type, returning InterpBase. PolyInput.size_function
+        # then fails every isinstance check and raises
+        # "Unknown interp type: <class '...interpolate.InterpBase'>".
+        #
+        # The fix belongs in xmsinterp, where InterpBase lives, and would fix
+        # linear/idw/anisotropic at the same time. See Aquaveo/xmsinterp#96.
+        # Re-enable all six assertions once that lands.
+        #
+        # self.assertIsInstance(pi.size_function, InterpRasterSizeFunction)
+        # self.assertEqual(str(size_func), str(pi.size_function))
+        # self.assertIsInstance(pi.elevation_function, InterpRasterSizeFunction)
+        # self.assertEqual(str(elev_func), str(pi.elevation_function))
 
     def test_properties(self):
         """Test the PolyInput properties."""

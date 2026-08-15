@@ -41,6 +41,8 @@
 #include <xmsmesher/tutorial/TutMeshing.t.h>
 
 #include <fstream>
+#include <set>
+#include <stdexcept>
 
 #include <xmscore/testing/TestTools.h>
 #include <xmsgrid/geometry/geoms.h>
@@ -135,9 +137,19 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
     }
     else if (("SIZE_FUNCTION" == card || "ELEVATION_FUNCTION" == card) && p)
     {
+      static const std::set<std::string> cCards = {
+        "BEGIN_POLYGON",           "END_POLYGON",         "OUTSIDE",
+        "OUTSIDE_3D",              "INSIDE",              "INSIDE_3D",
+        "BIAS",                    "SIZE_FUNCTION",       "ELEVATION_FUNCTION",
+        "CONST_SIZE_FUNCTION",     "PATCH_CORNERS",       "GENERATE_INTERIOR_POINTS",
+        "CHECK_TOPOLOGY",          "RETURN_CELL_POLYGONS", "REFINE_POINTS",
+        "SEED_POINTS",             "RELAXATION_METHOD",   "FIX_POINT_CONNECTIONS",
+        "REMOVE_INTERNAL_FOUR_TRIANGLE_PTS"};
+
       BSHP<InterpBase> interp;
       std::string interpType;
-      os >> interpType; // LINEAR or IDW
+      std::streampos beforeType = os.tellg();
+      os >> interpType; // LINEAR or IDW, or (if this function has no data) the next card
       if ("LINEAR" == interpType)
       {
         interp = InterpLinear::New();
@@ -145,6 +157,22 @@ bool tutReadMeshIoFromFile(const std::string& a_fname, MeMultiPolyMesherIo& a_io
       else if ("IDW" == interpType)
       {
         interp = InterpIdw::New();
+      }
+      else if (cCards.count(interpType))
+      {
+        // No interpolator data follows this card (an empty SIZE_FUNCTION/ELEVATION_FUNCTION).
+        // What was just read is actually the next card, so rewind and let the main loop
+        // reprocess it instead of consuming it as bogus point/triangle data.
+        os.seekg(beforeType);
+        continue;
+      }
+      else
+      {
+        // Raster-based size functions (and any other InterpBase subclass) are not
+        // representable in this point/triangle debug format; fail loudly rather
+        // than silently dropping the size/elevation function.
+        throw std::runtime_error("tutReadMeshIoFromFile: unsupported interpolator type '" +
+                                  interpType + "' in debug file.");
       }
 
       int numtri(0);

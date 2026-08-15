@@ -25,6 +25,7 @@ extra_export_sources = [
 python_namespaced_dir = "mesher"
 
 library_sources = [
+  "xmsmesher/meshing/InterpRasterSizeFunction.cpp",
   "xmsmesher/meshing/MeMeshUtils.cpp",
   "xmsmesher/meshing/MeMultiPolyTo2dm.cpp",
   "xmsmesher/meshing/MeMultiPolyMesher.cpp",
@@ -47,6 +48,7 @@ library_sources = [
 ]
 
 library_headers = [
+  "xmsmesher/meshing/InterpRasterSizeFunction.h",
   "xmsmesher/meshing/MeMeshUtils.h",
   "xmsmesher/meshing/MePolyMesher.h",
   "xmsmesher/meshing/MeMultiPolyMesher.h",
@@ -69,6 +71,7 @@ library_headers = [
 ]
 
 testing_headers = [
+  "xmsmesher/meshing/InterpRasterSizeFunction.t.h",
   "xmsmesher/meshing/MeMeshUtils.t.h",
   "xmsmesher/meshing/MeMultiPolyTo2dm.t.h",
   "xmsmesher/meshing/MePolyMesher.t.h",
@@ -94,6 +97,7 @@ testing_headers = [
 pybind_sources = [
   "xmsmesher/python/xmsmesher_py.cpp",
   "xmsmesher/python/meshing/meshing_py.cpp",
+  "xmsmesher/python/meshing/InterpRasterSizeFunction_py.cpp",
   "xmsmesher/python/meshing/MeMeshUtils_py.cpp",
   "xmsmesher/python/meshing/MeMultiPolyMesherIo_py.cpp",
   "xmsmesher/python/meshing/MePolyRedistributePts_py.cpp"
