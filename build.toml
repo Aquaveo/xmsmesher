@@ -1,7 +1,6 @@
 library_name = "xmsmesher"
 description = "Meshing library for XMS products"
 ci_type = "github"
-has_test_files = true
 
 extra_cmake_text = """
 # Disable FP contraction (FMA fusion) for consistent floating-point results across
