@@ -75,11 +75,11 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-15]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
         build_type: [Release, Debug]
 
     env:
-      MATRIX_NAME: ${{ matrix.platform }}-Clang${{ matrix.compiler-version }}-${{ matrix.build_type }}
+      MATRIX_NAME: ${{ matrix.platform }}-Clang${{ matrix.compiler-version }}-${{ matrix.build_type }}-py${{ matrix.python-version }}
       # Library Variables
       LIBRARY_NAME: xmsmesher
       XMS_VERSION: '0.0.0'
@@ -176,7 +176,7 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ runner.os }}
+          name: wheel-${{ runner.os }}-py${{ matrix.python-version }}
           path: wheelhouse/*.whl
         if: matrix.build_type == 'Release'
       # Upload wheel to Aquapi
@@ -217,7 +217,7 @@ jobs:
   # LINUX
   # ----------------------------------------------------------------------------------------------
   linux:
-    name: GCC-13 (${{ matrix.build_type }}, Linux)
+    name: GCC-13 (${{ matrix.build_type }}, ${{ matrix.python-version }}, Linux)
     runs-on: ubuntu-latest
 
     container:
@@ -227,10 +227,10 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Release, Debug]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
 
     env:
-      MATRIX_NAME: linux-GCC13-${{ matrix.build_type }}
+      MATRIX_NAME: linux-GCC13-${{ matrix.build_type }}-py${{ matrix.python-version }}
       # Library Variables
       LIBRARY_NAME: xmsmesher
       XMS_VERSION: '0.0.0'
@@ -314,7 +314,7 @@ jobs:
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ runner.os }}
+          name: wheel-${{ runner.os }}-py${{ matrix.python-version }}
           path: wheelhouse/*.whl
         if: matrix.build_type == 'Release'
       # Upload wheel to Aquapi
@@ -362,7 +362,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [windows-2022]
-        python-version: ["3.10", "3.13"]
+        python-version: ["3.10", "3.13", "3.14"]
         compiler-version: [17]
         build_type: [Release, Debug]
 
